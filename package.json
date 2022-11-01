@@ -7,10 +7,10 @@
   "private": true,
   "scripts": {
     "start": "npm run db:migrate && node dist/index.js",
-    "start-dev": "npm run db:migrate-dev && concurrently npm:watch:scss npm:watch:app",
     "build": "tsc && cp -R ./src/views ./dist/views && npm run build:scss && npm run build:autoprefixer",
     "build:scss": "sass --no-source-map -s compressed src/styles/main.scss static/main.css",
     "build:autoprefixer": "postcss -r --use autoprefixer --no-map static/main.css",
+    "watch": "npm run db:migrate-dev && concurrently npm:watch:scss npm:watch:app",
     "watch:scss": "sass --watch src/styles/main.scss static/main.css",
     "watch:app": "cross-env NODE_ENV=development nodemon -e ts,js,jsx,json --ignore 'src/views/**/*.jsx' --exec ts-node src/index.ts",
     "db:migrate-dev": "cross-env NODE_ENV=development npm run db:migrate",

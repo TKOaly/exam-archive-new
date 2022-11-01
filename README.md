@@ -27,7 +27,7 @@ Actually new exam archive
 5. _(OPTIONAL)_ If you want to test with realish users, set up `user-service` and make sure that there's a service for exam-archive, might need to change the permission bits to `770`. By default, the service will just skip authentication and log you in.
 6. Copy `.env-sample` to `.env`.
 7. Run `docker-compose up` in a terminal to start the database and the local s3 service
-8. Run `npm run start-dev`
+8. Run `npm run watch`
 
 then go to http://localhost:9000
 

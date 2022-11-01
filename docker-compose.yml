@@ -18,7 +18,7 @@ services:
   db:
     image: postgres:11.1
     ports:
-      - '9876:5432'
+      - '127.0.0.1:9876:5432'
     environment:
       - POSTGRES_PASSWORD=Su5hgVvoqUCRw5vrWmrW
       - POSTGRES_USER=tarpisto
@@ -30,7 +30,7 @@ services:
   adminer:
     image: adminer
     ports:
-      - 8082:8080
+      - 127.0.0.18082:8080
 
 volumes:
   exam-archive-pg-data:

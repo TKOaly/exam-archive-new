@@ -7,7 +7,7 @@
   "private": true,
   "scripts": {
     "start": "npm run db:migrate && node dist/index.js",
-    "start-dev": "concurrently npm:watch:scss npm:watch:app",
+    "start-dev": "npm run db:migrate-dev && concurrently npm:watch:scss npm:watch:app",
     "build": "tsc && cp -R ./src/views ./dist/views && npm run build:scss && npm run build:autoprefixer",
     "build:scss": "sass --no-source-map -s compressed src/styles/main.scss static/main.css",
     "build:autoprefixer": "postcss -r --use autoprefixer --no-map static/main.css",
@@ -59,11 +59,11 @@
     "autoprefixer": "^10.2.5",
     "concurrently": "^6.0.0",
     "dotenv": "^8.2.0",
-    "nodemon": "^2.0.4",
+    "nodemon": "^2.0.20",
     "postcss": "^8.2.8",
     "postcss-cli": "^8.3.1",
     "sass": "^1.32.8",
-    "ts-node": "^8.10.2",
+    "ts-node": "^10.9.1",
     "typescript": "^3.3.1"
   },
   "browserslist": [

@@ -1,4 +1,4 @@
-version: '3'
+version: '3.9'
 
 services:
   #exam-archive:
@@ -15,8 +15,20 @@ services:
   #  depends_on:
   #    - db
 
+  s3:
+    build:
+      context: ./docker
+      dockerfile: minio.Dockerfile
+    environment:
+      INITIAL_BUCKETS: "local/exam-archive-local"
+    volumes:
+      - exam-archive-minio-data:/data
+    ports:
+      - 127.0.0.1:9001:9000
+      - 127.0.0.1:9002:9001
+
   db:
-    image: postgres:11.1
+    image: postgres:11.16
     ports:
       - '127.0.0.1:9876:5432'
     environment:
@@ -30,7 +42,8 @@ services:
   adminer:
     image: adminer
     ports:
-      - 127.0.0.18082:8080
+      - 127.0.0.1:9003:8080
 
 volumes:
   exam-archive-pg-data:
+  exam-archive-minio-data:

@@ -18,7 +18,7 @@ if (!PG_CONNECTION_STRING) {
 module.exports = {
   development: {
     client: 'postgres',
-    version: '11.1',
+    version: '11.17',
     connection: PG_CONNECTION_STRING,
     pool: {
       min: 1,
@@ -34,7 +34,7 @@ module.exports = {
 
   production: {
     client: 'postgres',
-    version: '11.1',
+    version: '11.17',
     connection: PG_CONNECTION_STRING,
     pool: {
       min: 1,

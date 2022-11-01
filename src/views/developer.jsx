@@ -41,11 +41,6 @@ const IndexPage = ({ flash, username, s3Objects, s3DevPrefix }) => {
         <a href="/">{'<- '}Back</a>
       </p>
       <h1>Developer tools</h1>
-      <h2>Apply AWS_S3_DEV_PREFIX</h2>
-
-      <p>
-        <pre>AWS_S3_DEV_PREFIX={s3DevPrefix}</pre>
-      </p>
 
       <h3>Object prefixes in database</h3>
       <table>
@@ -65,22 +60,6 @@ const IndexPage = ({ flash, username, s3Objects, s3DevPrefix }) => {
           ))}
         </tbody>
       </table>
-
-      <h3>Apply AWS_S3_DEV_PREFIX to all objects in database</h3>
-      <form action="/dev/apply-s3-dev-prefix" method="post">
-        <p>
-          Specify new prefix to apply to all exam file_paths, or leave empty to
-          remove all prefixes.
-        </p>
-        <label>
-          <input type="text" name="devPrefix" value={s3DevPrefix} />
-          <input type="submit" value="Apply" />
-          <p>
-            NOTE: Does not modify objects in S3! Make a copy of the objects
-            under <c>template</c> for yourself.
-          </p>
-        </label>
-      </form>
 
       <h3>Objects in database</h3>
       <div className="developer-s3__table-container">

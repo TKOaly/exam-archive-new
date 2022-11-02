@@ -35,16 +35,12 @@ const slugifyCourseName = (courseName: string) => {
   })
 }
 
-const applyDevPrefix = (objectName: string) =>
-  config.AWS_S3_DEV_PREFIX
-    ? `${config.AWS_S3_DEV_PREFIX}/${objectName}`
-    : objectName
-
 const upload = multer({
   storage: multerS3({
     s3,
     bucket: config.AWS_S3_BUCKET_ID,
     contentType: multerS3.AUTO_CONTENT_TYPE,
+
     acl: 'private',
     key: (
       req: any,
@@ -52,7 +48,7 @@ const upload = multer({
       cb: (err: any, key: string) => void
     ) => {
       const id = uuidv4()
-      cb(null, applyDevPrefix(id))
+      cb(null, id)
     },
     contentDisposition: (
       req: any,

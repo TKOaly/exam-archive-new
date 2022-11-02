@@ -15,7 +15,9 @@ import controller from './controller'
 import {
   getUserServiceLoginUrl,
   getUserServiceLogoutUrl,
-  getMe
+  getMe,
+  UserMembership,
+  UserRole
 } from './service/tkoUserService'
 import { isActiveMember, AuthData, roleRights, requireRights } from './common'
 
@@ -134,6 +136,21 @@ app.use('/favicon.ico', (req, res) => {
 app.use('/static', staticMiddleware)
 
 app.use(async (req, res, next) => {
+  if (config.NODE_ENV === 'development') {
+    const mockUser = {
+      username: 'dev-user',
+      role: UserRole.Yllapitaja,
+      membership: UserMembership.Jasen
+    }
+
+    ;(req as any).auth = {
+      user: mockUser,
+      rights: isActiveMember(mockUser) ? roleRights[mockUser.role] || {} : {}
+    }
+
+    return next()
+  }
+
   const token = req.cookies.token as string | undefined
 
   if (!token) {
@@ -209,5 +226,5 @@ app.listen(config.PORT, (err: any) => {
     return
   }
 
-  console.log(`Server running on port ${config.PORT}`)
+  console.log(`Server running → http://localhost:${config.PORT}/`)
 })

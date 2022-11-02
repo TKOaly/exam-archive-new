@@ -45,6 +45,8 @@ function create-buckets() {
 
         echo "Creating bucket '$BUCKET_ADDR'"
         mc mb --region "$MINIO_REGION_NAME" -p "$BUCKET_ADDR"
+        mc cp --attr 'Content-Type=application/pdf;Content-Disposition=inline\; filename="010122_Example_Course_File_KK.pdf"' /tmp/sample-pdf.pdf "$BUCKET_ADDR/00000000-0000-4000-0000-000000000000"
+        mc cp --attr 'Content-Type=image/jpeg;Content-Disposition=inline\; filename="020122_Example_Course_File_KK.jpg"' /tmp/sample-jpg.jpg "$BUCKET_ADDR/00000000-0000-4000-0000-000000000001"
     done
 }
 

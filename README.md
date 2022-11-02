@@ -28,8 +28,13 @@ Actually new exam archive
 6. Copy `.env-sample` to `.env`.
 7. Run `docker-compose up` in a terminal to start the database and the local s3 service
 8. Run `npm run watch`
+9. _(OPTIONAL)_ Run `npm run db:seed` if you want to seed the DB with data. The dev S3 bucket (Minio) should be seeded with test files automatically, so you just need to run the DB seeds.
 
 then go to http://localhost:9000
+
+### Adding more test files
+
+By default, the local minio s3 is seeded with one PDF and one JPG. You can just upload more files, or see `docker/minio.Dockerfile` and `docker/minio-docker-entrypoint.sh` for how to add more files the Minio image we build. If you add a file, you can then modify `seeds/exams.js` with the correct file name. Make the file an uuidv4 or something.
 
 ### Seeding database with real data
 

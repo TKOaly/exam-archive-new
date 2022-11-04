@@ -106,7 +106,10 @@ const start = async (sourceDirectory, mod, markDirty) => {
   console.group(`Inserting ${courses.length} courses to db...`)
   /** @type {{id: number, name: string}[]} */
   const insertedCourses = await knex
-    .batchInsert('courses', courses.map(({ name }) => ({ name })))
+    .batchInsert(
+      'courses',
+      courses.map(({ name }) => ({ name }))
+    )
     .returning(['id', 'name'])
   console.log('Inserted!')
   console.groupEnd()

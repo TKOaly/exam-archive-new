@@ -32,11 +32,11 @@ type Validation = (obj: any) => boolean
 
 const isTrue = (_: any): _ is true => _ === true
 
-const createValidator = <T>(checks: Validation[]) => (
-  obj: any | T
-): obj is T => {
-  return checks.map(validate => validate(obj)).every(isTrue)
-}
+const createValidator =
+  <T>(checks: Validation[]) =>
+  (obj: any | T): obj is T => {
+    return checks.map(validate => validate(obj)).every(isTrue)
+  }
 
 const lastModifiedIsNullOrDate = (obj: any) =>
   obj.last_modified === null || obj.last_modified instanceof Date

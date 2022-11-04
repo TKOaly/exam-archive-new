@@ -103,12 +103,14 @@ router.post('/archive', requireRights('upload'), async (req, res) => {
   const { courseName } = req.body
 
   const existingCourse = await findCourseByName(courseName.trim())
+
   if (existingCourse) {
     req.flash(`Course ${existingCourse.name} already exists!`, 'error')
     return res.redirect('/')
   }
 
   const createdCourse = await createCourse({ name: courseName })
+
   req.flash(`Course "${createdCourse?.name ?? courseName}" created!`, 'info')
   res.redirect(
     createdCourse ? urlForCourse(createdCourse.id, createdCourse.name) : '/'

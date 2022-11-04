@@ -1,5 +1,4 @@
 import express from 'express'
-import bodyParser from 'body-parser'
 import slugify from 'slugify'
 import multer from 'multer'
 import multerS3 from 'multer-s3'
@@ -68,7 +67,7 @@ const upload = multer({
 
 const router = express.Router()
 
-router.use(bodyParser.urlencoded({ extended: true }))
+router.use(express.urlencoded({ extended: true }))
 
 if (config.NODE_ENV === 'development') {
   router.use('/dev', devRouter)
@@ -159,7 +158,7 @@ router.post(
     const file = req.file as Express.MulterS3.File
     const deleteFile = async () => {
       try {
-        await s3.deleteObject({ Bucket: file.bucket, Key: file.key }).promise()
+        await s3.deleteObject({ Bucket: file.bucket, Key: file.key })
       } catch (e) {
         console.error('Failed to delete uploaded object from S3', e)
       }
@@ -238,20 +237,18 @@ router.post(
       // object
       const s3key = updatedExam.filePath
       try {
-        await s3
-          .copyObject({
-            CopySource: `${config.AWS_S3_BUCKET_ID}/${s3key}`,
-            Bucket: config.AWS_S3_BUCKET_ID,
-            Key: s3key,
-            ACL: 'private',
-            ContentType: updatedExam.mimeType,
-            ContentDisposition: contentDisposition(updatedExam.fileName, {
-              type: 'inline',
-              fallback: transliterate(updatedExam.fileName)
-            }),
-            MetadataDirective: 'REPLACE'
-          })
-          .promise()
+        await s3.copyObject({
+          CopySource: `${config.AWS_S3_BUCKET_ID}/${s3key}`,
+          Bucket: config.AWS_S3_BUCKET_ID,
+          Key: s3key,
+          ACL: 'private',
+          ContentType: updatedExam.mimeType,
+          ContentDisposition: contentDisposition(updatedExam.fileName, {
+            type: 'inline',
+            fallback: transliterate(updatedExam.fileName)
+          }),
+          MetadataDirective: 'REPLACE'
+        })
       } catch (e) {
         // s3 failed! revert!
         await renameExamFile(examId, oldName)

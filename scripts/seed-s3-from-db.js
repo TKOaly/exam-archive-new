@@ -1,6 +1,6 @@
 require('dotenv').config()
 const Knex = require('knex')
-const AWS = require('aws-sdk')
+const { S3 } = require('@aws-sdk/client-s3')
 const fs = require('fs')
 const path = require('path')
 const { transliterate } = require('transliteration')
@@ -21,13 +21,14 @@ const chunk = (arr, len) => {
 }
 
 const start = async () => {
-  AWS.config.update({
+  const s3 = new S3({
+    apiVersion: '2006-03-01',
     region: process.env.AWS_REGION,
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    }
   })
-
-  const s3 = new AWS.S3({ apiVersion: '2006-03-01' })
 
   const exams = await knex('exams').select('*')
   let i = 0

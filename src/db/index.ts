@@ -1,4 +1,4 @@
-import Knex from 'knex'
+import * as Knex from 'knex'
 
 interface KnexTimestamped {
   created_at: number
@@ -20,10 +20,10 @@ export interface DbExam extends KnexTimestamped {
 }
 
 // trust the knexfile's contents
-type KnexFile = { [env: string]: Knex.Config | undefined }
+type KnexFile = { [env: string]: Knex.Knex.Config | undefined }
 const knexfile: KnexFile = require('../../knexfile.js')
 
-export const knex = Knex(knexfile[process.env.NODE_ENV!]!)
+export const knex = Knex.knex(knexfile[process.env.NODE_ENV!]!)
 
 export const testConnection = async () => {
   await knex('courses').count('id')

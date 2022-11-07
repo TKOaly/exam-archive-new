@@ -27,6 +27,7 @@ const app = express()
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jsx')
 app.engine('jsx', require('express-react-views').createEngine())
+app.set('trust proxy', config.TRUST_PROXY_IPS)
 
 // gzip response since ALB doesn't do compression.
 // Uses the `compressible` package to determine whether to compress, by default

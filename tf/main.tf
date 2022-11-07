@@ -387,7 +387,8 @@ resource "aws_ecs_task_definition" "exam_archive_task" {
       { "name": "PORT", "value": "${local.container_port}" },
       { "name": "AWS_REGION", "value": "${local.aws_region}" },
       { "name": "AWS_S3_BUCKET_ID", "value": "${aws_s3_bucket.exam_archive_files_s3_bucket.id}" },
-      { "name": "AWS_CF_DISTRIBUTION_DOMAIN", "value": "${local.cdn_domain}" }
+      { "name": "AWS_CF_DISTRIBUTION_DOMAIN", "value": "${local.cdn_domain}" },
+      { "name": "TRUST_PROXY_IPS", "value": "10.120.0.0/16" }
     ],
     "secrets": [
       { "name": "PG_CONNECTION_STRING", "valueFrom": "${data.aws_ssm_parameter.exam_archive_pg_connection_string.arn}" },

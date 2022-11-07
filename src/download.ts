@@ -1,23 +1,12 @@
 import express from 'express'
-import AWS from 'aws-sdk'
+import { GetObjectCommand } from '@aws-sdk/client-s3'
+import { getSignedUrl as getSignedS3Url } from '@aws-sdk/s3-request-presigner'
+import { getSignedUrl as getSignedCFUrl } from '@aws-sdk/cloudfront-signer'
 
 import config from './config'
 import s3 from './service/s3'
 import { findExamById } from './service/archive'
 import { DbExam } from './db'
-
-const getCfSigner = (() => {
-  let signer: AWS.CloudFront.Signer | null = null
-  return () => {
-    if (!signer) {
-      signer = new AWS.CloudFront.Signer(
-        config.AWS_CF_KEY_ID,
-        config.AWS_CF_KEY
-      )
-    }
-    return signer
-  }
-})()
 
 // age in seconds
 const oneHourToSeconds = 60 * 60 * 1
@@ -29,26 +18,22 @@ const getUrlExpirationTimestamp = () =>
 const getCloudFrontUrl = (exam: DbExam) =>
   `https://${config.AWS_CF_DISTRIBUTION_DOMAIN}/${exam.file_path}`
 
-const getCfSigningOptions = (
-  exam: DbExam
-): AWS.CloudFront.Signer.SignerOptionsWithoutPolicy => ({
-  expires: getUrlExpirationTimestamp(),
-  url: getCloudFrontUrl(exam)
-})
-
-const createSignedCloudFrontUrl = (exam: DbExam) =>
-  new Promise<string>((resolve, reject) => {
-    getCfSigner().getSignedUrl(getCfSigningOptions(exam), (err, url) =>
-      err ? reject(err) : resolve(url)
-    )
+const createSignedCloudFrontUrl = (exam: DbExam) => {
+  return getSignedCFUrl({
+    url: getCloudFrontUrl(exam),
+    keyPairId: config.AWS_CF_KEY_ID,
+    dateLessThan: new Date(getUrlExpirationTimestamp()).toISOString(),
+    privateKey: config.AWS_CF_KEY
   })
+}
 
-const createSignedS3Url = (exam: DbExam) =>
-  s3.getSignedUrlPromise('getObject', {
+const createSignedS3Url = (exam: DbExam) => {
+  const command = new GetObjectCommand({
     Bucket: config.AWS_S3_BUCKET_ID,
-    Key: exam.file_path,
-    Expires: getUrlExpirationTimestamp()
+    Key: exam.file_path
   })
+  return getSignedS3Url(s3, command, { expiresIn: oneDayToSeconds })
+}
 
 const createSignedUrl = (exam: DbExam) => {
   const signer = config.AWS_CF_KEY

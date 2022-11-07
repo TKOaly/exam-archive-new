@@ -1,11 +1,12 @@
 /// <reference path="./types/types.d.ts"/>
-import express from 'express'
+import express, { Request, Response } from 'express'
 import session from 'express-session'
 import morgan from 'morgan'
 import path from 'path'
 const MemoryStore = require('memorystore')(session)
 import cookieParser from 'cookie-parser'
 import compression from 'compression'
+import axios from 'axios'
 
 import config from './config'
 import * as db from './db'
@@ -33,7 +34,7 @@ app.engine('jsx', require('express-react-views').createEngine())
 // `text/*`, `*/*+json`, `*/*+text`, `*/*+xml`
 app.use(compression())
 
-app.get('/healthcheck', (req, res) =>
+app.get('/healthcheck', (req: Request, res: Response) =>
   res.send(
     `
 <!DOCTYPE html>
@@ -79,7 +80,7 @@ document.getElementById('btn').addEventListener('click', () => {
 `
   )
 )
-app.get('/healthcheck/db', async (req, res) => {
+app.get('/healthcheck/db', async (req: Request, res: Response) => {
   try {
     await db.testConnection()
     return res.sendStatus(200)
@@ -92,7 +93,7 @@ app.get('/healthcheck/db', async (req, res) => {
 const robots = `User-agent: *
 Disallow: /
 `
-app.get('/robots.txt', (req, res) => res.send(robots))
+app.get('/robots.txt', (req: Request, res: Response) => res.send(robots))
 
 app.use(cookieParser())
 app.use(morgan(config.NODE_ENV === 'development' ? 'dev' : 'combined'))
@@ -115,14 +116,15 @@ app.use(
   })
 )
 
-app.use((req, res, next) => {
-  req.flash = (message?: string, type?: 'error' | 'info') => {
-    if (typeof message === 'undefined' && typeof type === 'undefined') {
+app.use((req: Request, res: Response, next) => {
+  req.flash = (msg?: string, type?: 'error' | 'info') => {
+    if (!msg && !type) {
       const ret = req.session!['__flash']
       req.session!['__flash'] = undefined
       return ret
-    } else {
-      req.session!['__flash'] = { message, type }
+    }
+    if (msg && type) {
+      req.session!['__flash'] = { msg, type }
     }
   }
 
@@ -130,12 +132,12 @@ app.use((req, res, next) => {
 })
 
 const staticMiddleware = express.static(path.join(__dirname, '../static'))
-app.use('/favicon.ico', (req, res) => {
+app.use('/favicon.ico', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../static/favicon.ico'))
 })
 app.use('/static', staticMiddleware)
 
-app.use(async (req, res, next) => {
+app.use(async (req: Request, res: Response, next) => {
   if (config.NODE_ENV === 'development') {
     const mockUser = {
       username: 'dev-user',
@@ -175,6 +177,14 @@ app.use(async (req, res, next) => {
         : noRights
     } as AuthData
   } catch (e) {
+    if (!axios.isAxiosError(e))
+      return () => {
+        console.error(
+          'user-service getMe failed with error is not AxiosError',
+          e
+        )
+        res.status(500).render('error-user-service')
+      }
     if (!e.response) {
       console.error('user-service getMe failed with no response', e)
       return res.status(500).render('error-user-service')
@@ -199,7 +209,7 @@ app.use(async (req, res, next) => {
   next()
 })
 
-app.use('/logout', (req, res) => {
+app.use('/logout', (req: Request, res: Response) => {
   if (!req.cookies.token) {
     return res.redirect('/')
   }
@@ -211,7 +221,7 @@ app.use('/', requireRights('access'), controller)
 app.use('/api', requireRights('access'), apiRouter)
 app.use('/download', requireRights('access'), downloadRouter)
 
-app.use('*', (req, res) => {
+app.use('*', (req: Request, res: Response) => {
   const auth = (req as any).auth as AuthData | undefined
 
   res.status(404).render('404', {
@@ -220,11 +230,6 @@ app.use('*', (req, res) => {
   })
 })
 
-app.listen(config.PORT, (err: any) => {
-  if (err) {
-    console.error('Failed to start server: ', err)
-    return
-  }
-
+app.listen(config.PORT, () => {
   console.log(`Server running → http://localhost:${config.PORT}/`)
 })

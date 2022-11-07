@@ -7406,4 +7406,9 @@ exports.seed = function (knex) {
         }
       ])
     })
+    .then(() => {
+      return knex.raw(
+        "SELECT setval('exams_id_seq', (SELECT MAX(id) FROM exams), true);"
+      )
+    })
 }

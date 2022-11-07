@@ -7,21 +7,21 @@ import {
 
 export type AccessRight = 'access' | 'upload' | 'remove' | 'rename'
 
-export const requireRights = (
-  ...requiredRights: AccessRight[]
-): RequestHandler => (req, res, next) => {
-  const auth = (req as any).auth as AuthData
+export const requireRights =
+  (...requiredRights: AccessRight[]): RequestHandler =>
+  (req, res, next) => {
+    const auth = (req as any).auth as AuthData
 
-  if (!requiredRights.every(right => auth.rights[right])) {
-    // TODO: 400 page
-    return res.status(401).render('401', {
-      flash: req.flash(),
-      username: auth && auth.user && auth.user.username
-    })
+    if (!requiredRights.every(right => auth.rights[right])) {
+      // TODO: 400 page
+      return res.status(401).render('401', {
+        flash: req.flash(),
+        username: auth && auth.user && auth.user.username
+      })
+    }
+
+    next()
   }
-
-  next()
-}
 
 export const isActiveMember = ({ membership }: UserServiceUser) =>
   membership === UserMembership.Jasen ||

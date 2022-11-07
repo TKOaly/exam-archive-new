@@ -9,7 +9,9 @@ const UnauthorizedPage = ({ flash, username }) => {
       <p>
         <a href="/">Back to listing</a>
       </p>
-      <p><a href="https://tko-aly.fi">Back to tko-aly.fi</a></p>
+      <p>
+        <a href="https://tko-aly.fi">Back to tko-aly.fi</a>
+      </p>
 
       {username && (
         <div>

@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express'
-import bodyParser from 'body-parser'
 import {
   renameCourse,
   getCourseListing,
@@ -50,7 +49,7 @@ api.get(
 
 api.post(
   '/courses/:courseId/rename',
-  bodyParser.json(),
+  express.json(),
   async (req: Request & CourseIdLocals, res, next) => {
     const { name } = req.body
     if (!name || typeof name !== 'string') {

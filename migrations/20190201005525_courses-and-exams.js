@@ -11,10 +11,7 @@ const up = async knex => {
     table.increments('id')
     table.text('name').notNullable()
     // audit timestamps
-    table
-      .timestamp('created_at')
-      .notNullable()
-      .defaultTo(knex.fn.now())
+    table.timestamp('created_at').notNullable().defaultTo(knex.fn.now())
     table.timestamp('updated_at')
   })
 
@@ -32,10 +29,7 @@ const up = async knex => {
     table.text('file_path').notNullable()
     table.timestamp('upload_date').notNullable()
     // audit timestamps
-    table
-      .timestamp('created_at')
-      .notNullable()
-      .defaultTo(knex.fn.now())
+    table.timestamp('created_at').notNullable().defaultTo(knex.fn.now())
     table.timestamp('updated_at')
   })
 

@@ -177,14 +177,10 @@ app.use(async (req: Request, res: Response, next) => {
         : noRights
     } as AuthData
   } catch (e) {
-    if (!axios.isAxiosError(e))
-      return () => {
-        console.error(
-          'user-service getMe failed with error is not AxiosError',
-          e
-        )
-        res.status(500).render('error-user-service')
-      }
+    if (!axios.isAxiosError(e)) {
+      console.error('user-service getMe failed with error is not AxiosError', e)
+      return res.status(500).render('error-user-service')
+    }
     if (!e.response) {
       console.error('user-service getMe failed with no response', e)
       return res.status(500).render('error-user-service')

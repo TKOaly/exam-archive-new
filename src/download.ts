@@ -12,8 +12,10 @@ import { DbExam } from './db'
 const oneHourToSeconds = 60 * 60 * 1
 const oneDayToSeconds = oneHourToSeconds * 24
 
-const getUrlExpirationTimestamp = () =>
-  Math.floor(new Date().getTime() / 1000) + oneDayToSeconds
+const addDays = (date: Date, days: number) => {
+  const ts = date.getTime()
+  return new Date(ts + oneDayToSeconds * days * 1000)
+}
 
 const getCloudFrontUrl = (exam: DbExam) =>
   `https://${config.AWS_CF_DISTRIBUTION_DOMAIN}/${exam.file_path}`
@@ -22,7 +24,7 @@ const createSignedCloudFrontUrl = (exam: DbExam) => {
   return getSignedCFUrl({
     url: getCloudFrontUrl(exam),
     keyPairId: config.AWS_CF_KEY_ID,
-    dateLessThan: new Date(getUrlExpirationTimestamp()).toISOString(),
+    dateLessThan: addDays(new Date(), 1).toISOString(),
     privateKey: config.AWS_CF_KEY
   })
 }

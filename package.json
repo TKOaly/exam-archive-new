@@ -16,7 +16,7 @@
     "watch:scss": "sass --watch src/styles/main.scss static/main.css",
     "watch:ts": "tsc -p tsconfig.json -w",
     "watch:views": "node scripts/watch-views.js",
-    "watch:server": "NODE_ENV=development nodemon -e ts,js,jsx,json --delay 0.25 --ignore 'dist/views/**/*.jsx' dist/index.js",
+    "watch:server": "NODE_ENV=development nodemon -e ts,js,jsx,json --delay 0.5 --ignore 'dist/views/**/*.jsx' dist/index.js",
     "db:migrate": "knex migrate:latest",
     "db:seed": "knex seed:run",
     "prettier": "prettier --write .",

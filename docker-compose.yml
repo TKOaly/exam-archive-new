@@ -28,7 +28,7 @@ services:
       - 127.0.0.1:9002:9001
 
   db:
-    image: postgres:11.17
+    image: postgres:11.17-alpine
     ports:
       - '127.0.0.1:9876:5432'
     environment:

@@ -201,6 +201,45 @@ resource "aws_cloudfront_distribution" "exam_archive_cf_files_distribution" {
   }
 }
 
+resource "aws_iam_user" "exam_archive_kubernetes_user" {
+  name = "exam-archive-kubernetes-user"
+}
+
+resource "aws_iam_access_key" "exam_archive_kubernetes_user_access_key" {
+  user = aws_iam_user.exam_archive_kubernetes_user.name
+}
+
+resource "aws_iam_policy" "exam_archive_role" {
+  name = "exam-archive-role"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:GetObjectAcl",
+          "s3:PutObjectAcl",
+          "s3:UploadPart",
+          "s3:UploadPartCopy",
+          "s3:ListBucket"
+        ],
+        Effect = "Allow",
+        Resource = [
+          "${aws_s3_bucket.exam_archive_files_s3_bucket.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_user_policy_attachment" "exam_archive_user_policy_attachment" {
+  user = aws_iam_user.exam_archive_kubernetes_user.name
+  policy_arn = aws_iam_policy.exam_archive_role.arn
+}
+
 resource "aws_iam_role" "exam_archive_task_role" {
   name                = "exam-archive-task-role"
   assume_role_policy  = <<EOF

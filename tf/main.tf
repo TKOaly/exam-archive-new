@@ -205,10 +205,6 @@ resource "aws_iam_user" "exam_archive_kubernetes_user" {
   name = "exam-archive-kubernetes-user"
 }
 
-resource "aws_iam_access_key" "exam_archive_kubernetes_user_access_key" {
-  user = aws_iam_user.exam_archive_kubernetes_user.name
-}
-
 resource "aws_iam_policy" "exam_archive_role" {
   name = "exam-archive-role"
 

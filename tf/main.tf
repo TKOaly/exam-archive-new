@@ -221,15 +221,17 @@ resource "aws_iam_policy" "exam_archive_role" {
           "s3:GetObject",
           "s3:DeleteObject",
           "s3:GetObjectAcl",
-          "s3:PutObjectAcl",
-          "s3:UploadPart",
-          "s3:UploadPartCopy",
+          "s3:PutObjectAcl"
+        ],
+        Effect = "Allow",
+        Resource = ["${aws_s3_bucket.exam_archive_files_s3_bucket.arn}/*"]
+      },
+      {
+        Action = [
           "s3:ListBucket"
         ],
         Effect = "Allow",
-        Resource = [
-          "${aws_s3_bucket.exam_archive_files_s3_bucket.arn}/*"
-        ]
+        Resource = [aws_s3_bucket.exam_archive_files_s3_bucket.arn],
       }
     ]
   })

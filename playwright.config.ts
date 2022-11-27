@@ -45,21 +45,21 @@ const config: PlaywrightTestConfig = {
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
+      name: 'Desktop Chromium',
       use: {
         ...devices['Desktop Chrome']
       }
     },
 
     {
-      name: 'firefox',
+      name: 'Desktop Firefox',
       use: {
         ...devices['Desktop Firefox']
       }
     },
 
     {
-      name: 'webkit',
+      name: 'Desktop WebKit',
       use: {
         ...devices['Desktop Safari']
       }
@@ -81,14 +81,13 @@ const config: PlaywrightTestConfig = {
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
-  // outputDir: 'test-results/',
+  outputDir: 'test-results/',
 
   /* Run your local dev server before starting the tests */
 
   webServer: {
     reuseExistingServer: !process.env.CI,
-    command:
-      'NODE_ENV=development npm run build && NODE_ENV=development npm run start',
+    command: 'npm run build && npm run start:e2e',
     port: 9000
   }
 }

@@ -8,6 +8,7 @@
   "scripts": {
     "postinstall": "playwright install --with-deps",
     "start": "npm run db:migrate && node dist/index.js",
+    "start:e2e": "npm run db:migrate && NODE_ENV=development npm run db:seed && NODE_ENV=development node dist/index.js",
     "build": "npm run build:ts && npm run build:views && npm run build:scss && npm run build:autoprefixer",
     "build:ts": "tsc -p tsconfig.json",
     "build:views": "node scripts/build-views.js",

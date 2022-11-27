@@ -61,7 +61,7 @@ const ExamListItem = ({ exam, showDelete, showRename }) => {
   const { extname, basename } = splitExtension(fileName)
 
   return (
-    <div role="row" className="exam-list-item">
+    <div role="row" className="exam-list-item" data-exam-id={exam.id}>
       <Icon aria-hidden="true" className="exam-list-item__icon" />
       <div role="cell" className="exam-list-item__link-container">
         <a
@@ -127,19 +127,19 @@ const ExamListHeader = ({ showDelete, showRename }) => {
   )
 }
 
-const ExamList = ({ exams, className }) => {
+const ExamList = ({ courseId, exams, className }) => {
   const { canDelete, canRename } = useUserContext()
 
   if (exams.length === 0) {
     return (
-      <div className="exam-list-container">
+      <div className="exam-list-container" data-course-id={courseId}>
         <NoExamsFound className="exam-list__not-found" />
       </div>
     )
   }
 
   return (
-    <div className="exam-list-container">
+    <div className="exam-list-container" data-course-id={courseId}>
       <div
         role="table"
         aria-label="Exams"

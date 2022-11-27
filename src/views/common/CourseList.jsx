@@ -4,9 +4,9 @@ const fiLocale = require('date-fns/locale/fi')
 
 const FolderIcon = require('./FolderIcon')
 
-const CourseListItem = ({ name, url, lastModified }) => {
+const CourseListItem = ({ id, name, url, lastModified }) => {
   return (
-    <div role="row" className="course-list-item">
+    <div role="row" className="course-list-item" data-course-id={id}>
       <FolderIcon aria-hidden="true" className="course-list-item__icon" />
       <div
         role="cell"
@@ -55,6 +55,7 @@ const CourseList = ({ courses }) => {
           return (
             <CourseListItem
               key={course.id}
+              id={course.id}
               name={course.name}
               url={course.url}
               lastModified={course.lastModified}

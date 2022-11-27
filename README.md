@@ -21,7 +21,7 @@ Actually new exam archive
 ### 1. Install tools and dependencies
 
 1. Install Docker and docker-compose
-2. Install Node.JS (>=v12), if you don't have it already, install it with nvm (on windows: nwm)
+2. Install Node.JS (>=v12), if you don't have it already, install it with nvm (on windows: nwm). You can use `nvm use` to install and afterwards activate correct version based on `.nvmrc` file.
 3. Install the Prettier formatter extension for your editor
 4. Run `npm install`
 5. _(OPTIONAL)_ If you want to test with realish users, set up `user-service` and make sure that there's a service for exam-archive, might need to change the permission bits to `770`. By default, the service will just skip authentication and log you in.

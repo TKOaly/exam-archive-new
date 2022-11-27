@@ -6,6 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "postinstall": "playwright install --with-deps",
     "start": "npm run db:migrate && node dist/index.js",
     "build": "npm run build:ts && npm run build:views && npm run build:scss && npm run build:autoprefixer",
     "build:ts": "tsc -p tsconfig.json",
@@ -21,7 +22,8 @@
     "db:seed": "knex seed:run",
     "prettier": "prettier --write .",
     "seed-from-files-dev": "cross-env NODE_ENV=development node scripts/seed-db-from-files.js",
-    "seed-s3-from-db": "cross-env NODE_ENV=development node scripts/seed-s3-from-db.js"
+    "seed-s3-from-db": "cross-env NODE_ENV=development node scripts/seed-s3-from-db.js",
+    "test": "playwright test"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.202.0",
@@ -52,6 +54,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.28.1",
     "@types/compression": "^1.7.2",
     "@types/content-disposition": "^0.5.5",
     "@types/cookie-parser": "^1.4.3",

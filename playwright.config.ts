@@ -87,7 +87,8 @@ const config: PlaywrightTestConfig = {
 
   webServer: {
     reuseExistingServer: !process.env.CI,
-    command: 'npm run build && npm run start',
+    command:
+      'NODE_ENV=development npm run build && NODE_ENV=development npm run start',
     port: 9000
   }
 }

@@ -88,7 +88,9 @@ test('add a new course shows correct user logged in', async ({ page }) => {
     'Add a new course:Create courseLogged in: dev-user (Log out)'
   )
   const loggedIn = addBox.getByText('Logged in: dev-user (Log out)')
+  const logoutLink = loggedIn.locator('a', { hasText: 'Log out' })
 
   await expect(addBox).toBeVisible()
   await expect(loggedIn).toBeVisible()
+  await expect(logoutLink).toHaveAttribute('href', '/logout')
 })

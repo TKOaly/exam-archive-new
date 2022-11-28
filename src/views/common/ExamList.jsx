@@ -61,7 +61,12 @@ const ExamListItem = ({ exam, showDelete, showRename }) => {
   const { extname, basename } = splitExtension(fileName)
 
   return (
-    <div role="row" className="exam-list-item" data-exam-id={exam.id}>
+    <div
+      role="row"
+      className="exam-list-item"
+      data-exam-id={id}
+      data-exam-name={fileName}
+    >
       <Icon aria-hidden="true" className="exam-list-item__icon" />
       <div role="cell" className="exam-list-item__link-container">
         <a

@@ -62,7 +62,7 @@ test('add a new course works', async ({ page, request }) => {
   await expect(courseName).toBeVisible()
   await expect(createCourse).toBeVisible()
 
-  const testIdentifier = `+ ${new Date().toISOString()}`
+  const testIdentifier = `+ ${Math.random()}`
 
   await courseName.fill(`Introduction to testing ${testIdentifier}`)
   await createCourse.click()

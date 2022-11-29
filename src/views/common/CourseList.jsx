@@ -7,7 +7,11 @@ const FolderIcon = require('./FolderIcon')
 const CourseListItem = ({ id, name, url, lastModified }) => {
   return (
     <div role="row" className="course-list-item" data-course-id={id}>
-      <FolderIcon aria-hidden="true" className="course-list-item__icon" />
+      <FolderIcon
+        role="cell"
+        aria-hidden="true"
+        className="course-list-item__icon"
+      />
       <div
         role="cell"
         lang="fi-FI"

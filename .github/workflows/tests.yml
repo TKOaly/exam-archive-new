@@ -20,3 +20,9 @@ jobs:
         run: docker-compose up -d
       - name: Run tests
         run: npm run test
+      - name: Upload screenshots and videos
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report
+          path: playwright-report

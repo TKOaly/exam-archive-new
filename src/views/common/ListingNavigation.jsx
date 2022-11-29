@@ -32,7 +32,7 @@ const ListingNavigation = ({
   backButtonHref,
   className
 }) => (
-  <div className={classnames('listing-navigation', className)}>
+  <nav className={classnames('listing-navigation', className)}>
     <div className="listing-navigation__content">
       {backButtonHref && (
         <nav className="listing-navigation__button-container">
@@ -47,7 +47,7 @@ const ListingNavigation = ({
         <h2 className="listing-navigation__text">{title}</h2>
       </div>
     </div>
-  </div>
+  </nav>
 )
 
 module.exports = ListingNavigation

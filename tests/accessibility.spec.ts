@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import { createHtmlReport } from 'axe-html-reporter'
 
-// TODO: Fix accessibility - 129 violations from 2 rules
-test.fixme('courselisting check', async ({ page }) => {
+// TODO: Fix accessibility - 128 violations from 1 rule
+test.only('courselisting check', async ({ page }) => {
   await page.goto('/archive')
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze()

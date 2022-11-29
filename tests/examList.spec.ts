@@ -169,10 +169,7 @@ test('rename exam works', async ({ page, request }) => {
   const uploadButton = page.getByRole('button', { name: 'Upload' })
   await uploadButton.click()
 
-  const row = page.locator(`[data-exam-name="${filename}"]`)
-  const renameButton = row
-    .getByRole('cell', { name: 'rename' })
-    .locator('button')
+  const renameButton = page.locator(`[data-current-name="${filename}"]`)
 
   const newFilename = `${Math.random()}-2.txt`
   page.once('dialog', async dialog => {

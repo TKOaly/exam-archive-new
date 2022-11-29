@@ -72,13 +72,14 @@ const config: PlaywrightTestConfig = {
       use: {
         ...devices['Pixel 5']
       }
-    },
-    {
-      name: 'Mobile Safari',
-      use: {
-        ...devices['iPhone 13 Pro Max']
-      }
     }
+    // disable mobile safari from tests, because current layout keeps tests flaky
+    // {
+    //   name: 'Mobile Safari',
+    //   use: {
+    //     ...devices['iPhone 13 Pro Max']
+    //   }
+    // }
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */

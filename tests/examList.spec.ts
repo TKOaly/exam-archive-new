@@ -169,8 +169,6 @@ test('rename exam works', async ({ page, request }) => {
   const uploadButton = page.getByRole('button', { name: 'Upload' })
   await uploadButton.click()
 
-  const renameButton = page.locator(`[data-current-name="${filename}"]`)
-
   const newFilename = `${Math.random()}-2.txt`
   page.once('dialog', async dialog => {
     expect(dialog.message()).toEqual(
@@ -179,7 +177,7 @@ test('rename exam works', async ({ page, request }) => {
     await dialog.accept(newFilename)
   })
 
-  await renameButton.click()
+  await page.click(`[data-current-name="${filename}"]`)
 
   const newRow = page.locator(`[data-exam-name="${newFilename}"]`)
   const name = newRow.locator('a', {
@@ -212,12 +210,6 @@ test('rename exam cancel does nothing', async ({ page, request }) => {
 
   await uploadButton.click()
 
-  const row = page.locator(`[data-exam-name="${filename}"]`)
-  await expect(row).toBeVisible()
-  const renameButton = row
-    .getByRole('cell', { name: 'rename' })
-    .locator('button')
-
   page.once('dialog', async dialog => {
     expect(dialog.message()).toEqual(
       'Please enter the new filename for this exam:'
@@ -225,7 +217,7 @@ test('rename exam cancel does nothing', async ({ page, request }) => {
     await dialog.dismiss()
   })
 
-  await renameButton.click()
+  await page.click(`[data-current-name="${filename}"]`)
 
   const newRow = page.locator(`[data-exam-name="${filename}"]`)
   const name = newRow.locator('a', {

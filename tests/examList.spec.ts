@@ -493,3 +493,16 @@ test('delete course throws error if exams currently', async ({
   const courseId = await page.getAttribute('[data-course-id]', 'data-course-id')
   await request.post(`/archive/delete-course/${courseId}`)
 })
+
+test('opening exam makes popup like pdf viewer etc', async ({ page }) => {
+  await page.goto('/archive/3')
+
+  const row = page.locator('[data-exam-id="1842"]')
+  const name = row.locator('a', {
+    hasText: '170511_Advanced_Course_in_Machine_Learning_KK.pdf'
+  })
+
+  const [page1] = await Promise.all([page.waitForEvent('popup'), name.click()])
+
+  await expect(page1).toBeDefined()
+})

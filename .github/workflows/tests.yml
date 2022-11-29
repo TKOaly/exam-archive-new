@@ -26,3 +26,9 @@ jobs:
         with:
           name: test-results
           path: test-results
+      - name: Upload accessibility reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: axe-results
+          path: axe-results

@@ -32,7 +32,10 @@ const ListingNavigation = ({
   backButtonHref,
   className
 }) => (
-  <nav className={classnames('listing-navigation', className)}>
+  <nav
+    className={classnames('listing-navigation', className)}
+    title="Listing navigation"
+  >
     <div className="listing-navigation__content">
       {backButtonHref && (
         <nav className="listing-navigation__button-container">

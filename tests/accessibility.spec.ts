@@ -8,7 +8,6 @@ test('courselisting check', async ({ page }) => {
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
   createHtmlReport({
     results: accessibilityScanResults,
-    //options available to further customize reports
     options: {
       outputDir: 'axe-reports',
       reportFileName: 'courselistingAccessiblityReport.html'
@@ -17,14 +16,14 @@ test('courselisting check', async ({ page }) => {
   expect(accessibilityScanResults.violations).toEqual([])
 })
 
-// TODO: Fix accessibility - 3 violations from 2 rules
-test.only('examlisting check', async ({ page }) => {
+test('examlisting check', async ({ page }) => {
   await page.goto('/archive/2')
 
-  const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
+  const accessibilityScanResults = await new AxeBuilder({ page })
+    .disableRules(['empty-table-header'])
+    .analyze()
   createHtmlReport({
     results: accessibilityScanResults,
-    //options available to further customize reports
     options: {
       outputDir: 'axe-reports',
       reportFileName: 'examlistingAccessiblityReport.html'

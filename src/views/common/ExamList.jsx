@@ -67,7 +67,7 @@ const ExamListItem = ({ exam, showDelete, showRename }) => {
       data-exam-id={id}
       data-exam-name={fileName}
     >
-      <Icon role="cell" aria-busy="true" className="exam-list-item__icon" />
+      <Icon role="cell" aria-hidden="true" className="exam-list-item__icon" />
       <div role="cell" className="exam-list-item__link-container">
         <a
           href={downloadUrl}

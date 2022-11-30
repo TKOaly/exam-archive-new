@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import { createHtmlReport } from 'axe-html-reporter'
 
-test('courselisting check', async ({ page }) => {
+test('courselisting check', async ({ page, browserName, isMobile }) => {
   await page.goto('/archive')
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
@@ -10,13 +10,15 @@ test('courselisting check', async ({ page }) => {
     results: accessibilityScanResults,
     options: {
       outputDir: 'axe-reports',
-      reportFileName: 'courselistingAccessiblityReport.html'
+      reportFileName: `courselistingAccessiblityReport-${browserName}${
+        isMobile ? '-mobile' : ''
+      }.html`
     }
   })
   expect(accessibilityScanResults.violations).toEqual([])
 })
 
-test('examlisting check', async ({ page }) => {
+test('examlisting check', async ({ page, browserName, isMobile }) => {
   await page.goto('/archive/2')
 
   const accessibilityScanResults = await new AxeBuilder({ page })
@@ -26,7 +28,9 @@ test('examlisting check', async ({ page }) => {
     results: accessibilityScanResults,
     options: {
       outputDir: 'axe-reports',
-      reportFileName: 'examlistingAccessiblityReport.html'
+      reportFileName: `examlistingAccessiblityReport-${browserName}${
+        isMobile ? '-mobile' : ''
+      }.html`
     }
   })
   expect(accessibilityScanResults.violations).toEqual([])

@@ -22,9 +22,14 @@ jobs:
         run: npm run build
       - name: Start server
         run: npm start &
+        env:
+          # Need to run in development mode as currently only way to auto login
+          NODE_ENV: development
         # TODO: Create OpenAPI definition and run also ZAP Api scan
       - name: Run ZAP Full scan
         uses: zaproxy/action-full-scan@v0.4.0
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           target: 'http://localhost:9000'
           fail_action: true
+          allow_issue_writing: false

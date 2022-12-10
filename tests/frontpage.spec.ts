@@ -19,7 +19,7 @@ test('footer is working correctly', async ({ page }) => {
 
   const footer = page.getByText('Tärpistö - The TKO-äly ry exam archive.')
   const contact = page.getByText('Contact: tarpisto@tko-aly.fi')
-  const links = page.getByText('TKO-äly ryPrivacySource codeFuksiwiki')
+  const links = page.getByTestId('footer-links')
   await expect(footer).toBeVisible()
   await expect(contact).toBeVisible()
   await expect(contact.locator('a')).toHaveAttribute(

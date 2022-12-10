@@ -9,7 +9,7 @@ const Footer = () => {
           Contact: <a href="mailto:tarpisto@tko-aly.fi">tarpisto@tko-aly.fi</a>
         </p>
       </div>
-      <div className="layout-footer__links">
+      <div className="layout-footer__links" data-test-id="footer-links">
         <a rel="noopener" target="_blank" href="https://www.tko-aly.fi/">
           TKO-äly ry
         </a>

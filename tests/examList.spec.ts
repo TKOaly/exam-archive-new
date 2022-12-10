@@ -312,9 +312,7 @@ test('delete exam cancel does nothing', async ({ page, request }) => {
 test('controls is correct', async ({ page }) => {
   await page.goto('/archive/132')
 
-  const box = page.getByText(
-    'Upload a new file here:UploadRename courserenameDelete courseCourse can only be '
-  )
+  const box = page.getByTestId('controls')
 
   await expect(box).toBeVisible()
 
@@ -354,9 +352,7 @@ test('controls is correct', async ({ page }) => {
 test('rename course works', async ({ page, request }) => {
   await page.goto('/archive')
 
-  const addBox = page.getByText(
-    'Add a new course:Create courseLogged in: dev-user (Log out)'
-  )
+  const addBox = page.getByTestId('controls')
   const courseName = addBox.getByPlaceholder('Course name')
   const createCourse = addBox.getByText('Create course')
 
@@ -389,9 +385,7 @@ test('rename course works', async ({ page, request }) => {
 test('rename course cancel works', async ({ page, request }) => {
   await page.goto('/archive')
 
-  const addBox = page.getByText(
-    'Add a new course:Create courseLogged in: dev-user (Log out)'
-  )
+  const addBox = page.getByTestId('controls')
   const courseName = addBox.getByPlaceholder('Course name')
   const createCourse = addBox.getByText('Create course')
 
@@ -424,9 +418,7 @@ test('rename course cancel works', async ({ page, request }) => {
 test('delete course works if no exams currently', async ({ page }) => {
   await page.goto('/archive')
 
-  const addBox = page.getByText(
-    'Add a new course:Create courseLogged in: dev-user (Log out)'
-  )
+  const addBox = page.getByTestId('controls')
   const courseName = addBox.getByPlaceholder('Course name')
   const createCourse = addBox.getByText('Create course')
 
@@ -451,9 +443,7 @@ test('delete course throws error if exams currently', async ({
 }) => {
   await page.goto('/archive')
 
-  const addBox = page.getByText(
-    'Add a new course:Create courseLogged in: dev-user (Log out)'
-  )
+  const addBox = page.getByTestId('controls')
   const courseName = addBox.getByPlaceholder('Course name')
   const createCourse = addBox.getByText('Create course')
 

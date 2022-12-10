@@ -48,9 +48,7 @@ test('courselisting row hides last modified if no exams', async ({ page }) => {
 test('add a new course works', async ({ page, request }) => {
   await page.goto('/archive')
 
-  const addBox = page.getByText(
-    'Add a new course:Create courseLogged in: dev-user (Log out)'
-  )
+  const addBox = page.getByTestId('controls')
   const heading = addBox.getByRole('heading', {
     name: 'Add a new course:'
   })
@@ -84,9 +82,7 @@ test('add a new course works', async ({ page, request }) => {
 test('add a new course shows correct user logged in', async ({ page }) => {
   await page.goto('/archive')
 
-  const addBox = page.getByText(
-    'Add a new course:Create courseLogged in: dev-user (Log out)'
-  )
+  const addBox = page.getByTestId('controls')
   const loggedIn = addBox.getByText('Logged in: dev-user (Log out)')
   const logoutLink = loggedIn.locator('a', { hasText: 'Log out' })
 

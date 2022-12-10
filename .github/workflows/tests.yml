@@ -18,6 +18,8 @@ jobs:
         run: cp .env-sample .env
       - name: Start database and S3
         run: docker-compose up -d
+      - name: Install Playwright Browsers
+        run: npm run test:install
       - name: Run tests
         run: npm run test
       - name: Upload screenshots and videos

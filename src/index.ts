@@ -29,6 +29,20 @@ app.set('view engine', 'jsx')
 app.engine('jsx', require('express-react-views').createEngine())
 app.set('trust proxy', config.TRUST_PROXY_IPS)
 
+app.disable('x-powered-by')
+app.use(function (_req, res, next) {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self' https://tarpisto.cdn.tko-aly.fi"
+  )
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader(
+    'Feature-Policy',
+    "microphone 'none'; geolocation 'none'; usb 'none'; payment 'none'; autoplay 'none'; battery 'none'; display-capture 'none'; document-domain 'none'; encrypted-media 'none'; gamepad 'none'; gyroscope 'none'; midi 'none'; picture-in-picture 'none'; publickey-credentials-get 'none'; screen-wake-lock 'none';"
+  )
+  return next()
+})
+
 // gzip response since ALB doesn't do compression.
 // Uses the `compressible` package to determine whether to compress, by default
 // checks mime-db and falls back to checking content type - compresses:

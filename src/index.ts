@@ -33,7 +33,7 @@ app.disable('x-powered-by')
 app.use(function (_req, res, next) {
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self' https://tarpisto.cdn.tko-aly.fi; img-src 'self' https://tarpisto.cdn.tko-aly.fi; media-src 'self' https://tarpisto.cdn.tko-aly.fi; script-src 'self' https://tarpisto.cdn.tko-aly.fi;"
+    "default-src 'self' tarpisto.cdn.tko-aly.fi; img-src 'self' tarpisto.cdn.tko-aly.fi; media-src 'self' tarpisto.cdn.tko-aly.fi; script-src 'self' tarpisto.cdn.tko-aly.fi;"
   )
   res.setHeader('X-Content-Type-Options', 'nosniff')
   res.setHeader('X-Frame-Options', 'DENY')
@@ -121,9 +121,7 @@ app.use(
       httpOnly: true,
       sameSite: 'strict',
       domain:
-        config.NODE_ENV === 'development'
-          ? 'http://localhost:9000'
-          : 'https://tko-aly.fi'
+        config.NODE_ENV === 'development' ? 'localhost:9000' : 'tko-aly.fi'
     },
     // TODO: persistent storage
     store: new MemoryStore({

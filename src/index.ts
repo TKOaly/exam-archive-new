@@ -119,9 +119,7 @@ app.use(
     cookie: {
       maxAge: 86400000,
       httpOnly: true,
-      sameSite: 'strict',
-      domain:
-        config.NODE_ENV === 'development' ? 'localhost:9000' : 'tko-aly.fi'
+      sameSite: 'strict'
     },
     // TODO: persistent storage
     store: new MemoryStore({

@@ -33,3 +33,4 @@ jobs:
           target: 'http://localhost:9000'
           fail_action: true
           allow_issue_writing: false
+          rules_file_name: .zap-rules.tsv

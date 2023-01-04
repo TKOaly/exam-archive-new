@@ -33,12 +33,13 @@ app.disable('x-powered-by')
 app.use(function (_req, res, next) {
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self' https://tarpisto.cdn.tko-aly.fi"
+    "default-src 'self' https://tarpisto.cdn.tko-aly.fi; img-src 'self' https://tarpisto.cdn.tko-aly.fi; media-src 'self' https://tarpisto.cdn.tko-aly.fi; script-src 'self' https://tarpisto.cdn.tko-aly.fi;"
   )
   res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('X-Frame-Options', 'DENY')
   res.setHeader(
-    'Feature-Policy',
-    "microphone 'none'; geolocation 'none'; usb 'none'; payment 'none'; autoplay 'none'; battery 'none'; display-capture 'none'; document-domain 'none'; encrypted-media 'none'; gamepad 'none'; gyroscope 'none'; midi 'none'; picture-in-picture 'none'; publickey-credentials-get 'none'; screen-wake-lock 'none';"
+    'Permission-Policy',
+    'microphone=(), geolocation=(), usb=(), payment=(), autoplay=(), battery=(), display-capture=(), document-domain=(), encrypted-media=(), gamepad=(), gyroscope=(), midi=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(),'
   )
   return next()
 })
@@ -118,7 +119,11 @@ app.use(
     cookie: {
       maxAge: 86400000,
       httpOnly: true,
-      sameSite: 'strict'
+      sameSite: 'strict',
+      domain:
+        config.NODE_ENV === 'development'
+          ? 'http://localhost:9000'
+          : 'https://tko-aly.fi'
     },
     // TODO: persistent storage
     store: new MemoryStore({

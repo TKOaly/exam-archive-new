@@ -33,7 +33,7 @@ app.disable('x-powered-by')
 app.use(function (_req, res, next) {
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self' tarpisto.cdn.tko-aly.fi; img-src 'self' tarpisto.cdn.tko-aly.fi; media-src 'self' tarpisto.cdn.tko-aly.fi; script-src 'self' tarpisto.cdn.tko-aly.fi;"
+    "default-src 'self'; img-src 'self'; media-src 'self'; script-src 'self';"
   )
   res.setHeader('X-Content-Type-Options', 'nosniff')
   res.setHeader('X-Frame-Options', 'DENY')

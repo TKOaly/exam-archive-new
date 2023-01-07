@@ -18,7 +18,11 @@ Logout.propTypes = {
 }
 
 const ControlsBox = ({ children }) => {
-  return <div className="controls">{children}</div>
+  return (
+    <div className="controls" data-test-id="controls">
+      {children}
+    </div>
+  )
 }
 
 ControlsBox.propTypes = {

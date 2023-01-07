@@ -216,7 +216,7 @@ const CoursePage = ({
         <div className="page-container">
           <FlashMessage flash={flash} />
           <main>
-            <ExamList exams={exams} />
+            <ExamList courseId={course.id} exams={exams} />
             {/*<ExamTable
               exams={exams}
               previousPageUrl={previousPageUrl}

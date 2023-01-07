@@ -29,6 +29,21 @@ app.set('view engine', 'jsx')
 app.engine('jsx', require('express-react-views').createEngine())
 app.set('trust proxy', config.TRUST_PROXY_IPS)
 
+app.disable('x-powered-by')
+app.use(function (_req, res, next) {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; img-src 'self'; media-src 'self'; script-src 'self';"
+  )
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('X-Frame-Options', 'DENY')
+  res.setHeader(
+    'Permission-Policy',
+    'microphone=(), geolocation=(), usb=(), payment=(), autoplay=(), battery=(), display-capture=(), document-domain=(), encrypted-media=(), gamepad=(), gyroscope=(), midi=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(),'
+  )
+  return next()
+})
+
 // gzip response since ALB doesn't do compression.
 // Uses the `compressible` package to determine whether to compress, by default
 // checks mime-db and falls back to checking content type - compresses:

@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "start": "npm run db:migrate && node dist/index.js",
+    "start:e2e": "npm run db:migrate && NODE_ENV=development npm run db:seed && NODE_ENV=development node dist/index.js",
     "build": "npm run build:ts && npm run build:views && npm run build:scss && npm run build:autoprefixer",
     "build:ts": "tsc -p tsconfig.json",
     "build:views": "node scripts/build-views.js",
@@ -21,7 +22,9 @@
     "db:seed": "knex seed:run",
     "prettier": "prettier --write .",
     "seed-from-files-dev": "cross-env NODE_ENV=development node scripts/seed-db-from-files.js",
-    "seed-s3-from-db": "cross-env NODE_ENV=development node scripts/seed-s3-from-db.js"
+    "seed-s3-from-db": "cross-env NODE_ENV=development node scripts/seed-s3-from-db.js",
+    "test": "playwright test",
+    "test:install": "playwright install --with-deps"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.202.0",
@@ -52,6 +55,8 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.5.2",
+    "@playwright/test": "^1.28.1",
     "@types/compression": "^1.7.2",
     "@types/content-disposition": "^0.5.5",
     "@types/cookie-parser": "^1.4.3",
@@ -63,6 +68,7 @@
     "@types/node": "^18.11.9",
     "@types/uuid": "^8.3.4",
     "autoprefixer": "^10.4.13",
+    "axe-html-reporter": "^2.2.3",
     "chokidar": "^3.5.3",
     "concurrently": "^7.5.0",
     "nodemon": "^2.0.20",

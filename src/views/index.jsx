@@ -6,28 +6,7 @@ const FlashMessage = require('./common/FlashMessage')
 const ListingNavigation = require('./common/ListingNavigation')
 const CourseList = require('./common/CourseList')
 const { ControlsBox, Logout } = require('./common/Controls')
-
-const CreateCourseForm = () => {
-  return (
-    <form className="create-course-form" method="post">
-      <h3>Add a new course:</h3>
-      <input
-        className="create-course-form__name"
-        required
-        aria-label="Course name"
-        placeholder="Course name"
-        type="text"
-        name="courseName"
-      ></input>
-      <input
-        className="create-course-form__submit"
-        type="submit"
-        name="create"
-        value="Create course"
-      />
-    </form>
-  )
-}
+const CreateCourseForm = require('./common/forms/CreateCourseForm')
 
 const IndexPage = ({ flash, courses, username, userRights }) => {
   return (

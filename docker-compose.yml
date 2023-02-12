@@ -24,13 +24,13 @@ services:
     volumes:
       - exam-archive-minio-data:/data
     ports:
-      - 127.0.0.1:9001:9000
-      - 127.0.0.1:9002:9001
+      - 127.0.0.1::9000
+      - 127.0.0.1::9001
 
   db:
     image: postgres:11.17-alpine
     ports:
-      - '127.0.0.1:9876:5432'
+      - '127.0.0.1::5432'
     environment:
       - POSTGRES_PASSWORD=Su5hgVvoqUCRw5vrWmrW
       - POSTGRES_USER=tarpisto

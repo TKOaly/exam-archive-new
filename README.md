@@ -18,19 +18,21 @@ Actually new exam archive
 
 ## Development
 
-### 1. Install tools and dependencies
+### Quick guide
 
-1. Install Docker and docker-compose
-2. Install Node.JS (>=v12), if you don't have it already, install it with nvm (on windows: nwm). You can use `nvm use` to install and afterwards activate correct version based on `.nvmrc` file.
-3. Install the Prettier formatter extension for your editor
-4. Run `npm install`
-5. _(OPTIONAL)_ If you want to test with realish users, set up `user-service` and make sure that there's a service for exam-archive, might need to change the permission bits to `770`. By default, the service will just skip authentication and log you in.
-6. Copy `.env-sample` to `.env`.
-7. Run `docker-compose up` in a terminal to start the database and the local s3 service
-8. Run `npm run watch`
-9. _(OPTIONAL)_ Run `npm run db:seed` if you want to seed the DB with data. The dev S3 bucket (Minio) should be seeded with test files automatically, so you just need to run the DB seeds.
+1. Run `start-local-env.sh`. This will set up development environment and runs all needed commands. Script will also tell if you are missing some tooling listed below.
+2. _(OPTIONAL)_ Run `npm run db:seed` if you want to seed the DB with data. The dev S3 bucket (Minio) should be seeded with test files automatically, so you just need to run the DB seeds.
+3. _(OPTIONAL)_ If you want to test with realish users, set up `user-service` and make sure that there's a service for exam-archive, might need to change the permission bits to `770`. By default, the service will just skip authentication and log you in.
+4. Then go to http://localhost:9000
 
-then go to http://localhost:9000
+### Needed tools and dependencies
+
+- docker and docker-compose
+- tmux
+- curl
+- shasum
+- npm (start-local-env.sh will take care of this with nvm)
+- Prettier formatter extension for your editor
 
 ### Adding more test files
 
@@ -41,7 +43,7 @@ By default, the local minio s3 is seeded with one PDF and one JPG. You can just 
 1. Download the development database dump (`db.sql`) from [here](https://github.com/TKOaly/exam-archive-dev-db-dump)
 2. Start the database and Adminer:
    - `docker-compose up -d db adminer`
-3. Open Adminer (navigate to http://localhost:8082) and log in with the credentials in `docker-compose.yml`, by default they are:
+3. Open Adminer (navigate to http://localhost:9003) and log in with the credentials in `docker-compose.yml`, by default they are:
    | Key | Value |
    | ------------- |-------------|
    | System | PostgreSQL |

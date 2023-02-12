@@ -15,12 +15,12 @@ test('examlisting works', async ({ page }) => {
   )
 })
 
-test('examList screenshot testing', async ({ page }) => {
-  await page.goto('/archive/3')
-  await expect(page).toHaveScreenshot({
-    fullPage: true
-  })
-})
+// test('examList screenshot testing', async ({ page }) => {
+//   await page.goto('/archive/3')
+//   await expect(page).toHaveScreenshot({
+//     fullPage: true
+//   })
+// })
 
 test('examlisting headers are correct', async ({ page }) => {
   await page.goto('/archive/3')

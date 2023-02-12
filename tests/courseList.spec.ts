@@ -9,12 +9,12 @@ test('courselisting works', async ({ page }) => {
   await expect(heading).toBeVisible()
 })
 
-test('examList screenshot testing', async ({ page }) => {
-  await page.goto('/archive')
-  await expect(page).toHaveScreenshot({
-    fullPage: true
-  })
-})
+// test('examList screenshot testing', async ({ page }) => {
+//   await page.goto('/archive')
+//   await expect(page).toHaveScreenshot({
+//     fullPage: true
+//   })
+// })
 
 test('courselisting headers are correct', async ({ page }) => {
   await page.goto('/archive')

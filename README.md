@@ -21,7 +21,7 @@ Actually new exam archive
 ### Quick guide
 
 1. Run `start-local-env.sh`. This will set up development environment and runs all needed commands. Script will also tell if you are missing some tooling listed below.
-2. _(OPTIONAL)_ Run `npm run db:seed` if you want to seed the DB with data. The dev S3 bucket (Minio) should be seeded with test files automatically, so you just need to run the DB seeds.
+2. _(OPTIONAL)_ Run `seed-dev-db.sh` if you want to seed the DB with data. The dev S3 bucket (Minio) should be seeded with test files automatically, so you just need to run the DB seeds.
 3. _(OPTIONAL)_ If you want to test with realish users, set up `user-service` and make sure that there's a service for exam-archive, might need to change the permission bits to `770`. By default, the service will just skip authentication and log you in.
 4. Then go to http://localhost:9000
 

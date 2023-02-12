@@ -6,13 +6,7 @@ const fiLocale = require('date-fns/locale/fi')
 
 const { useUserContext } = require('./context')
 
-const [DocumentIcon, PdfIcon, PhotoIcon] = [
-  '/static/img/icon-document.svg',
-  '/static/img/icon-pdf.svg',
-  '/static/img/icon-photo.svg'
-].map(src => ({ className, ...props }) => {
-  return <img {...props} src={src} className={className} />
-})
+const { DocumentIcon, PdfIcon, PhotoIcon } = require('./icons/File')
 
 const NoExamsFound = ({ className }) => (
   <p className={classnames('no-exams-found', className)}>No exams found.</p>

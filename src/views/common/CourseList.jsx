@@ -2,7 +2,7 @@ const React = require('react')
 const formatDate = require('date-fns/format')
 const fiLocale = require('date-fns/locale/fi')
 
-const FolderIcon = require('./FolderIcon')
+const FolderIcon = require('./icons/Folder')
 
 const CourseListItem = ({ id, name, url, lastModified }) => {
   return (

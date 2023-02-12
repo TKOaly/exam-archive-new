@@ -1,7 +1,6 @@
-const React = require('react')
-const classnames = require('classnames')
+import classnames from 'classnames'
 
-const Header = ({ className }) => {
+const Header = ({ className }: { className: string }) => {
   const cls = classnames('header', className)
 
   return (
@@ -23,4 +22,4 @@ const Header = ({ className }) => {
   )
 }
 
-module.exports = Header
+export default Header

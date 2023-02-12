@@ -1,6 +1,6 @@
 {
   "name": "exam-archive-new",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "main": "src/index.ts",
   "author": "cxcorp",
   "license": "MIT",
@@ -25,7 +25,10 @@
     "seed-s3-from-db": "cross-env NODE_ENV=development node scripts/seed-s3-from-db.js",
     "test": "playwright test",
     "test:install": "playwright install --with-deps",
-    "test:update-screenshots": "playwright test --update-snapshots"
+    "test:update-screenshots": "playwright test --update-snapshots",
+    "next:dev": "next dev",
+    "next:start": "next start",
+    "next:build": "next build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.267.0",
@@ -67,6 +70,7 @@
     "@types/multer": "^1.4.7",
     "@types/multer-s3": "^3.0.0",
     "@types/node": "^18.13.0",
+    "@types/react": "18.0.28",
     "@types/uuid": "^9.0.0",
     "autoprefixer": "^10.4.13",
     "axe-html-reporter": "^2.2.3",

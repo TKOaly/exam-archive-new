@@ -35,13 +35,13 @@ function npm_ci() {
     required_command shasum
 
     # check if shashum is same, do not run npm ci
-    if shasum -c "node_modules/.package-lock.json.sha1" &> /dev/null
+    if shasum -c "node_modules/package-lock.json.sha1" &> /dev/null
     then
         echo "package-lock.json has not changed, no need for npm ci"
     else
         echo "package-lock.json has changed, running npm ci"
         npm ci
-        shasum "node_modules/.package-lock.json" > "node_modules/.package-lock.json.sha1"
+        shasum "package-lock.json" > "node_modules/package-lock.json.sha1"
     fi
 
     popd

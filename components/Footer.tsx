@@ -1,5 +1,3 @@
-const React = require('react')
-
 const Footer = () => {
   return (
     <footer className="layout-footer">
@@ -39,4 +37,4 @@ const Footer = () => {
   )
 }
 
-module.exports = Footer
+export default Footer

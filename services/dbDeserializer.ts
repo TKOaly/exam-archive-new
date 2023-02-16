@@ -1,4 +1,4 @@
-import { Course, CourseListItem, Exam, ExamListItem } from './common'
+import { Course, CourseListItem, Exam, ExamListItem } from '@utilities/types'
 
 // created_at and uploaded_at are missing because we aren't using them
 interface DbCourse {

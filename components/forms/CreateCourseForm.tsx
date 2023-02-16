@@ -1,8 +1,10 @@
-const React = require('react')
-
 const CreateCourseForm = () => {
   return (
-    <form className="create-course-form" method="post">
+    <form
+      className="create-course-form"
+      method="post"
+      action="/api/create-course"
+    >
       <h3>Add a new course:</h3>
       <input
         className="create-course-form__name"
@@ -22,4 +24,4 @@ const CreateCourseForm = () => {
   )
 }
 
-module.exports = CreateCourseForm
+export default CreateCourseForm

@@ -10,6 +10,7 @@ export interface CourseListItem extends Course {
    * Timestamp representing the date when this course's latest exam was
    * uploaded.
    */
+  url: string
   lastModified: Date | null
 }
 

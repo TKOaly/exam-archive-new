@@ -1,4 +1,4 @@
-import { knex, DbExam } from '../db'
+import { knex, DbExam } from '../src/db'
 import {
   Course,
   CourseListItem,
@@ -6,13 +6,15 @@ import {
   CourseId,
   ExamId,
   Exam
-} from './common'
+} from '@utilities/types'
 import {
   deserializeCourseListItem,
   deserializeCourse,
   deserializeExamListItem,
   deserializeExam
 } from './dbDeserializer'
+
+import { urlForCourse } from '@utilities/courses'
 
 const isNull = (obj: any): obj is null => obj === null
 const isNotNull = (obj: any) => !isNull(obj)
@@ -87,7 +89,7 @@ export const renameCourse = async (
     .where({ id, ...whereNotDeleted() })
 
 export const getCourseListing = async (): Promise<CourseListItem[]> => {
-  const results = await knex('courses as course')
+  let results = await knex('courses as course')
     .leftJoin('exams as exam', function () {
       this.on('exam.course_id', '=', 'course.id').andOnNull('exam.removed_at')
     })
@@ -101,9 +103,18 @@ export const getCourseListing = async (): Promise<CourseListItem[]> => {
     })
     .groupBy(['course.id'])
 
-  return results
+  results = results
     .map(deserializeCourseListItem)
     .filter(isNotNull) as CourseListItem[]
+
+  return results
+    .map(({ id, name, lastModified }) => ({
+      id,
+      name,
+      lastModified,
+      url: urlForCourse(id, name)
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name))
 }
 
 export interface CourseInfo extends Course {

@@ -1,15 +1,17 @@
-const React = require('react')
-const formatDate = require('date-fns/format')
-const fiLocale = require('date-fns/locale/fi')
+import formatDate from 'date-fns/format'
+import fiLocale from 'date-fns/locale/fi'
 
-const FolderIcon = require('./icons/Folder')
+import FolderIcon from '@components/icons/Folder'
 
-const CourseListItem = ({ id, name, url, lastModified }) => {
+import { CourseListItem } from '@utilities/types'
+
+const CourseListItem = ({ id, name, url, lastModified }: CourseListItem) => {
   return (
     <div role="row" className="course-list-item" data-course-id={id}>
       <FolderIcon
+        alt=""
         role="cell"
-        aria-hidden="true"
+        ariaHidden={true}
         className="course-list-item__icon"
       />
       <div
@@ -50,7 +52,11 @@ const CourseListHeader = () => {
   )
 }
 
-const CourseList = ({ courses }) => {
+interface CourseListProps {
+  courses: CourseListItem[]
+}
+
+const CourseList = ({ courses }: CourseListProps) => {
   return (
     <div className="course-list-container">
       <div role="table" aria-label="Courses" className="course-list">
@@ -71,4 +77,4 @@ const CourseList = ({ courses }) => {
   )
 }
 
-module.exports = CourseList
+export default CourseList

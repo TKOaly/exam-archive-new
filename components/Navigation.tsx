@@ -1,8 +1,13 @@
-const React = require('react')
-const classnames = require('classnames')
-const ArrowBack = require('./icons/ArrowBack')
+import classnames from 'classnames'
+import ArrowBack from '@components/icons/ArrowBack'
 
-const BackButton = ({ href, className }) => (
+const BackButton = ({
+  href,
+  className
+}: {
+  href: string
+  className: string
+}) => (
   <a
     data-instant
     href={href}
@@ -13,12 +18,17 @@ const BackButton = ({ href, className }) => (
   </a>
 )
 
+interface NavigationProps {
+  title: string
+  backButtonHref?: string
+  className?: string
+}
+
 const ListingNavigation = ({
   title,
-  backButtonLabel,
   backButtonHref,
   className
-}) => (
+}: NavigationProps) => (
   <nav
     className={classnames('listing-navigation', className)}
     title="Listing navigation"
@@ -29,7 +39,6 @@ const ListingNavigation = ({
           <BackButton
             className="listing-navigation__back-button"
             href={backButtonHref}
-            label={backButtonLabel}
           />
         </nav>
       )}
@@ -40,4 +49,4 @@ const ListingNavigation = ({
   </nav>
 )
 
-module.exports = ListingNavigation
+export default ListingNavigation

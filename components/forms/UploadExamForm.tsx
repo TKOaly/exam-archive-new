@@ -1,16 +1,17 @@
-const React = require('react')
-const PropTypes = require('prop-types')
+interface UploadExamFormProps {
+  courseId: number
+}
 
-const UploadExamForm = ({ courseId }) => {
+const UploadExamForm = ({ courseId }: UploadExamFormProps) => {
   return (
     <form
       className="exam-upload-form"
       method="post"
       encType="multipart/form-data"
-      action="/archive/upload"
+      action="/api/exam/upload"
     >
       <h3>Upload a new file here:</h3>
-      <input type="hidden" name="course_id" value={courseId} />
+      <input type="hidden" name="courseId" value={courseId} />
       <input
         className="exam-upload-form__file"
         required
@@ -28,8 +29,4 @@ const UploadExamForm = ({ courseId }) => {
   )
 }
 
-UploadExamForm.propTypes = {
-  courseId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired
-}
-
-module.exports = UploadExamForm
+export default UploadExamForm

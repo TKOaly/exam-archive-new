@@ -1,18 +1,19 @@
-const React = require('react')
-const path = require('path')
-const classnames = require('classnames')
-const formatDate = require('date-fns/format')
-const fiLocale = require('date-fns/locale/fi')
+import path from 'path'
+import classnames from 'classnames'
+import formatDate from 'date-fns/format'
+import fiLocale from 'date-fns/locale/fi'
 
-const { useUserContext } = require('./context')
+// import { useUserContext } from './context'
 
-const { DocumentIcon, PdfIcon, PhotoIcon } = require('./icons/File')
+import { DocumentIcon, PdfIcon, PhotoIcon } from '@components/icons/File'
 
-const NoExamsFound = ({ className }) => (
+import { ExamListItem } from '@utilities/types'
+
+const NoExamsFound = ({ className }: { className: string }) => (
   <p className={classnames('no-exams-found', className)}>No exams found.</p>
 )
 
-const iconForFile = mimeType => {
+const iconForFile = (mimeType: string) => {
   if (mimeType.startsWith('image/')) {
     return PhotoIcon
   }
@@ -22,19 +23,19 @@ const iconForFile = mimeType => {
   return DocumentIcon
 }
 
-const splitExtension = fileName => {
+const splitExtension = (fileName: string) => {
   const extname = path.extname(fileName)
   const basename = path.basename(fileName, extname)
 
   return { extname, basename }
 }
 
-const DeleteExamButton = ({ exam }) => {
+const DeleteExamButton = ({ exam }: { exam: ExamListItem }) => {
   return (
     <form
       className="delete-exam-button"
       method="post"
-      action={`/archive/delete-exam/${exam.id}`}
+      action={`/api/exam/delete/${exam.id}`}
     >
       <button
         className="delete-exam-button__button"
@@ -48,7 +49,13 @@ const DeleteExamButton = ({ exam }) => {
   )
 }
 
-const ExamListItem = ({ exam, showDelete, showRename }) => {
+interface ExamListItemProps {
+  exam: ExamListItem
+  showDelete: boolean
+  showRename: boolean
+}
+
+const ExamListItem = ({ exam, showDelete, showRename }: ExamListItemProps) => {
   const { id, fileName, mimeType, uploadDate, downloadUrl } = exam
   const Icon = iconForFile(mimeType)
 
@@ -61,7 +68,12 @@ const ExamListItem = ({ exam, showDelete, showRename }) => {
       data-exam-id={id}
       data-exam-name={fileName}
     >
-      <Icon role="cell" aria-hidden="true" className="exam-list-item__icon" />
+      <Icon
+        role="cell"
+        ariaHidden={true}
+        alt=""
+        className="exam-list-item__icon"
+      />
       <div role="cell" className="exam-list-item__link-container">
         <a
           href={downloadUrl}
@@ -105,7 +117,13 @@ const ExamListItem = ({ exam, showDelete, showRename }) => {
   )
 }
 
-const ExamListHeader = ({ showDelete, showRename }) => {
+const ExamListHeader = ({
+  showDelete,
+  showRename
+}: {
+  showDelete: boolean
+  showRename: boolean
+}) => {
   return (
     <div role="row" className="exam-list-header">
       <div role="columnheader" className="exam-list-header__name">
@@ -126,8 +144,16 @@ const ExamListHeader = ({ showDelete, showRename }) => {
   )
 }
 
-const ExamList = ({ courseId, exams, className }) => {
-  const { canDelete, canRename } = useUserContext()
+const ExamList = ({
+  courseId,
+  exams
+}: {
+  courseId: number
+  exams: ExamListItem[]
+}) => {
+  // const { canDelete, canRename } = useUserContext()
+  const canDelete = true
+  const canRename = true
 
   if (exams.length === 0) {
     return (
@@ -139,11 +165,7 @@ const ExamList = ({ courseId, exams, className }) => {
 
   return (
     <div className="exam-list-container" data-course-id={courseId}>
-      <div
-        role="table"
-        aria-label="Exams"
-        className={classnames('exam-list', className)}
-      >
+      <div role="table" aria-label="Exams" className="exam-list">
         <ExamListHeader showDelete={canDelete} showRename={canRename} />
         {exams.map(exam => (
           <ExamListItem
@@ -158,4 +180,4 @@ const ExamList = ({ courseId, exams, className }) => {
   )
 }
 
-module.exports = ExamList
+export default ExamList

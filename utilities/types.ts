@@ -22,6 +22,7 @@ export interface ExamListItem {
   fileName: string
   mimeType: string
   uploadDate: Date
+  downloadUrl: string
 }
 
 export interface Exam {

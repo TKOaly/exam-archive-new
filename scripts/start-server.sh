@@ -23,7 +23,7 @@ function s3_health_check() {
 
     required_command curl
 
-    until curl -I "http://$(docker-compose port s3 9001)/minio/health/live" &>/dev/null; do
+    until curl -I "http://$(docker-compose port s3 9000)/minio/health/live" &>/dev/null; do
         echo "Waiting for s3 to be healthy. Trying again in 5 seconds."
         sleep 5;
     done
@@ -49,7 +49,7 @@ function main() {
     export AWS_ACCESS_KEY_ID=minioadmin
     export AWS_SECRET_ACCESS_KEY=minioadmin
 
-    export AWS_S3_ENDPOINT=http://$(docker-compose port s3 9001)
+    export AWS_S3_ENDPOINT=http://$(docker-compose port s3 9000)
     export AWS_S3_FORCE_PATH_STYLE=true
     export AWS_S3_BUCKET_ID=exam-archive-local
 

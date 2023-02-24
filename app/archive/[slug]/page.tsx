@@ -16,9 +16,8 @@ const Page = async ({ params }: any) => {
     type: 'info'
   }
 
-  const re = /(?<id>\d+)-(?<courseSlug>.*)/
-  const test = params.slug.match(re)
-  const { id: unparsedId, courseSlug } = test.groups
+  const parsedParams = params.slug.match(/(?<id>\d+)-(?<courseSlug>.*)/)
+  const { id: unparsedId, courseSlug } = parsedParams.groups
 
   const id = parseInt(unparsedId, 10)
   if (isNaN(id)) {

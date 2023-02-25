@@ -10,6 +10,10 @@ import { getCourseInfo } from '@services/archive'
 import { slugifyCourseName } from '@utilities/courses'
 import { examDownloadUrl } from '@utilities/exams'
 
+export const metadata = {
+  title: 'placeholder - Tärpistö - TKO-äly ry'
+}
+
 const Page = async ({ params }: any) => {
   const flash = {
     msg: 'toot',

@@ -7,6 +7,14 @@ import CreateCourseForm from '@components/forms/CreateCourseForm'
 
 import { getCourseListing } from '@services/archive'
 
+export const metadata = {
+  title: 'Tärpistö - TKO-äly ry',
+  viewport: 'width=device-width',
+  robots: {
+    index: false
+  }
+}
+
 const Page = async () => {
   const flash = {
     msg: 'toot',

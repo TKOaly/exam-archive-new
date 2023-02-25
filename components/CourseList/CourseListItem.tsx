@@ -3,6 +3,8 @@ import fiLocale from 'date-fns/locale/fi'
 
 import { CourseListItem } from '@utilities/types'
 
+import Link from 'next/link'
+
 import FolderIcon from '@components/icons/Folder'
 
 const CourseListItem = ({ id, name, url, lastModified }: CourseListItem) => {
@@ -19,14 +21,14 @@ const CourseListItem = ({ id, name, url, lastModified }: CourseListItem) => {
         lang="fi-FI"
         className="course-list-item__link-container"
       >
-        <a
+        <Link
           data-instant
           href={url}
           title={name}
           className="course-list-item__link"
         >
           {name}
-        </a>
+        </Link>
       </div>
       <div className="course-list-item__last-modified" role="cell">
         {lastModified && (

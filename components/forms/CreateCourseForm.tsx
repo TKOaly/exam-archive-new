@@ -1,9 +1,13 @@
-const CreateCourseForm = () => {
+'use client'
+// import { Suspense, useState } from 'react'
+
+export default () => {
+  // const [courseName, setCourseName] = useState('')
   return (
     <form
       className="create-course-form"
       method="post"
-      action="/api/create-course"
+      action="/api/course/create"
     >
       <h3>Add a new course:</h3>
       <input

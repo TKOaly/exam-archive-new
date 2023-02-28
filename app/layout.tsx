@@ -1,11 +1,11 @@
 import '@styles/main.css'
 import '@styles/vendor/normalize.css'
+import React from 'react'
 import Header from '@components/Header'
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
-      <head />
       <body data-instant-whitelist>
         <div className="layout">
           <Header className="layout__header" />

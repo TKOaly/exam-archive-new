@@ -15,13 +15,11 @@ export const metadata = {
   }
 }
 
-const Page = async () => {
+const Page = () => {
   const flash = {
     msg: 'toot',
     type: 'info'
   }
-
-  const courses = await getCourseListing()
 
   const username = 'toot'
   const userRights = { remove: true, rename: true, upload: true }
@@ -31,7 +29,8 @@ const Page = async () => {
       <div className="page-container">
         <FlashMessage flash={flash} />
         <main>
-          <CourseList courses={courses} />
+          {/* @ts-expect-error Async Server Component */}
+          <CourseList />
           <ControlsBox>
             {userRights.upload && <CreateCourseForm />}
             <Logout username={username} />

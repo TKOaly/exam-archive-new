@@ -1,30 +1,49 @@
 'use client'
-// import { Suspense, useState } from 'react'
+import { useState, MouseEvent } from 'react'
+import { useRouter } from 'next/navigation'
 
-export default () => {
-  // const [courseName, setCourseName] = useState('')
+import { urlForCourse } from '@utilities/courses'
+
+const CreateCourseForm = () => {
+  const [courseName, setCourseName] = useState('')
+  const router = useRouter()
+
+  const createCourse = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    const request = await fetch('/api/course/create', {
+      method: 'POST',
+      body: JSON.stringify({ courseName })
+    })
+
+    const response = await request.json()
+
+    if (!request.ok) {
+      alert(response.error)
+      return
+    }
+    router.push(urlForCourse(response.id, response.name))
+  }
+
   return (
-    <form
-      className="create-course-form"
-      method="post"
-      action="/api/course/create"
-    >
+    <div className="create-course-form">
       <h3>Add a new course:</h3>
       <input
         className="create-course-form__name"
-        required
         aria-label="Course name"
         placeholder="Course name"
         type="text"
-        name="courseName"
+        onChange={e => setCourseName(e.target.value)}
       ></input>
-      <input
+      <button
         className="create-course-form__submit"
         type="submit"
         name="create"
         value="Create course"
-      />
-    </form>
+        onClick={createCourse}
+      >
+        Create course
+      </button>
+    </div>
   )
 }
 

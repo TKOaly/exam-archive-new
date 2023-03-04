@@ -9,6 +9,7 @@ import UploadExamForm from '@components/forms/UploadExamForm'
 import { getCourseInfo } from '@services/archive'
 import { slugifyCourseName } from '@utilities/courses'
 import { examDownloadUrl } from '@utilities/exams'
+import RenameCourse from '@components/tools/RenameCourse'
 
 export const metadata = {
   title: 'placeholder - Tärpistö - TKO-äly ry'
@@ -62,16 +63,7 @@ const Page = async ({ params }: any) => {
           <ControlsBox>
             {userRights.upload && <UploadExamForm courseId={course.id} />}
             {userRights.rename && (
-              <>
-                <h3>Rename course</h3>
-                <button
-                  data-rename-course-button
-                  data-current-name={course.name}
-                  data-id={course.id}
-                >
-                  rename
-                </button>
-              </>
+              <RenameCourse currentName={course.name} courseId={course.id} />
             )}
             {userRights.remove && (
               <>

@@ -9,7 +9,9 @@ import UploadExamForm from '@components/forms/UploadExamForm'
 import { getCourseInfo } from '@services/archive'
 import { slugifyCourseName } from '@utilities/courses'
 import { examDownloadUrl } from '@utilities/exams'
+
 import RenameCourse from '@components/tools/RenameCourse'
+import DeleteCourse from '@components/tools/DeleteCourse'
 
 export const metadata = {
   title: 'placeholder - Tärpistö - TKO-äly ry'
@@ -65,17 +67,7 @@ const Page = async ({ params }: any) => {
             {userRights.rename && (
               <RenameCourse currentName={course.name} courseId={course.id} />
             )}
-            {userRights.remove && (
-              <>
-                <h3>Delete course</h3>
-                <p>
-                  Course can only be deleted after all exams have been deleted.
-                </p>
-                <form action={`/api/course/delete/${course.id}`} method="post">
-                  <input type="submit" value="delete" />
-                </form>
-              </>
-            )}
+            {userRights.remove && <DeleteCourse courseId={course.id} />}
             <Logout username={username} />
           </ControlsBox>
         </main>

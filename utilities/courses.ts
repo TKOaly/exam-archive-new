@@ -10,3 +10,5 @@ export const slugifyCourseName = (courseName: string) => {
 
 export const urlForCourse = (id: number, name: string) =>
   `/archive/${id}-${slugifyCourseName(name)}`
+
+export const urlForCourseListing = () => '/'

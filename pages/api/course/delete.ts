@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import {
@@ -5,34 +6,34 @@ import {
   CourseNotFoundError,
   CannotDeleteError
 } from '@services/archive'
-import { urlForCourse } from '@utilities/courses'
+
+const DeleteCourseBody = z.object({
+  courseId: z.number()
+})
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // requireRights('remove')
   if (req.method === 'POST') {
-    const { courseId: unparsedCourseId } = req.query
-    const test = unparsedCourseId as string
-    const courseId = parseInt(test, 10)
-    console.log(unparsedCourseId, test, courseId)
     try {
+      const { courseId } = DeleteCourseBody.parse(JSON.parse(req.body))
+
       const deletedCourse = await deleteCourse(courseId)
       // req.flash(`The course "${deletedCourse?.name}" has been deleted.`, 'info')
-      return res.redirect('/')
-    } catch (e) {
-      if (e instanceof CourseNotFoundError) {
-        // req.flash(e.message, 'error')
-        return res.redirect('/')
+      return res.json({ ok: true })
+    } catch (error) {
+      console.error('Error deleting course', error)
+      if (error instanceof CourseNotFoundError) {
+        return res.status(404).json({ error: error.message })
       }
-      if (e instanceof CannotDeleteError) {
+      if (error instanceof CannotDeleteError) {
         // req.flash(e.message, 'error')
-        return res.redirect(urlForCourse(courseId, 'a'))
+        return res.status(400).json({ error: error.message })
       }
       // req.flash('An error occurred while deleting the course.', 'error')
-      res.redirect('/')
+      res.status(500).json({ error: '500 Internal Server Error' })
     }
   } else {
-    console.log('ignoring, not post')
-    res.redirect('/')
+    res.status(404).send('404 Not Found')
   }
 }
 

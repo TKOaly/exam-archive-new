@@ -10,7 +10,6 @@ import formidable from 'formidable'
 import { getCourseInfo, createExam } from '@services/archive'
 import s3 from '@services/s3'
 import configs from '@utilities/config'
-import { urlForCourse } from '@utilities/courses'
 
 export const config = {
   api: {
@@ -47,49 +46,50 @@ const parseFile = (
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // requireRights('upload')
   if (req.method === 'POST') {
-    console.log('handling file upload')
+    try {
+      const { file, courseId } = await parseFile(req)
 
-    const { file, courseId } = await parseFile(req)
+      const course = await getCourseInfo(courseId)
+      if (course === null) {
+        return res.status(404).json({
+          error: 'Cannot upload a file to a course that does not exist.'
+        })
+      }
 
-    const course = await getCourseInfo(courseId)
-    if (course === null) {
-      // req.flash(
-      //   `Cannot upload a file to a course that does not exist.`,
-      //   'error'
-      // )
-      return res.status(404)
+      const originalFilename = file.originalFilename as string
+      const contentType = file.mimetype as string
+      const filepath = file.filepath as string
+
+      const params = {
+        Bucket: configs.AWS_S3_BUCKET_ID,
+        Key: uuidv4(),
+        ContentDisposition: contentDisposition(originalFilename, {
+          type: 'inline',
+          fallback: transliterate(originalFilename)
+        }),
+        ContentType: contentType,
+        ACL: 'private',
+        Body: createReadStream(filepath)
+      }
+
+      await s3.send(new PutObjectCommand(params))
+
+      const exam = await createExam({
+        course_id: course.id,
+        file_name: originalFilename,
+        file_path: params.Key,
+        mime_type: contentType
+      })
+
+      // req.flash(`Exam ${file.originalname} created!`, 'info')
+      res.json(exam)
+    } catch (error) {
+      if (!(error instanceof Error)) throw error
+      console.log('Error uploading exam:', error)
+      return res.status(500).json({ error: '500 Internal Server Error' })
     }
-
-    const originalFilename = file.originalFilename as string
-    const contentType = file.mimetype as string
-    const filepath = file.filepath as string
-
-    const params = {
-      Bucket: configs.AWS_S3_BUCKET_ID,
-      Key: uuidv4(),
-      ContentDisposition: contentDisposition(originalFilename, {
-        type: 'inline',
-        fallback: transliterate(originalFilename)
-      }),
-      ContentType: contentType,
-      ACL: 'private',
-      Body: createReadStream(filepath)
-    }
-
-    await s3.send(new PutObjectCommand(params))
-
-    await createExam({
-      course_id: course.id,
-      file_name: originalFilename,
-      file_path: params.Key,
-      mime_type: contentType
-    })
-
-    // req.flash(`Exam ${file.originalname} created!`, 'info')
-    res.redirect(urlForCourse(course.id, course.name))
   } else {
-    console.log('ignoring, not post')
-    res.redirect('/')
+    res.status(404).send('404 Not Found')
   }
 }
 

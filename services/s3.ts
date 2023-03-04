@@ -22,8 +22,6 @@ if (config.NODE_ENV === 'development') {
   }
 }
 
-console.log(s3Options)
-
 const s3 = new S3(s3Options)
 
 export default s3

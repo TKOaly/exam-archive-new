@@ -3,9 +3,8 @@ import FlashMessage from '@components/FlashMessage'
 import ListingNavigation from '@components/Navigation'
 import CourseList from '@components/CourseList'
 import { ControlsBox, Logout } from '@components/Controls'
-import CreateCourseForm from '@components/forms/CreateCourseForm'
 
-import { getCourseListing } from '@services/archive'
+import CreateCourseForm from '@components/forms/CreateCourseForm'
 
 export const metadata = {
   title: 'Tärpistö - TKO-äly ry',

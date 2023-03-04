@@ -84,7 +84,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // req.flash(`Exam ${file.originalname} created!`, 'info')
       res.json(exam)
     } catch (error) {
-      if (!(error instanceof Error)) throw error
       console.log('Error uploading exam:', error)
       return res.status(500).json({ error: '500 Internal Server Error' })
     }

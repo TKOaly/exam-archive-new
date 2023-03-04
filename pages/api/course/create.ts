@@ -29,7 +29,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // req.flash(`Course "${createdCourse?.name ?? courseName}" created!`, 'info')
       res.json(createdCourse)
     } catch (error) {
-      if (!(error instanceof Error)) throw error
       console.log('Error creating course', error)
       return res.status(500).json({ error: '500 Internal Server Error' })
     }

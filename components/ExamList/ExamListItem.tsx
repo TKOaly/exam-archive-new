@@ -6,6 +6,7 @@ import { ExamListItem } from '@utilities/types'
 
 import { DocumentIcon, PdfIcon, PhotoIcon } from '@components/icons/File'
 import DeleteExamButton from '@components/ExamList/DeleteExamButton'
+import RenameExam from '@components/ExamList/RenameExam'
 
 const iconForFile = (mimeType: string) => {
   if (mimeType.startsWith('image/')) {
@@ -77,15 +78,7 @@ const ExamListItem = ({ exam, showDelete, showRename }: ExamListItemProps) => {
       )}
       {showRename && (
         <div role="cell" className="exam-list-item__rename">
-          <button
-            /* augments.js */
-            data-current-name={fileName}
-            data-id={id}
-            data-rename-exam-button
-            className="exam-list-item__rename-button"
-          >
-            rename
-          </button>
+          <RenameExam currentName={fileName} examId={id} />
         </div>
       )}
     </div>

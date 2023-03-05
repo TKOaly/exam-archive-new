@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import contentDisposition from 'content-disposition'
 import { transliterate } from 'transliteration'
@@ -6,18 +7,19 @@ import { getExamFileNameById, renameExamFile } from '@services/archive'
 import configs from '@utilities/config'
 import s3 from '@services/s3'
 
+const RenameExamBody = z.object({
+  examId: z.number(),
+  name: z.string().min(1)
+})
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // requireRights('rename')
   if (req.method === 'POST') {
-    const { examId: unparsedExamId } = req.query
     try {
-      if (!req.body.name) {
-        return res.status(400).json({ error: 'name missing' })
-      }
+      const { examId, name } = RenameExamBody.parse(JSON.parse(req.body))
 
-      const examId = parseInt(unparsedExamId as string, 10)
-      if (isNaN(examId)) {
-        return res.status(404).json({ error: 'invalid exam id' })
+      if (!name) {
+        return res.status(400).json({ error: 'name missing' })
       }
 
       const oldName = await getExamFileNameById(examId)
@@ -26,7 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(404).json({ error: 'exam not found' })
       }
 
-      const updatedExam = await renameExamFile(examId, req.body.name)
+      const updatedExam = await renameExamFile(examId, name)
       if (updatedExam === null) {
         console.error(
           new Error(`Exam renaming didn't update any exams! Exam ID: ${examId}`)
@@ -58,13 +60,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       return res.status(200).json({ ok: true })
-    } catch (e) {
-      console.error(e)
-      res.status(500).json({ error: 'internal server error' })
+    } catch (error) {
+      console.log('Error renaming exam', error)
+      return res.status(500).json({ error: '500 Internal Server Error' })
     }
   } else {
-    console.log('ignoring, not post')
-    res.redirect('/')
+    res.status(404).send('404 Not Found')
   }
 }
 

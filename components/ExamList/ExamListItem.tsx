@@ -73,7 +73,7 @@ const ExamListItem = ({ exam, showDelete, showRename }: ExamListItemProps) => {
       </div>
       {showDelete && (
         <div role="cell" className="exam-list-item__delete">
-          <DeleteExamButton exam={exam} />
+          <DeleteExamButton fileName={fileName} examId={id} />
         </div>
       )}
       {showRename && (

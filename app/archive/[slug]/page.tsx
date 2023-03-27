@@ -15,7 +15,11 @@ import { getSession } from '@services/tkoUserService'
 import { getCourseInfo } from '@services/archive'
 
 export const metadata = {
-  title: 'placeholder - Tärpistö - TKO-äly ry'
+  title: 'placeholder - Tärpistö - TKO-äly ry',
+  viewport: 'width=device-width',
+  robots: {
+    index: false
+  }
 }
 
 const Page = async ({ params }: any) => {

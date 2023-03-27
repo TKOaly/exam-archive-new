@@ -19,6 +19,7 @@ const {
   COOKIE_SECRET,
   USER_SERVICE_SERVICE_ID,
   USER_SERVICE_URL,
+  PG_CONNECTION_STRING,
   AWS_S3_ENDPOINT,
   AWS_S3_FORCE_PATH_STYLE,
   AWS_REGION,
@@ -34,7 +35,8 @@ const {
 assertSet({
   COOKIE_SECRET,
   AWS_REGION,
-  AWS_S3_BUCKET_ID
+  AWS_S3_BUCKET_ID,
+  PG_CONNECTION_STRING
 })
 
 if (NODE_ENV !== 'development') {
@@ -68,6 +70,52 @@ export default {
   AWS_SECRET_ACCESS_KEY,
   TRUST_PROXY_IPS: TRUST_PROXY_IPS ? TRUST_PROXY_IPS.split(',') : []
 }
+
+export const knexConfig = {
+  development: {
+    client: 'postgres',
+    version: '11.17',
+    connection: PG_CONNECTION_STRING,
+    pool: {
+      min: 1,
+      max: 100
+    }
+    // migrations: {
+    //   tableName: 'knex_migrations'
+    // },
+    // seeds: {
+    //   directory: '../seeds'
+    // }
+  },
+  test: {
+    client: 'postgres',
+    version: '11.17',
+    connection: PG_CONNECTION_STRING,
+    pool: {
+      min: 1,
+      max: 100
+    }
+    // migrations: {
+    //   tableName: 'knex_migrations'
+    // },
+    // seeds: {
+    //   directory: '../seeds'
+    // }
+  },
+  production: {
+    client: 'postgres',
+    version: '11.17',
+    connection: PG_CONNECTION_STRING,
+    pool: {
+      min: 1,
+      max: 3
+    },
+    migrations: {
+      tableName: 'knex_migrations'
+    }
+  }
+}
+
 export const sessionOptions: IronSessionOptions = {
   cookieName: 'tarpisto',
   password: COOKIE_SECRET as string,

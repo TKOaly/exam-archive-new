@@ -6,15 +6,21 @@ import {
   CourseNotFoundError,
   CannotDeleteError
 } from '@services/archive'
+import { validateRights } from '@services/tkoUserService'
+import { withSessionRoute } from '@utilities/sessions'
 
 const DeleteCourseBody = z.object({
   courseId: z.number()
 })
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // requireRights('remove')
+const del = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
+      const isRights = validateRights(req.session.rights, 'remove')
+      if (!isRights) {
+        return res.status(401).json({ error: '401 Unauthorized' })
+      }
+
       const { courseId } = DeleteCourseBody.parse(JSON.parse(req.body))
 
       const deletedCourse = await deleteCourse(courseId)
@@ -33,8 +39,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(500).json({ error: '500 Internal Server Error' })
     }
   } else {
-    res.status(404).send('404 Not Found')
+    res.status(405).send({ error: 'unvalid method' })
   }
 }
+
+const handler = withSessionRoute(del)
 
 export default handler

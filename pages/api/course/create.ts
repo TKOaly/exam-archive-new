@@ -2,6 +2,8 @@ import { z } from 'zod'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { findCourseByName, createCourse } from '@services/archive'
+import { validateRights } from '@services/tkoUserService'
+import { withSessionRoute } from '@utilities/sessions'
 
 const CreateCourseBody = z
   .object({
@@ -9,10 +11,14 @@ const CreateCourseBody = z
   })
   .transform(body => body.courseName)
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // requireRights('upload')
+const create = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
+      const isRights = validateRights(req.session.rights, 'upload')
+      if (!isRights) {
+        return res.status(401).json({ error: '401 Unauthorized' })
+      }
+
       const courseName = CreateCourseBody.parse(JSON.parse(req.body))
 
       const existingCourse = await findCourseByName(courseName.trim())
@@ -33,8 +39,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(500).json({ error: '500 Internal Server Error' })
     }
   } else {
-    res.status(404).send('404 Not Found')
+    res.status(405).send({ error: 'unvalid method' })
   }
 }
+
+const handler = withSessionRoute(create)
 
 export default handler

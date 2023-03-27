@@ -1,22 +1,31 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-
+import { withSessionRoute } from '@utilities/sessions'
 import { getCourseInfo } from '@services/archive'
+import { validateRights } from '@services/tkoUserService'
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // requireRights('')
+
+const get = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     const { courseId: unparsedCourseId } = req.query
     const courseId = parseInt(unparsedCourseId as string, 10)
     try {
+      const isRights = validateRights(req.session.rights, 'access')
+      if (!isRights) {
+        return res.status(401).json({ error: '401 Unauthorized' })
+      }
+
+
       const course = await getCourseInfo(courseId)
       return res.status(200).json(course)
-    } catch (e) {
-      console.error(e)
-      res.status(500).json({ error: 'internal server error' })
+    } catch (error) {
+      console.error('Error while getting course', error)
+      res.status(500).json({ error: '500 Internal server error' })
     }
   } else {
-    res.status(405).send('unvalid method')
+    res.status(405).send({ error: 'unvalid method' })
   }
 }
+
+const handler = withSessionRoute(get)
 
 export default handler

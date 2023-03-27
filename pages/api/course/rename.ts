@@ -6,16 +6,22 @@ import {
   renameCourse,
   findCourseByName
 } from '@services/archive'
+import { validateRights } from '@services/tkoUserService'
+import { withSessionRoute } from '@utilities/sessions'
 
 const RenameCourseBody = z.object({
   courseId: z.number(),
   name: z.string().min(1)
 })
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // requireRights('rename')
+const rename = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
+      const isRights = validateRights(req.session.rights, 'rename')
+      if (!isRights) {
+        return res.status(401).json({ error: '401 Unauthorized' })
+      }
+
       const { courseId, name } = RenameCourseBody.parse(JSON.parse(req.body))
 
       const course = await getCourseInfo(courseId)
@@ -43,8 +49,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(500).json({ error: '500 Internal Server Error' })
     }
   } else {
-    res.status(404).send('404 Not Found')
+    res.status(405).send({ error: 'unvalid method' })
   }
 }
+
+const handler = withSessionRoute(rename)
 
 export default handler

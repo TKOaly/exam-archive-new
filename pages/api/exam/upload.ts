@@ -8,8 +8,10 @@ import { createReadStream } from 'node:fs'
 import formidable from 'formidable'
 
 import { getCourseInfo, createExam } from '@services/archive'
+import { validateRights } from '@services/tkoUserService'
 import s3 from '@services/s3'
 import configs from '@utilities/config'
+import { withSessionRoute } from '@utilities/sessions'
 
 export const config = {
   api: {
@@ -43,10 +45,14 @@ const parseFile = (
   })
 }
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // requireRights('upload')
+const upload = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
+      const isRights = validateRights(req.session.rights, 'upload')
+      if (!isRights) {
+        return res.status(401).json({ error: '401 Unauthorized' })
+      }
+
       const { file, courseId } = await parseFile(req)
 
       const course = await getCourseInfo(courseId)
@@ -88,8 +94,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(500).json({ error: '500 Internal Server Error' })
     }
   } else {
-    res.status(404).send('404 Not Found')
+    res.status(405).send({ error: 'unvalid method' })
   }
 }
+
+const handler = withSessionRoute(upload)
 
 export default handler

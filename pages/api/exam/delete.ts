@@ -2,16 +2,21 @@ import { z } from 'zod'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { findCourseByExamId, deleteExam } from '@services/archive'
-import { urlForCourse } from '@utilities/courses'
+import { validateRights } from '@services/tkoUserService'
+import { withSessionRoute } from '@utilities/sessions'
 
 const DeleteExamBody = z.object({
   examId: z.number()
 })
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // requireRights('rename')
+const del = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
+      const isRights = validateRights(req.session.rights, 'remove')
+      if (!isRights) {
+        return res.status(401).json({ error: '401 Unauthorized' })
+      }
+
       const { examId } = DeleteExamBody.parse(JSON.parse(req.body))
 
       const course = await findCourseByExamId(examId)
@@ -34,8 +39,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(500).json({ error: '500 Internal Server Error' })
     }
   } else {
-    res.status(404).send('404 Not Found')
+    res.status(405).send({ error: 'unvalid method' })
   }
 }
+
+const handler = withSessionRoute(del)
 
 export default handler

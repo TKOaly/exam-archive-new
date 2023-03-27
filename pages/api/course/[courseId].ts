@@ -1,19 +1,24 @@
+import { z } from 'zod'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { withSessionRoute } from '@utilities/sessions'
 import { getCourseInfo } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
 
+const GetCourseBody = z
+  .object({
+    courseId: z.number()
+  })
+  .transform(courseId => courseId.courseId)
 
 const get = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
-    const { courseId: unparsedCourseId } = req.query
-    const courseId = parseInt(unparsedCourseId as string, 10)
     try {
       const isRights = validateRights(req.session.rights, 'access')
       if (!isRights) {
         return res.status(401).json({ error: '401 Unauthorized' })
       }
 
+      const courseId = GetCourseBody.parse(req.query)
 
       const course = await getCourseInfo(courseId)
       return res.status(200).json(course)

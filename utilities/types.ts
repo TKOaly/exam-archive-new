@@ -14,6 +14,10 @@ export interface CourseListItem extends Course {
   lastModified: Date | null
 }
 
+export interface CourseInfo extends Course {
+  exams: ExamListItem[]
+}
+
 export type ExamId = number
 
 export interface ExamListItem {
@@ -32,4 +36,43 @@ export interface Exam {
   mimeType: string
   filePath: string
   uploadDate: Date
+}
+
+export type AccessRight = 'access' | 'upload' | 'remove' | 'rename'
+
+export enum UserRole {
+  Kayttaja = 'kayttaja',
+  Virkailija = 'virkailija',
+  Tenttiarkistovirkailija = 'tenttiarkistovirkailija',
+  Jasenvirkailija = 'jasenvirkailija',
+  Yllapitaja = 'yllapitaja'
+}
+
+export enum UserMembership {
+  EiJasen = 'ei-jasen',
+  Erotettu = 'erotettu',
+  Ulkojasen = 'ulkojasen',
+  Jasen = 'jasen',
+  Kannatusjasen = 'kannatusjasen',
+  Kunniajasen = 'kunniajasen'
+}
+
+export interface UserServiceUser {
+  username: string
+  role: UserRole
+  membership: UserMembership
+}
+
+export interface AuthData {
+  user: UserServiceUser
+  rights: { [right in AccessRight]: boolean }
+}
+
+declare module 'iron-session' {
+  interface IronSessionData {
+    user: UserServiceUser
+    rights: { [right in AccessRight]: boolean }
+    token: string
+    timestamp: number
+  }
 }

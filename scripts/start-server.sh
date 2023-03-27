@@ -40,7 +40,7 @@ function main() {
 
     export PORT=9000
     export PG_CONNECTION_STRING=postgresql://tarpisto:Su5hgVvoqUCRw5vrWmrW@$(docker-compose port db 5432)/tarpisto
-    export COOKIE_SECRET="keyboard cat 2"
+    export COOKIE_SECRET="catlike-meringue-tying-PASTERN-bed-simply"
 
     export USER_SERVICE_SERVICE_ID=11188b9c-9534-4faf-8355-60973b720647
     export USER_SERVICE_URL=http://127.0.0.1:8080

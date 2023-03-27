@@ -1,11 +1,8 @@
-import { getCourseListing } from '@services/archive'
-
 import CourseListItem from '@components/CourseList/CourseListItem'
 import CourseListHeader from '@components/CourseList/CourseListHeader'
+import { CourseListItem as CourseListItemType } from '@utilities/types'
 
-const CourseList = async () => {
-  const courses = await getCourseListing()
-
+const CourseList = ({ courses }: { courses: CourseListItemType[] }) => {
   return (
     <div className="course-list-container">
       <div role="table" aria-label="Courses" className="course-list">

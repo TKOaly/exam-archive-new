@@ -12,7 +12,8 @@ const CreateCourseForm = () => {
     e.preventDefault()
     const request = await fetch('/api/course/create', {
       method: 'POST',
-      body: JSON.stringify({ courseName })
+      body: JSON.stringify({ courseName }),
+      credentials: 'same-origin'
     })
 
     const response = await request.json()

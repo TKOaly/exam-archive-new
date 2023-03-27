@@ -1,7 +1,8 @@
-import { knex, DbExam } from '../src/db'
+import { db as knex, DbExam } from '@utilities/db'
 import {
   Course,
   CourseListItem,
+  CourseInfo,
   ExamListItem,
   CourseId,
   ExamId,
@@ -115,10 +116,6 @@ export const getCourseListing = async (): Promise<CourseListItem[]> => {
       url: urlForCourse(id, name)
     }))
     .sort((a, b) => a.name.localeCompare(b.name))
-}
-
-export interface CourseInfo extends Course {
-  exams: ExamListItem[]
 }
 
 export const getCourseInfo = async (

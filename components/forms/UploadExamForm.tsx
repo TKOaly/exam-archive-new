@@ -24,7 +24,8 @@ const UploadExamForm = ({ courseId }: UploadExamFormProps) => {
 
     const request = await fetch('/api/exam/upload', {
       method: 'POST',
-      body
+      body,
+      credentials: 'same-origin'
     })
 
     const response = await request.json()

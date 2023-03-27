@@ -1,23 +1,26 @@
 import Footer from '@components/Footer'
 import FlashMessage from '@components/FlashMessage'
-// const { UserContextProvider } = require('./common/context')
 import ListingNavigation from '@components/Navigation'
 import ExamList from '@components/ExamList'
 import { ControlsBox, Logout } from '@components/Controls'
 import UploadExamForm from '@components/forms/UploadExamForm'
 
-import { getCourseInfo } from '@services/archive'
 import { slugifyCourseName } from '@utilities/courses'
 import { examDownloadUrl } from '@utilities/exams'
 
 import RenameCourse from '@components/tools/RenameCourse'
 import DeleteCourse from '@components/tools/DeleteCourse'
 
+import { getSession } from '@services/tkoUserService'
+import { getCourseInfo } from '@services/archive'
+
 export const metadata = {
   title: 'placeholder - Tärpistö - TKO-äly ry'
 }
 
 const Page = async ({ params }: any) => {
+  const { user, rights } = await getSession()
+
   const flash = {
     msg: 'toot',
     type: 'info'
@@ -46,34 +49,25 @@ const Page = async ({ params }: any) => {
     downloadUrl: examDownloadUrl(exam.id, exam.fileName)
   }))
 
-  const username = 'toot'
-  const userRights = { remove: true, rename: true, upload: true }
-
   return (
     <>
-      {/* <UserContextProvider
-        username={username}
-        canDelete={userRights.remove}
-        canRename={userRights.rename}
-      > */}
       <ListingNavigation title={course.name} backButtonHref="/" />
       <div className="page-container">
         <FlashMessage flash={flash} />
         <main>
-          <ExamList courseId={course.id} exams={exams} />
+          <ExamList courseId={course.id} exams={exams} rights={rights} />
 
           <ControlsBox>
-            {userRights.upload && <UploadExamForm courseId={course.id} />}
-            {userRights.rename && (
+            {rights.upload && <UploadExamForm courseId={course.id} />}
+            {rights.rename && (
               <RenameCourse currentName={course.name} courseId={course.id} />
             )}
-            {userRights.remove && <DeleteCourse courseId={course.id} />}
-            <Logout username={username} />
+            {rights.remove && <DeleteCourse courseId={course.id} />}
+            <Logout username={user.username} />
           </ControlsBox>
         </main>
         <Footer />
       </div>
-      {/* </UserContextProvider> */}
     </>
   )
 }

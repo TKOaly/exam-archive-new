@@ -1,3 +1,5 @@
+import { IronSessionOptions } from 'iron-session'
+
 const { NODE_ENV } = process.env
 const assertSet = (obj: any) =>
   Object.entries(obj).forEach(([key, val]) => {
@@ -47,6 +49,8 @@ if (NODE_ENV !== 'development') {
 
 const DEFAULT_PORT = '9001'
 
+export const SERVER_START_TIMESTAMP = Date.now()
+
 export default {
   PORT: parseInt(PORT || DEFAULT_PORT, 10),
   NODE_ENV: NODE_ENV!,
@@ -63,4 +67,14 @@ export default {
   AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY,
   TRUST_PROXY_IPS: TRUST_PROXY_IPS ? TRUST_PROXY_IPS.split(',') : []
+}
+export const sessionOptions: IronSessionOptions = {
+  cookieName: 'tarpisto',
+  password: COOKIE_SECRET as string,
+  cookieOptions: {
+    httpOnly: true,
+    sameSite: 'strict', // should be strict
+    maxAge: 86400, // 24h
+    secure: NODE_ENV === 'production'
+  }
 }

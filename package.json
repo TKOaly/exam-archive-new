@@ -29,6 +29,7 @@
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "formidable": "^3.2.5",
+    "iron-session": "^6.3.1",
     "knex": "^2.4.2",
     "next": "^13.2.4-canary.2",
     "pg": "^8.9.0",

@@ -3,8 +3,10 @@ import FlashMessage from '@components/FlashMessage'
 import ListingNavigation from '@components/Navigation'
 import CourseList from '@components/CourseList'
 import { ControlsBox, Logout } from '@components/Controls'
-
 import CreateCourseForm from '@components/forms/CreateCourseForm'
+
+import { getSession } from '@services/tkoUserService'
+import { getCourseListing } from '@services/archive'
 
 export const metadata = {
   title: 'Tärpistö - TKO-äly ry',
@@ -14,25 +16,28 @@ export const metadata = {
   }
 }
 
-const Page = () => {
+const Page = async () => {
   const flash = {
     msg: 'toot',
     type: 'info'
   }
 
-  const username = 'toot'
-  const userRights = { remove: true, rename: true, upload: true }
+  const { user, rights } = await getSession()
+
+  const courses = await getCourseListing()
+
   return (
     <>
       <ListingNavigation title="Courses" />
       <div className="page-container">
         <FlashMessage flash={flash} />
+        <div>{JSON.stringify(user, null, 4)}</div>
+        <div>{JSON.stringify(rights, null, 4)}</div>
         <main>
-          {/* @ts-expect-error Async Server Component */}
-          <CourseList />
+          <CourseList courses={courses} />
           <ControlsBox>
-            {userRights.upload && <CreateCourseForm />}
-            <Logout username={username} />
+            {rights.upload && <CreateCourseForm />}
+            <Logout username={user.username} />
           </ControlsBox>
         </main>
         <Footer />

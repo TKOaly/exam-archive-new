@@ -40,7 +40,7 @@ services:
       - exam-archive-pg-data:/data/pgdata
 
   adminer:
-    image: adminer
+    image: adminer:4.8.1-standalone
     ports:
       - 127.0.0.1:9003:8080
 

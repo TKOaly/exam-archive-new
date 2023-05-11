@@ -33,5 +33,7 @@ export const GET = async (
     return new NextResponse('404 Exam file not found', { status: 404 })
   }
 
-  return new NextResponse(stream.Body.transformToWebStream())
+  return new NextResponse(stream.Body.transformToWebStream(), {
+    headers: { 'Content-Type': exam.mimeType }
+  })
 }

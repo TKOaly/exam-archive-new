@@ -2,7 +2,6 @@ import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 
 import Footer from '@components/Footer'
-import FlashMessage from '@components/FlashMessage'
 import ListingNavigation from '@components/Navigation'
 
 import { ControlsBox, Logout } from '@components/Controls'

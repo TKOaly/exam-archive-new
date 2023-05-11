@@ -6,7 +6,6 @@ import { ControlsBox, Logout } from '@components/Controls'
 import UploadExamForm from '@components/forms/UploadExamForm'
 
 import { slugifyCourseName } from '@utilities/courses'
-import { examDownloadUrl } from '@utilities/exams'
 
 import RenameCourse from '@components/tools/RenameCourse'
 import DeleteCourse from '@components/tools/DeleteCourse'
@@ -48,18 +47,13 @@ const Page = async ({ params }: any) => {
     // return res.redirect(302, urlForCourse(course.id, course.name))
   }
 
-  const exams = course.exams.map(exam => ({
-    ...exam,
-    downloadUrl: examDownloadUrl(exam.id, exam.fileName)
-  }))
-
   return (
     <>
       <ListingNavigation title={course.name} backButtonHref="/" />
       <div className="page-container">
         <FlashMessage flash={flash} />
         <main>
-          <ExamList courseId={course.id} exams={exams} rights={rights} />
+          <ExamList courseId={course.id} exams={course.exams} rights={rights} />
 
           <ControlsBox>
             {rights.upload && <UploadExamForm courseId={course.id} />}

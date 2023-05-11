@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { urlForCourse } from './courses'
+import { examDownloadUrl } from './exams'
 
 export type CourseId = number
 
@@ -79,6 +80,24 @@ declare module 'iron-session' {
     timestamp: number
   }
 }
+
+export const ExamLI = z
+  .object({
+    id: z.number(),
+    course_id: z.number(),
+    file_name: z.string(),
+    mime_type: z.string(),
+    upload_date: z.date()
+  })
+  .transform(exam => ({
+    id: exam.id,
+    courseId: exam.course_id,
+    fileName: exam.file_name,
+    mimeType: exam.mime_type,
+    uploadDate: exam.upload_date,
+    downloadUrl: examDownloadUrl(exam.id, exam.file_name)
+  }))
+export type ExamLI = z.infer<typeof ExamLI>
 
 export const CourseLI = z
   .object({

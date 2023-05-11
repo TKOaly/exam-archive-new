@@ -3,22 +3,17 @@ import {
   Course,
   CourseListItem,
   CourseInfo,
-  ExamListItem,
   CourseId,
   ExamId,
   Exam,
   CourseLI,
+  ExamLI
 } from '@utilities/types'
 import {
   deserializeCourse,
   deserializeExamListItem,
   deserializeExam
 } from './dbDeserializer'
-
-import { urlForCourse } from '@utilities/courses'
-
-const isNull = (obj: any): obj is null => obj === null
-const isNotNull = (obj: any) => !isNull(obj)
 
 const whereNotDeleted = (tableName?: string) => {
   const key = tableName ? `${tableName}.removed_at` : 'removed_at'
@@ -109,28 +104,47 @@ export const getCourseListing = async (): Promise<CourseListItem[]> => {
 export const getCourseInfo = async (
   courseId: number
 ): Promise<CourseInfo | null> => {
-  const courseResult = await knex('courses')
-    .where({ id: courseId, ...whereNotDeleted() })
-    .first(['courses.*'])
+  const courseResult = await dbPool.query(
+    `
+    SELECT
+      c.id,
+      c.name,
+      max(e.upload_date) as last_modified
+    FROM courses c
+    LEFT JOIN exams e ON e.course_id = c.id AND e.removed_at IS NULL
+    WHERE c.id = $1 AND c.removed_at IS NULL
+    GROUP BY c.id
+    LIMIT 1
+  `,
+    [courseId]
+  )
 
   if (!courseResult) {
     return null
   }
 
-  const examsResult = await knex('exams')
-    .select('exams.*')
-    .from('exams')
-    .where({ course_id: courseId, ...whereNotDeleted() })
-    .orderBy('file_name', 'desc')
+  const examsResult = await dbPool.query(
+    `
+    SELECT
+      e.id,
+      e.course_id,
+      e.file_name,
+      e.mime_type,
+      e.upload_date
+    FROM exams e
+    WHERE e.course_id = $1 AND e.removed_at IS NULL
+    ORDER BY e.file_name DESC
+    `,
+    [courseId]
+  )
 
-  const course = deserializeCourse(courseResult)
+  const course = CourseLI.parse(courseResult.rows[0])
   if (!course) {
     return null
   }
 
-  const exams = examsResult
-    .map(deserializeExamListItem)
-    .filter(isNotNull) as ExamListItem[]
+  const exams = examsResult.rows.map(exam => ExamLI.parse(exam))
+
   return {
     ...course,
     exams

@@ -2,7 +2,7 @@
 import { useState, MouseEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { urlForCourse } from '@utilities/courses'
+import { urlForCourse } from '@lib/courses'
 
 const CreateCourseForm = () => {
   const [courseName, setCourseName] = useState('')

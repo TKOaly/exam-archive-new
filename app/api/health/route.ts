@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { testConnection } from '@utilities/db'
+import { testConnection } from '@lib/db'
 
 export const GET = async (req: Request) => {
   try {

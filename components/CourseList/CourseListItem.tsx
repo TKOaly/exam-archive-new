@@ -1,7 +1,7 @@
 import formatDate from 'date-fns/format'
 import fiLocale from 'date-fns/locale/fi'
 
-import { CourseListItem } from '@utilities/types'
+import { CourseListItem } from '@lib/types'
 
 import Link from 'next/link'
 

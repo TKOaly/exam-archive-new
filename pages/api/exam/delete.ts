@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { findCourseByExamId, deleteExam } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
-import { withSessionRoute } from '@utilities/sessions'
+import { withSessionRoute } from '@lib/sessions'
 
 const DeleteExamBody = z.object({
   examId: z.number()

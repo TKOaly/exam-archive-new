@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { withSessionRoute } from '@utilities/sessions'
+import { withSessionRoute } from '@lib/sessions'
 import { getCourseInfo } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
 

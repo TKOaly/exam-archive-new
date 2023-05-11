@@ -9,7 +9,7 @@ import { ControlsBox, Logout } from '@components/Controls'
 import { adminGetS3Objects, sortByPrefixThenObjNameAsc } from '@services/admin'
 import { getSession } from '@services/tkoUserService'
 
-import config from '@utilities/config'
+import config from '@lib/config'
 
 export const metadata = {
   title: 'Tärpistö - TKO-äly ry',

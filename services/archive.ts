@@ -1,4 +1,4 @@
-import { dbPool } from '@utilities/db'
+import { dbPool } from '@lib/db'
 import {
   Course,
   CourseListItem,
@@ -12,7 +12,7 @@ import {
   CreateCourse,
   Count,
   FileName
-} from '@utilities/types'
+} from '@lib/types'
 export class CourseNotFoundError extends Error {
   constructor(message?: string) {
     // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html#example

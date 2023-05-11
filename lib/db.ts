@@ -1,5 +1,5 @@
 import { Pool } from 'pg'
-import config from '@utilities/config'
+import config from '@lib/config'
 
 export const testConnection = async () => {
   await dbPool.query('SELECT NOW()')

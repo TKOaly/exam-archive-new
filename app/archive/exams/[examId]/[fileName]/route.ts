@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { findExamById } from '@services/archive'
 import s3 from '@services/s3'
 import { getSession } from '@services/tkoUserService'
-import config from '@utilities/config'
+import config from '@lib/config'
 
 export const GET = async (
   req: Request,

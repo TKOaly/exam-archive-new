@@ -2,7 +2,7 @@ import path from 'path'
 import formatDate from 'date-fns/format'
 import fiLocale from 'date-fns/locale/fi'
 
-import { ExamListItem } from '@utilities/types'
+import { ExamListItem } from '@lib/types'
 
 import { DocumentIcon, PdfIcon, PhotoIcon } from '@components/icons/File'
 import DeleteExamButton from '@components/ExamList/DeleteExamButton'

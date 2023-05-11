@@ -1,6 +1,6 @@
 import { S3, S3ClientConfig } from '@aws-sdk/client-s3'
 import { AwsCredentialIdentity } from '@aws-sdk/types'
-import config from '@utilities/config'
+import config from '@lib/config'
 
 const s3Options: S3ClientConfig = {
   apiVersion: '2006-03-01',

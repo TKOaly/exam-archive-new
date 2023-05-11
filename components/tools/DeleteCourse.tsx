@@ -2,7 +2,7 @@
 import { MouseEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { urlForCourseListing } from '@utilities/courses'
+import { urlForCourseListing } from '@lib/courses'
 
 interface DeleteCourseProps {
   courseId: number

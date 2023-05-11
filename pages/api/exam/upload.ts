@@ -10,8 +10,8 @@ import formidable from 'formidable'
 import { getCourseInfo, createExam } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
 import s3 from '@services/s3'
-import configs from '@utilities/config'
-import { withSessionRoute } from '@utilities/sessions'
+import configs from '@lib/config'
+import { withSessionRoute } from '@lib/sessions'
 
 export const config = {
   api: {

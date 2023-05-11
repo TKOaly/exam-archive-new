@@ -1,6 +1,6 @@
 import CourseListItem from '@components/CourseList/CourseListItem'
 import CourseListHeader from '@components/CourseList/CourseListHeader'
-import { CourseListItem as CourseListItemType } from '@utilities/types'
+import { CourseListItem as CourseListItemType } from '@lib/types'
 
 const CourseList = ({ courses }: { courses: CourseListItemType[] }) => {
   return (

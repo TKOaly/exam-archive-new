@@ -1,5 +1,5 @@
-import { dbPool } from '@utilities/db'
-import { AdminS3Object } from '@utilities/types'
+import { dbPool } from '@lib/db'
+import { AdminS3Object } from '@lib/types'
 
 export const adminGetS3Objects = async (): Promise<AdminS3Object[]> => {
   const result = await dbPool.query(`

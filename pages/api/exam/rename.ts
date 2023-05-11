@@ -4,10 +4,10 @@ import contentDisposition from 'content-disposition'
 import { transliterate } from 'transliteration'
 
 import { getExamFileNameById, renameExamFile } from '@services/archive'
-import configs from '@utilities/config'
+import configs from '@lib/config'
 import s3 from '@services/s3'
 import { validateRights } from '@services/tkoUserService'
-import { withSessionRoute } from '@utilities/sessions'
+import { withSessionRoute } from '@lib/sessions'
 
 const RenameExamBody = z.object({
   examId: z.number(),

@@ -1,10 +1,7 @@
 import querystring from 'querystring'
 import { cookies, headers } from 'next/headers'
 import { redirect, notFound } from 'next/navigation'
-import config, {
-  SERVER_START_TIMESTAMP,
-  sessionOptions
-} from '@utilities/config'
+import config, { SERVER_START_TIMESTAMP, sessionOptions } from '@lib/config'
 import { unsealData, IronSessionData } from 'iron-session'
 
 import {
@@ -12,7 +9,7 @@ import {
   UserMembership,
   UserServiceUser,
   AccessRight
-} from '@utilities/types'
+} from '@lib/types'
 
 export const isActiveMember = ({ membership }: UserServiceUser) =>
   membership === UserMembership.Jasen ||

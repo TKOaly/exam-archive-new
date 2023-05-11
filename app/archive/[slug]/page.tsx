@@ -5,7 +5,7 @@ import ExamList from '@components/ExamList'
 import { ControlsBox, Logout } from '@components/Controls'
 import UploadExamForm from '@components/forms/UploadExamForm'
 
-import { slugifyCourseName } from '@utilities/courses'
+import { slugifyCourseName } from '@lib/courses'
 
 import RenameCourse from '@components/tools/RenameCourse'
 import DeleteCourse from '@components/tools/DeleteCourse'

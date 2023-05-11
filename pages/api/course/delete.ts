@@ -7,7 +7,7 @@ import {
   CannotDeleteError
 } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
-import { withSessionRoute } from '@utilities/sessions'
+import { withSessionRoute } from '@lib/sessions'
 
 const DeleteCourseBody = z.object({
   courseId: z.number()

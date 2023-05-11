@@ -1,9 +1,9 @@
-import { ExamListItem as ExamListItemType } from '@utilities/types'
+import { ExamListItem as ExamListItemType } from '@lib/types'
 
 import ExamListHeader from '@components/ExamList/ExamListHeader'
 import ExamListItem from '@components/ExamList/ExamListItem'
 import NoExamsFound from '@components/ExamList/NoExamsFound'
-import { AccessRight } from '@utilities/types'
+import { AccessRight } from '@lib/types'
 
 const ExamList = ({
   courseId,

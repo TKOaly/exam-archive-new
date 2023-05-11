@@ -1,6 +1,6 @@
 import { authenticateUserServiceToken } from '@services/tkoUserService'
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { withSessionRoute } from '@utilities/sessions'
+import { withSessionRoute } from '@lib/sessions'
 
 const callback = async (req: NextApiRequest, res: NextApiResponse) => {
   try {

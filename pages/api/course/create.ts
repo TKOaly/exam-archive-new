@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { findCourseByName, createCourse } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
-import { withSessionRoute } from '@utilities/sessions'
+import { withSessionRoute } from '@lib/sessions'
 
 const CreateCourseBody = z
   .object({

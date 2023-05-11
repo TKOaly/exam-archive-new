@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation'
+
 import Footer from '@components/Footer'
 import FlashMessage from '@components/FlashMessage'
 import ListingNavigation from '@components/Navigation'
@@ -5,7 +7,7 @@ import ExamList from '@components/ExamList'
 import { ControlsBox, Logout } from '@components/Controls'
 import UploadExamForm from '@components/forms/UploadExamForm'
 
-import { slugifyCourseName } from '@lib/courses'
+import { slugifyCourseName, urlForCourse } from '@lib/courses'
 
 import RenameCourse from '@components/tools/RenameCourse'
 import DeleteCourse from '@components/tools/DeleteCourse'
@@ -44,7 +46,7 @@ const Page = async ({ params }: any) => {
   }
 
   if (courseSlug !== slugifyCourseName(course.name)) {
-    // return res.redirect(302, urlForCourse(course.id, course.name))
+    return redirect(urlForCourse(course.id, course.name))
   }
 
   return (

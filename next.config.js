@@ -25,7 +25,7 @@ const nextConfig = {
           {
             key: 'Permissions-Policy',
             value:
-              'microphone=(), geolocation=(), usb=(), payment=(), autoplay=(), battery=(), display-capture=(), document-domain=(), encrypted-media=(), gamepad=(), gyroscope=(), midi=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=()'
+              'microphone=(), geolocation=(), usb=(), payment=(), autoplay=(), display-capture=(), encrypted-media=(), gamepad=(), gyroscope=(), midi=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=()'
           },
           {
             key: 'X-XSS-Protection',
@@ -34,7 +34,7 @@ const nextConfig = {
           {
             key: 'Content-Security-Policy',
             value:
-              "default-src 'self'; img-src 'self'; media-src 'self'; script-src 'self';"
+              "default-src 'self'; img-src 'self'; media-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline';"
           }
         ]
       }

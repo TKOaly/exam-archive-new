@@ -237,7 +237,8 @@ export const renameExamFile = async (
     UPDATE exams
     SET file_name = $2
     WHERE id = $1 AND removed_at IS NULL
-    RETURNING id, course_id, file_name, mime_type, upload_date, file_path
+    RETURNING
+      id, course_id, file_name, mime_type, upload_date, file_path
   `,
     [examId, newFilename]
   )
@@ -268,11 +269,11 @@ export const createExam = async (exam: CreateExam) => {
     INSERT INTO exams
       (course_id, file_name, mime_type, file_path, upload_date)
     VALUES
-      ($1, $2, $3, $4, $5)
+      ($1, $2, $3, $4, NOW())
     RETURNING
       id, course_id, file_name, mime_type, upload_date, file_path
   `,
-    [exam.courseId, exam.fileName, exam.mimeType, exam.filePath, new Date()]
+    [exam.courseId, exam.fileName, exam.mimeType, exam.filePath]
   )
 
   const createdExam = ExamLI.parse(result.rows[0])

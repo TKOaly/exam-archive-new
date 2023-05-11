@@ -10,7 +10,8 @@ import {
   ExamLI,
   CreateExam,
   CreateCourse,
-  Count
+  Count,
+  FileName
 } from '@utilities/types'
 import {
   deserializeCourse,
@@ -246,17 +247,25 @@ export const findCourseByExamId = async (
 
 export const getExamFileNameById = async (
   examId: ExamId
-): Promise<string | null> => {
-  const exam = await knex('exams')
-    .select('file_name')
-    .where({ id: examId, ...whereNotDeleted() })
-    .first()
+): Promise<FileName | null> => {
+  const result = await dbPool.query(
+    `
+    SELECT
+      e.file_name
+    FROM exams e
+    WHERE e.id = $1 AND e.removed_at IS NULL
+    LIMIT 1
+  `,
+    [examId]
+  )
 
-  if (!exam) {
+  const filename = FileName.safeParse(result.rows[0])
+
+  if (!filename.success) {
     return null
   }
 
-  return exam.file_name
+  return filename.data
 }
 
 export const renameExamFile = async (
@@ -313,7 +322,27 @@ export const createExam = async (exam: CreateExam) => {
 }
 
 export const findExamById = async (examId: number) => {
-  return (await knex('exams')
-    .where({ id: examId, ...whereNotDeleted() })
-    .first(['exams.*'])) as DbExam
+  const result = await dbPool.query(
+    `
+    SELECT
+      e.id,
+      e.course_id,
+      e.file_name,
+      e.mime_type,
+      e.upload_date,
+      e.file_path
+    FROM exams e
+    WHERE e.id = $1 AND e.removed_at IS NULL
+    LIMIT 1
+  `,
+    [examId]
+  )
+
+  const exam = ExamLI.safeParse(result.rows[0])
+
+  if (!exam.success) {
+    return null
+  }
+
+  return exam.data
 }

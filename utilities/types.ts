@@ -136,3 +136,10 @@ export const Count = z
   })
   .transform(count => count.count)
 export type Count = z.infer<typeof Count>
+
+export const FileName = z
+  .object({
+    file_name: z.string()
+  })
+  .transform(fileName => fileName.file_name)
+export type FileName = z.infer<typeof FileName>

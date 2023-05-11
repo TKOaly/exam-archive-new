@@ -143,3 +143,16 @@ export const FileName = z
   })
   .transform(fileName => fileName.file_name)
 export type FileName = z.infer<typeof FileName>
+
+export const AdminS3Object = z
+  .object({
+    id: z.number(),
+    file_name: z.string(),
+    file_path: z.string()
+  })
+  .transform(obj => ({
+    id: obj.id,
+    fileName: obj.file_name,
+    filePath: obj.file_path
+  }))
+export type AdminS3Object = z.infer<typeof AdminS3Object>

@@ -183,50 +183,83 @@ export const getCourseInfo = async (
 export const findCourseByName = async (
   courseName: string
 ): Promise<Course | null> => {
-  const course = await knex('courses')
-    .where({ name: courseName, ...whereNotDeleted() })
-    .first(['courses.*'])
+  const result = await dbPool.query(
+    `
+    SELECT
+      c.id,
+      c.name,
+      max(e.upload_date) as last_modified
+    FROM courses c
+    LEFT JOIN exams e ON e.course_id = c.id AND e.removed_at IS NULL
+    WHERE c.name = $1 AND c.removed_at IS NULL
+    GROUP BY c.id
+    LIMIT 1
+  `,
+    [courseName]
+  )
 
-  if (!course) {
+  const course = CourseLI.safeParse(result.rows[0])
+
+  if (!course.success) {
     return null
   }
 
-  return deserializeCourse(course)
+  return course.data
 }
 
 export const findCourseById = async (
   courseId: CourseId
 ): Promise<Course | null> => {
-  const course = await knex('courses')
-    .where({ id: courseId, ...whereNotDeleted() })
-    .first(['courses.*'])
+  const result = await dbPool.query(
+    `
+    SELECT
+      c.id,
+      c.name,
+      max(e.upload_date) as last_modified
+    FROM courses c
+    LEFT JOIN exams e ON e.course_id = c.id AND e.removed_at IS NULL
+    WHERE c.id = $1 AND c.removed_at IS NULL
+    GROUP BY c.id
+    LIMIT 1
+  `,
+    [courseId]
+  )
+  const course = CourseLI.safeParse(result.rows[0])
 
-  if (!course) {
+  if (!course.success) {
     return null
   }
 
-  return deserializeCourse(course)
+  return course.data
 }
 
 export const findCourseByExamId = async (
   examId: ExamId
 ): Promise<Course | null> => {
-  const course = await knex('courses')
-    .select('*')
-    .where({ ...whereNotDeleted() })
-    .whereIn('id', function () {
-      this.select('course_id')
-        .from('exams')
-        .where({ id: examId, ...whereNotDeleted() })
-        .first()
-    })
-    .first()
+  const result = await dbPool.query(
+    `
+    SELECT
+      c.id,
+      c.name,
+      max(e.upload_date) as last_modified
+    FROM courses c
+    LEFT JOIN exams e ON e.course_id = c.id AND e.removed_at IS NULL
+    WHERE
+      c.id = (SELECT e.course_id FROM exams e WHERE e.id = $1 AND e.removed_at IS NULL LIMIT 1)
+      AND c.removed_at IS NULL
+    GROUP BY c.id
+    LIMIT 1
+  `,
+    [examId]
+  )
 
-  if (!course) {
+  const course = CourseLI.safeParse(result.rows[0])
+
+  if (!course.success) {
     return null
   }
 
-  return deserializeCourse(course)
+  return course.data
 }
 
 export const getExamFileNameById = async (

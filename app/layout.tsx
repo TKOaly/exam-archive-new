@@ -1,5 +1,4 @@
 import '@styles/main.scss'
-// import '@styles/vendor/normalize.css'
 import React from 'react'
 import Header from '@components/Header'
 

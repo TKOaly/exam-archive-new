@@ -101,7 +101,7 @@ export const getCourseListing = async (): Promise<CourseListItem[]> => {
     LEFT JOIN exams e ON e.course_id = c.id AND e.removed_at IS NULL
     WHERE c.removed_at IS NULL
     GROUP BY c.id
-    ORDER BY c.name ASC
+    ORDER BY LOWER(c.name) ASC
   `)
   const courses = results.rows.map(course => CourseLI.parse(course))
 
@@ -141,7 +141,7 @@ export const getCourseInfo = async (
       e.file_path
     FROM exams e
     WHERE e.course_id = $1 AND e.removed_at IS NULL
-    ORDER BY e.file_name DESC
+    ORDER BY LOWER(e.file_name) DESC
     `,
     [courseId]
   )

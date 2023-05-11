@@ -9,8 +9,8 @@ function main() {
 
     required_command npm
 
-    export NODE_ENV=development
-    export PG_CONNECTION_STRING=postgresql://tarpisto:Su5hgVvoqUCRw5vrWmrW@$(docker-compose port db 5432)/tarpisto
+    export NODE_ENV=${NODE_ENV:-"development"}
+    export PG_CONNECTION_STRING=${PG_CONNECTION_STRING:-"postgresql://tarpisto:tarpisto@$(docker-compose port db 5432)/tarpisto"}
 
     npm run db:seed
 

@@ -3,7 +3,6 @@ import config from '@utilities/config'
 
 export const testConnection = async () => {
   await dbPool.query('SELECT NOW()')
-  await dbPool.end()
 }
 
 let dbPool: Pool

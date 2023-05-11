@@ -30,7 +30,7 @@ function main() {
     tmux splitw -h
 
     tmux select-pane -t 0
-    tmux send-keys "./scripts/start-server.sh" C-m
+    tmux send-keys "./scripts/start-dev-server.sh" C-m
     tmux select-pane -t 0 -T "next dev"
 
     tmux select-pane -t 1

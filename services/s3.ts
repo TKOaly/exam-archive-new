@@ -7,19 +7,15 @@ const s3Options: S3ClientConfig = {
   region: config.AWS_REGION
 }
 
-if (config.NODE_ENV === 'development') {
-  const s3Credentials = {
-    accessKeyId: config.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: config.AWS_SECRET_ACCESS_KEY!
-  } as AwsCredentialIdentity
+const s3Credentials = {
+  accessKeyId: config.AWS_ACCESS_KEY_ID,
+  secretAccessKey: config.AWS_SECRET_ACCESS_KEY
+} as AwsCredentialIdentity
 
-  s3Options.credentials = s3Credentials
-  if (config.AWS_S3_ENDPOINT) {
-    s3Options.endpoint = config.AWS_S3_ENDPOINT
-  }
-  if (config.AWS_S3_FORCE_PATH_STYLE) {
-    s3Options.forcePathStyle = true
-  }
+s3Options.credentials = s3Credentials
+s3Options.endpoint = config.AWS_S3_ENDPOINT
+if (config.AWS_S3_FORCE_PATH_STYLE) {
+  s3Options.forcePathStyle = true
 }
 
 const s3 = new S3(s3Options)

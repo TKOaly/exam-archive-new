@@ -132,22 +132,9 @@ export const getCourseListing = async (): Promise<CourseListItem[]> => {
 export const getCourseInfo = async (
   courseId: number
 ): Promise<CourseInfo | null> => {
-  const courseResult = await dbPool.query(
-    `
-    SELECT
-      c.id,
-      c.name,
-      max(e.upload_date) as last_modified
-    FROM courses c
-    LEFT JOIN exams e ON e.course_id = c.id AND e.removed_at IS NULL
-    WHERE c.id = $1 AND c.removed_at IS NULL
-    GROUP BY c.id
-    LIMIT 1
-  `,
-    [courseId]
-  )
+  const course = await findCourseById(courseId)
 
-  if (!courseResult) {
+  if (!course) {
     return null
   }
 
@@ -166,11 +153,6 @@ export const getCourseInfo = async (
     `,
     [courseId]
   )
-
-  const course = CourseLI.parse(courseResult.rows[0])
-  if (!course) {
-    return null
-  }
 
   const exams = examsResult.rows.map(exam => ExamLI.parse(exam))
 

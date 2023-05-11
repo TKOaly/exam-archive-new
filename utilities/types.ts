@@ -106,13 +106,14 @@ export const CourseLI = z
     id: z.number(),
     name: z.string(),
     last_modified: z.date().nullable(),
-    exams: z.array(ExamLI).optional()
+    exams: z.array(ExamLI).default([])
   })
   .transform(course => ({
     id: course.id,
     name: course.name,
     lastModified: course.last_modified,
-    url: urlForCourse(course.id, course.name)
+    url: urlForCourse(course.id, course.name),
+    exams: course.exams
   }))
 export type CourseLI = z.infer<typeof CourseLI>
 

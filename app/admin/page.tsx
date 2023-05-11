@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 
 import Footer from '@components/Footer'
@@ -49,13 +50,21 @@ const Page = async () => {
                 </tr>
               </thead>
               <tbody>
-                {objects.map(({ id, fileName, filePath }) => (
-                  <tr key={[id, fileName, filePath].join('-')}>
-                    <td>{id}</td>
-                    <td>{fileName}</td>
-                    <td>{filePath}</td>
-                  </tr>
-                ))}
+                <Suspense
+                  fallback={
+                    <tr>
+                      <td rowSpan={3}>Loading...</td>
+                    </tr>
+                  }
+                >
+                  {objects.map(({ id, fileName, filePath }) => (
+                    <tr key={[id, fileName, filePath].join('-')}>
+                      <td>{id}</td>
+                      <td>{fileName}</td>
+                      <td>{filePath}</td>
+                    </tr>
+                  ))}
+                </Suspense>
               </tbody>
             </table>
           </div>

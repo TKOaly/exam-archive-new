@@ -1,3 +1,5 @@
+import { Suspense } from 'react'
+
 import Footer from '@components/Footer'
 import FlashMessage from '@components/FlashMessage'
 import ListingNavigation from '@components/Navigation'
@@ -34,7 +36,9 @@ const Page = async () => {
         <div>{JSON.stringify(user, null, 4)}</div>
         <div>{JSON.stringify(rights, null, 4)}</div>
         <main>
-          <CourseList courses={courses} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <CourseList courses={courses} />
+          </Suspense>
           <ControlsBox>
             {rights.upload && <CreateCourseForm />}
             <Logout username={user.username} />

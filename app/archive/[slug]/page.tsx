@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 
 import Footer from '@components/Footer'
@@ -55,8 +56,13 @@ const Page = async ({ params }: any) => {
       <div className="page-container">
         <FlashMessage flash={flash} />
         <main>
-          <ExamList courseId={course.id} exams={course.exams} rights={rights} />
-
+          <Suspense fallback={<div>Loading...</div>}>
+            <ExamList
+              courseId={course.id}
+              exams={course.exams}
+              rights={rights}
+            />
+          </Suspense>
           <ControlsBox>
             {rights.upload && <UploadExamForm courseId={course.id} />}
             {rights.rename && (

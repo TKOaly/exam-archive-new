@@ -6,9 +6,6 @@
   "private": true,
   "scripts": {
     "start:e2e": "npm run db:migrate && NODE_ENV=development npm run db:seed && NODE_ENV=development node dist/index.js",
-    "build:scss": "sass --no-source-map -s compressed src/styles/main.scss static/main.css",
-    "build:autoprefixer": "postcss -r --use autoprefixer --no-map static/main.css",
-    "watch:scss": "sass --watch src/styles/main.scss static/main.css",
     "db:migrate": "knex migrate:latest",
     "db:seed": "knex seed:run",
     "prettier": "prettier --write .",
@@ -48,7 +45,6 @@
     "@types/pg": "^8.6.6",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
-    "autoprefixer": "^10.4.14",
     "axe-html-reporter": "^2.2.3",
     "nodemon": "^2.0.22",
     "postcss": "^8.4.23",

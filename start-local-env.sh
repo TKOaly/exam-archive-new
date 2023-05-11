@@ -28,19 +28,14 @@ function main() {
     tmux new-session -d -s $session
 
     tmux splitw -h
-    tmux splitw -v
 
     tmux select-pane -t 0
     tmux send-keys "./scripts/start-server.sh" C-m
     tmux select-pane -t 0 -T "next dev"
 
     tmux select-pane -t 1
-    tmux send-keys "npm run watch:scss" C-m
-    tmux select-pane -t 1 -T "scss watch"
-
-    tmux select-pane -t 2
     tmux send-keys "docker-compose up" C-m
-    tmux select-pane -t 2 -T "db & s3 logs"
+    tmux select-pane -t 1 -T "db & s3 logs"
 
     tmux select-pane -t 0
     tmux set pane-border-status top

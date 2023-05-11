@@ -19,7 +19,7 @@
       "@components/*": ["components/*"],
       "@services/*": ["services/*"],
       "@utilities/*": ["utilities/*"],
-      "@styles/*": ["static/*"]
+      "@styles/*": ["styles/*"]
     },
     "plugins": [
       {

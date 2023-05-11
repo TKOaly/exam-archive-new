@@ -80,9 +80,14 @@ export const renameCourse = async (
   id: CourseId,
   newName: string
 ): Promise<any> =>
-  await knex('courses')
-    .update({ name: newName })
-    .where({ id, ...whereNotDeleted() })
+  await dbPool.query(
+    `
+    UPDATE courses
+    SET name = $2
+    WHERE id = $1 AND removed_at IS NULL
+  `,
+    [id, newName]
+  )
 
 export const getCourseListing = async (): Promise<CourseListItem[]> => {
   const results = await dbPool.query(`
@@ -130,7 +135,8 @@ export const getCourseInfo = async (
       e.course_id,
       e.file_name,
       e.mime_type,
-      e.upload_date
+      e.upload_date,
+      e.file_path
     FROM exams e
     WHERE e.course_id = $1 AND e.removed_at IS NULL
     ORDER BY e.file_name DESC
@@ -219,16 +225,18 @@ export const renameExamFile = async (
   examId: ExamId,
   newFilename: string
 ): Promise<Exam | null> => {
-  const updatedRows: any[] = await knex('exams')
-    .update({ file_name: newFilename })
-    .where({
-      id: examId,
-      ...whereNotDeleted()
-    })
-    .returning('*')
+  const updatedRows = await dbPool.query(
+    `
+    UPDATE exams
+    SET file_name = $2
+    WHERE id = $1 AND removed_at IS NULL
+    RETURNING id, course_id, file_name, mime_type, upload_date, file_path
+  `,
+    [examId, newFilename]
+  )
 
-  const updatedExam = updatedRows[0]
-  return deserializeExam(updatedExam)
+  const updatedExam = ExamLI.parse(updatedRows.rows[0])
+  return updatedExam
 }
 
 interface ExamSubmission {

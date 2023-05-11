@@ -87,7 +87,8 @@ export const ExamLI = z
     course_id: z.number(),
     file_name: z.string(),
     mime_type: z.string(),
-    upload_date: z.date()
+    upload_date: z.date(),
+    file_path: z.string().uuid()
   })
   .transform(exam => ({
     id: exam.id,
@@ -95,6 +96,7 @@ export const ExamLI = z
     fileName: exam.file_name,
     mimeType: exam.mime_type,
     uploadDate: exam.upload_date,
+    filePath: exam.file_path,
     downloadUrl: examDownloadUrl(exam.id, exam.file_name)
   }))
 export type ExamLI = z.infer<typeof ExamLI>

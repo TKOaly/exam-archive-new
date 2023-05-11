@@ -6,9 +6,9 @@ interface IconProps {
 }
 
 const [DocumentIcon, PdfIcon, PhotoIcon] = [
-  '/static/img/icon-document.svg',
-  '/static/img/icon-pdf.svg',
-  '/static/img/icon-photo.svg'
+  '/img/icon-document.svg',
+  '/img/icon-pdf.svg',
+  '/img/icon-photo.svg'
 ].map(src => ({ alt, className, role, ariaHidden }: IconProps) => {
   return (
     <img

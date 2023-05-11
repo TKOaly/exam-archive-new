@@ -8,7 +8,7 @@ const Header = ({ className }: { className: string }) => {
       <div className="header__container">
         <a data-instant href="/" className="header__link">
           <img
-            src="/static/img/tkoaly-logo-outline-black.svg"
+            src="/img/tkoaly-logo-outline-black.svg"
             alt="TKO-äly logo"
             className="header__logo"
           />

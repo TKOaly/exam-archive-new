@@ -41,7 +41,7 @@ const DeleteExamButton = ({ examId, fileName }: DeleteExamProps) => {
         title={`Delete exam "${fileName}"`}
         onClick={deleteExam}
       >
-        <img aria-hidden="true" src="/static/img/delete.png" alt="Delete" />
+        <img aria-hidden="true" src="/img/delete.png" alt="Delete" />
       </button>
     </div>
   )

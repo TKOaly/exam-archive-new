@@ -11,7 +11,7 @@ const FolderIcon = ({ alt, className, role, ariaHidden }: FolderIconProps) => (
     aria-hidden={ariaHidden}
     className={className}
     alt={alt}
-    src="/static/img/icon-folder.svg"
+    src="/img/icon-folder.svg"
   />
 )
 

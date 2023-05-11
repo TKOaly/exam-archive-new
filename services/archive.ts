@@ -1,4 +1,4 @@
-import { db as knex, dbPool, DbExam } from '@utilities/db'
+import { dbPool } from '@utilities/db'
 import {
   Course,
   CourseListItem,
@@ -13,17 +13,6 @@ import {
   Count,
   FileName
 } from '@utilities/types'
-import {
-  deserializeCourse,
-  deserializeExamListItem,
-  deserializeExam
-} from './dbDeserializer'
-
-const whereNotDeleted = (tableName?: string) => {
-  const key = tableName ? `${tableName}.removed_at` : 'removed_at'
-  return { [key]: null }
-}
-
 export class CourseNotFoundError extends Error {
   constructor(message?: string) {
     // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html#example

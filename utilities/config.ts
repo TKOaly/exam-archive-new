@@ -72,40 +72,41 @@ export default {
   PG_CONNECTION_STRING: PG_CONNECTION_STRING!
 }
 
+// knex is only used to handle database migrations and seeding
 export const knexConfig = {
   development: {
     client: 'postgres',
-    version: '11.17',
+    version: '15.2',
     connection: PG_CONNECTION_STRING,
     pool: {
       min: 1,
-      max: 100
+      max: 3
+    },
+    migrations: {
+      tableName: 'knex_migrations'
+    },
+    seeds: {
+      directory: '../seeds'
     }
-    // migrations: {
-    //   tableName: 'knex_migrations'
-    // },
-    // seeds: {
-    //   directory: '../seeds'
-    // }
   },
   test: {
     client: 'postgres',
-    version: '11.17',
+    version: '15.2',
     connection: PG_CONNECTION_STRING,
     pool: {
       min: 1,
-      max: 100
+      max: 3
+    },
+    migrations: {
+      tableName: 'knex_migrations'
+    },
+    seeds: {
+      directory: '../seeds'
     }
-    // migrations: {
-    //   tableName: 'knex_migrations'
-    // },
-    // seeds: {
-    //   directory: '../seeds'
-    // }
   },
   production: {
     client: 'postgres',
-    version: '11.17',
+    version: '15.2',
     connection: PG_CONNECTION_STRING,
     pool: {
       min: 1,

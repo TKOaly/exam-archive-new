@@ -9,8 +9,6 @@
     "db:migrate": "knex migrate:latest",
     "db:seed": "knex seed:run",
     "prettier": "prettier --write .",
-    "seed-from-files-dev": "cross-env NODE_ENV=development node scripts/seed-db-from-files.js",
-    "seed-s3-from-db": "cross-env NODE_ENV=development node scripts/seed-s3-from-db.js",
     "test": "playwright test",
     "test:install": "playwright install --with-deps",
     "test:update-screenshots": "playwright test --update-snapshots",

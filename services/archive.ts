@@ -1,4 +1,4 @@
-import { db as knex, DbExam } from '@utilities/db'
+import { db as knex, dbPool, DbExam } from '@utilities/db'
 import {
   Course,
   CourseListItem,
@@ -6,10 +6,10 @@ import {
   ExamListItem,
   CourseId,
   ExamId,
-  Exam
+  Exam,
+  CourseLI,
 } from '@utilities/types'
 import {
-  deserializeCourseListItem,
   deserializeCourse,
   deserializeExamListItem,
   deserializeExam
@@ -90,32 +90,20 @@ export const renameCourse = async (
     .where({ id, ...whereNotDeleted() })
 
 export const getCourseListing = async (): Promise<CourseListItem[]> => {
-  let results = await knex('courses as course')
-    .leftJoin('exams as exam', function () {
-      this.on('exam.course_id', '=', 'course.id').andOnNull('exam.removed_at')
-    })
-    .select([
-      'course.id',
-      'course.name',
-      knex.raw('max("exam"."upload_date") as "last_modified"')
-    ])
-    .where({
-      ...whereNotDeleted('course')
-    })
-    .groupBy(['course.id'])
+  const results = await dbPool.query(`
+    SELECT
+      c.id,
+      c.name,
+      max(e.upload_date) as last_modified
+    FROM courses c
+    LEFT JOIN exams e ON e.course_id = c.id AND e.removed_at IS NULL
+    WHERE c.removed_at IS NULL
+    GROUP BY c.id
+    ORDER BY c.name ASC
+  `)
+  const courses = results.rows.map(course => CourseLI.parse(course))
 
-  results = results
-    .map(deserializeCourseListItem)
-    .filter(isNotNull) as CourseListItem[]
-
-  return results
-    .map(({ id, name, lastModified }) => ({
-      id,
-      name,
-      lastModified,
-      url: urlForCourse(id, name)
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name))
+  return courses
 }
 
 export const getCourseInfo = async (

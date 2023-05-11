@@ -1,3 +1,6 @@
+import { z } from 'zod'
+import { urlForCourse } from './courses'
+
 export type CourseId = number
 
 export interface Course {
@@ -76,3 +79,18 @@ declare module 'iron-session' {
     timestamp: number
   }
 }
+
+export const CourseLI = z
+  .object({
+    id: z.number(),
+    name: z.string(),
+    last_modified: z.date().nullable(),
+    exams: z.array(ExamLI).optional()
+  })
+  .transform(course => ({
+    id: course.id,
+    name: course.name,
+    lastModified: course.last_modified,
+    url: urlForCourse(course.id, course.name)
+  }))
+export type CourseLI = z.infer<typeof CourseLI>

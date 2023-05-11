@@ -128,3 +128,10 @@ export const CreateCourse = z.object({
   name: z.string()
 })
 export type CreateCourse = z.infer<typeof CreateCourse>
+
+export const Count = z
+  .object({
+    count: z.number()
+  })
+  .transform(count => count.count)
+export type Count = z.infer<typeof Count>

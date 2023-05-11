@@ -9,7 +9,8 @@ import {
   CourseLI,
   ExamLI,
   CreateExam,
-  CreateCourse
+  CreateCourse,
+  Count
 } from '@utilities/types'
 import {
   deserializeCourse,
@@ -44,33 +45,48 @@ export class CannotDeleteError extends Error {
  * @throws {CannotDeleteError} if course still has non-deleted exams
  */
 export const deleteCourse = async (courseId: CourseId) => {
-  const course = await knex('courses')
-    .where({ id: courseId, ...whereNotDeleted() })
-    .first(['*'])
+  const course = await dbPool.query(
+    `
+      SELECT
+        COUNT(c.name)::INTEGER AS count
+      FROM courses c
+      WHERE c.id = $1 AND c.removed_at IS NULL
+      LIMIT 1
+    `,
+    [courseId]
+  )
 
-  if (!course) {
+  if (Count.parse(course.rows[0]) === 0) {
     throw new CourseNotFoundError('Course not found.')
   }
 
-  const nonDeletedExams = parseInt(
-    (
-      await knex('exams')
-        .where({ course_id: courseId, ...whereNotDeleted() })
-        .count('id as count')
-    )[0].count + '',
-    10
+  const nonDeletedExams = await dbPool.query(
+    `
+    SELECT
+      COUNT(e.id)::INTEGER AS count
+    FROM exams e
+    WHERE e.course_id = $1 AND e.removed_at IS NULL
+  `,
+    [courseId]
   )
 
-  if (nonDeletedExams > 0) {
+  if (Count.parse(nonDeletedExams.rows[0]) > 0) {
     throw new CannotDeleteError('Cannot delete a course with exam documents.')
   }
 
-  const deletedCourse = await knex('courses')
-    .update({ removed_at: knex.fn.now() })
-    .where({ id: courseId, ...whereNotDeleted() })
-    .returning(['courses.*'])
+  const result = await dbPool.query(
+    `
+    UPDATE courses
+    SET removed_at = NOW()
+    WHERE id = $1 AND removed_at IS NULL
+    RETURNING
+      id, name, (SELECT MAX(e.upload_date) FROM exams e WHERE e.course_id = id AND removed_at IS NULL) AS last_modified
+  `,
+    [courseId]
+  )
+  const deletedCourse = CourseLI.parse(result.rows[0])
 
-  return deserializeCourse(deletedCourse[0])
+  return deletedCourse
 }
 
 export const deleteExam = async (examId: ExamId) =>

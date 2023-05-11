@@ -8,7 +8,8 @@ import {
   Exam,
   CourseLI,
   ExamLI,
-  CreateExam
+  CreateExam,
+  CreateCourse
 } from '@utilities/types'
 import {
   deserializeCourse,
@@ -240,9 +241,20 @@ export const renameExamFile = async (
   return updatedExam
 }
 
-export const createCourse = async (exam: { name: string }) => {
-  const created = await knex('courses').insert(exam, ['courses.*'])
-  return deserializeCourse(created[0])
+export const createCourse = async (course: CreateCourse) => {
+  const result = await dbPool.query(
+    `
+    INSERT INTO courses
+      (name)
+    VALUES
+      ($1)
+    RETURNING
+      id, name, created_at AS last_modified
+  `,
+    [course.name]
+  )
+  const createdCourse = CourseLI.parse(result.rows[0])
+  return createdCourse
 }
 
 export const createExam = async (exam: CreateExam) => {

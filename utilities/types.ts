@@ -123,3 +123,8 @@ export const CreateExam = z.object({
   filePath: z.string()
 })
 export type CreateExam = z.infer<typeof CreateExam>
+
+export const CreateCourse = z.object({
+  name: z.string()
+})
+export type CreateCourse = z.infer<typeof CreateCourse>

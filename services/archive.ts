@@ -74,9 +74,14 @@ export const deleteCourse = async (courseId: CourseId) => {
 }
 
 export const deleteExam = async (examId: ExamId) =>
-  await knex('exams')
-    .update({ removed_at: knex.fn.now() })
-    .where({ id: examId, ...whereNotDeleted() })
+  await dbPool.query(
+    `
+    UPDATE exams
+    SET removed_at = NOW()
+    WHERE id = $1 AND removed_at IS NULL
+  `,
+    [examId]
+  )
 
 export const renameCourse = async (
   id: CourseId,

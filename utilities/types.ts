@@ -115,3 +115,11 @@ export const CourseLI = z
     url: urlForCourse(course.id, course.name)
   }))
 export type CourseLI = z.infer<typeof CourseLI>
+
+export const CreateExam = z.object({
+  courseId: z.number(),
+  fileName: z.string(),
+  mimeType: z.string(),
+  filePath: z.string()
+})
+export type CreateExam = z.infer<typeof CreateExam>

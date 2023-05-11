@@ -81,10 +81,10 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
       await s3.send(new PutObjectCommand(params))
 
       const exam = await createExam({
-        course_id: course.id,
-        file_name: originalFilename,
-        file_path: params.Key,
-        mime_type: contentType
+        courseId: course.id,
+        fileName: originalFilename,
+        filePath: params.Key,
+        mimeType: contentType
       })
 
       // req.flash(`Exam ${file.originalname} created!`, 'info')

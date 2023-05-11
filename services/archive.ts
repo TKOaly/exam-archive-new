@@ -7,7 +7,8 @@ import {
   ExamId,
   Exam,
   CourseLI,
-  ExamLI
+  ExamLI,
+  CreateExam
 } from '@utilities/types'
 import {
   deserializeCourse,
@@ -239,28 +240,27 @@ export const renameExamFile = async (
   return updatedExam
 }
 
-interface ExamSubmission {
-  course_id: number
-  file_name: string
-  mime_type: string
-  file_path: string
-}
-
 export const createCourse = async (exam: { name: string }) => {
   const created = await knex('courses').insert(exam, ['courses.*'])
   return deserializeCourse(created[0])
 }
 
-export const createExam = async (exam: ExamSubmission) => {
-  const createdExam = await knex('exams').insert(
-    {
-      ...exam,
-      upload_date: new Date()
-    },
-    ['exams.*']
+export const createExam = async (exam: CreateExam) => {
+  const result = await dbPool.query(
+    `
+    INSERT INTO exams
+      (course_id, file_name, mime_type, file_path, upload_date)
+    VALUES
+      ($1, $2, $3, $4, $5)
+    RETURNING
+      id, course_id, file_name, mime_type, upload_date, file_path
+  `,
+    [exam.courseId, exam.fileName, exam.mimeType, exam.filePath, new Date()]
   )
 
-  return deserializeExamListItem(createdExam[0])
+  const createdExam = ExamLI.parse(result.rows[0])
+
+  return createdExam
 }
 
 export const findExamById = async (examId: number) => {

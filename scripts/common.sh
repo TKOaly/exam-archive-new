@@ -46,3 +46,32 @@ function npm_ci() {
 
     popd
 }
+
+function db_health_check() {
+    pushd "$repository"
+
+    required_command docker
+    required_command docker-compose
+
+    until docker-compose exec db pg_isready -U tarpisto &>/dev/null; do
+        echo "Waiting for database to be healthy. Trying again in 5 seconds."
+        sleep 5;
+    done
+
+    popd
+}
+
+function s3_health_check() {
+    pushd "$repository"
+
+    required_command curl
+    required_command docker
+    required_command docker-compose
+
+    until curl -I "http://$(docker-compose port s3 9000)/minio/health/live" &>/dev/null; do
+        echo "Waiting for s3 to be healthy. Trying again in 5 seconds."
+        sleep 5;
+    done
+
+    popd
+}

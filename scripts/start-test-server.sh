@@ -12,8 +12,8 @@ function main() {
     s3_health_check
 
     export PORT=${PORT:-"9000"}
-    export DB_SCHEMA=${DB_SCHEMA:-"test"}
     export PG_CONNECTION_STRING=${PG_CONNECTION_STRING:-"postgresql://tarpisto:tarpisto@$(docker-compose port db 5432)/tarpisto"}
+    export COOKIE_NAME=${COOKIE_NAME:-"tarpisto"}
     export COOKIE_SECRET=${COOKIE_SECRET:-"catlike-meringue-tying-PASTERN-bed-simply"}
 
     export USER_SERVICE_SERVICE_ID=${USER_SERVICE_SERVICE_ID:-"11188b9c-9534-4faf-8355-60973b720647"}

@@ -1,7 +1,7 @@
 import querystring from 'querystring'
 import { cookies, headers } from 'next/headers'
 import { redirect, notFound } from 'next/navigation'
-import config, { SERVER_START_TIMESTAMP, sessionOptions } from '@lib/config'
+import config, { sessionOptions } from '@lib/config'
 import { unsealData, IronSessionData } from 'iron-session'
 
 import {
@@ -113,12 +113,22 @@ export const authenticateUserServiceToken = async (token: string) => {
   }
 }
 
+const getDevSession = () => ({
+  user: { username: 'dev', membership: 'jasen', role: 'yllapitaja' },
+  rights: { access: true, upload: true, remove: true, rename: true },
+  token: 'totally-valid-token',
+  timestamp: Date.now()
+})
+
 export const getSession = async () => {
   const cookiesStore = cookies()
   const token = cookiesStore.get('token')
   const sealedSession = cookiesStore.get(sessionOptions.cookieName)
 
   if (!sealedSession || !token) {
+    if (config.NODE_ENV === 'development') {
+      return getDevSession()
+    }
     return redirect(getUserServiceLoginUrl())
   }
 
@@ -129,7 +139,7 @@ export const getSession = async () => {
 
   if (
     session.token !== token.value ||
-    session.timestamp < SERVER_START_TIMESTAMP
+    session.timestamp < config.SERVER_START_TIMESTAMP
   ) {
     return redirect(getUserServiceLoginUrl())
   }

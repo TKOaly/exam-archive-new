@@ -12,6 +12,7 @@ function main() {
     s3_health_check
 
     export PORT=${PORT:-"9000"}
+    export DB_SCHEMA=${DB_SCHEMA:-"test"}
     export PG_CONNECTION_STRING=${PG_CONNECTION_STRING:-"postgresql://tarpisto:tarpisto@$(docker-compose port db 5432)/tarpisto"}
     export COOKIE_SECRET=${COOKIE_SECRET:-"catlike-meringue-tying-PASTERN-bed-simply"}
 
@@ -26,10 +27,11 @@ function main() {
     export AWS_S3_FORCE_PATH_STYLE=${AWS_S3_FORCE_PATH_STYLE:-true}
     export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"exam-archive-local"}
 
-    export NODE_ENV=${NODE_ENV:-"development"}
+    export NODE_ENV=${NODE_ENV:-"test"}
 
     npm run db:migrate
-    npm run next:dev
+    npm run db:seed
+    npm run next:start
 
     popd
 }

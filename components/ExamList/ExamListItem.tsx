@@ -1,6 +1,7 @@
 import path from 'path'
 import formatDate from 'date-fns/format'
 import fiLocale from 'date-fns/locale/fi'
+import Link from 'next/link'
 
 import { ExamListItem } from '@lib/types'
 
@@ -51,7 +52,7 @@ const ExamListItem = ({ exam, showDelete, showRename }: ExamListItemProps) => {
         className="exam-list-item__icon"
       />
       <div role="cell" className="exam-list-item__link-container">
-        <a
+        <Link
           href={downloadUrl}
           title={fileName}
           target="_blank"
@@ -59,7 +60,7 @@ const ExamListItem = ({ exam, showDelete, showRename }: ExamListItemProps) => {
         >
           <span className="exam-list-item__basename">{basename}</span>
           <span className="exam-list-item__extname">{extname}</span>
-        </a>
+        </Link>
       </div>
       <div role="cell" className="exam-list-item__last-modified">
         {uploadDate && (

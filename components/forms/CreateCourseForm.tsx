@@ -1,49 +1,55 @@
-'use client'
-import { useState, MouseEvent } from 'react'
-import { useRouter } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
+import { getSession, validateRights } from '@services/tkoUserService'
+import { findCourseByName, createCourse } from '@services/archive'
 import { urlForCourse } from '@lib/courses'
+import { CreateCourseBody } from '@lib/types'
 
 const CreateCourseForm = () => {
-  const [courseName, setCourseName] = useState('')
-  const router = useRouter()
+  const handleCourseCreation = async (formData: FormData) => {
+    'use server'
+    const { rights } = await getSession()
 
-  const createCourse = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    const request = await fetch('/api/course/create', {
-      method: 'POST',
-      body: JSON.stringify({ courseName }),
-      credentials: 'same-origin'
-    })
-
-    const response = await request.json()
-
-    if (!request.ok) {
-      alert(response.error)
-      return
+    const isRights = validateRights(rights, 'upload')
+    if (!isRights) {
+      return `Unauthorized`
     }
-    router.push(urlForCourse(response.id, response.name))
+
+    const body = CreateCourseBody.safeParse(formData.get('courseName'))
+    if (!body.success) {
+      return 'Invalid course name'
+    }
+
+    const existingCourse = await findCourseByName(body.data.trim())
+    if (existingCourse) {
+      return `Course ${existingCourse.name} already exists!`
+    }
+
+    const createdCourse = await createCourse({ name: body.data })
+
+    redirect(urlForCourse(createdCourse.id, createdCourse.name))
   }
 
   return (
     <div className="create-course-form">
       <h3>Add a new course:</h3>
-      <input
-        className="create-course-form__name"
-        aria-label="Course name"
-        placeholder="Course name"
-        type="text"
-        onChange={e => setCourseName(e.target.value)}
-      ></input>
-      <button
-        className="create-course-form__submit"
-        type="submit"
-        name="create"
-        value="Create course"
-        onClick={createCourse}
-      >
-        Create course
-      </button>
+      <form action={handleCourseCreation}>
+        <input
+          name="courseName"
+          className="create-course-form__name"
+          aria-label="Course name"
+          placeholder="Course name"
+          type="text"
+        ></input>
+        <button
+          className="create-course-form__submit"
+          type="submit"
+          name="create"
+          value="Create course"
+        >
+          Create course
+        </button>
+      </form>
     </div>
   )
 }

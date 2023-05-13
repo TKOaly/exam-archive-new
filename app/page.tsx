@@ -5,7 +5,7 @@ import FlashMessage from '@components/FlashMessage'
 import ListingNavigation from '@components/Navigation'
 import CourseList from '@components/CourseList'
 import { ControlsBox, Logout } from '@components/Controls'
-import CreateCourseForm from '@components/forms/CreateCourseForm'
+import CreateCourse from '@components/tools/CreateCourse'
 
 import { getSession } from '@services/tkoUserService'
 import { getCourseListing } from '@services/archive'
@@ -40,7 +40,7 @@ const Page = async () => {
             <CourseList courses={courses} />
           </Suspense>
           <ControlsBox>
-            {rights.upload && <CreateCourseForm />}
+            {rights.upload && <CreateCourse />}
             <Logout username={user.username} />
           </ControlsBox>
         </main>

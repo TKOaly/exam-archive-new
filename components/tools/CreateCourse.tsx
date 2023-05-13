@@ -5,7 +5,7 @@ import { findCourseByName, createCourse } from '@services/archive'
 import { urlForCourse } from '@lib/courses'
 import { CreateCourseBody } from '@lib/types'
 
-const CreateCourseForm = () => {
+const CreateCourse = () => {
   const handleCourseCreation = async (formData: FormData) => {
     'use server'
     const { rights } = await getSession()
@@ -54,4 +54,4 @@ const CreateCourseForm = () => {
   )
 }
 
-export default CreateCourseForm
+export default CreateCourse

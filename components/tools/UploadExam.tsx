@@ -2,11 +2,11 @@
 import { useState, MouseEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
-interface UploadExamFormProps {
+interface UploadExamProps {
   courseId: number
 }
 
-const UploadExamForm = ({ courseId }: UploadExamFormProps) => {
+const UploadExam = ({ courseId }: UploadExamProps) => {
   const [file, setFile] = useState<File | null>(null)
   const router = useRouter()
 
@@ -64,4 +64,4 @@ const UploadExamForm = ({ courseId }: UploadExamFormProps) => {
   )
 }
 
-export default UploadExamForm
+export default UploadExam

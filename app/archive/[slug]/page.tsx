@@ -6,7 +6,7 @@ import FlashMessage from '@components/FlashMessage'
 import ListingNavigation from '@components/Navigation'
 import ExamList from '@components/ExamList'
 import { ControlsBox, Logout } from '@components/Controls'
-import UploadExamForm from '@components/forms/UploadExamForm'
+import UploadExam from '@components/tools/UploadExam'
 
 import { slugifyCourseName, urlForCourse } from '@lib/courses'
 
@@ -64,7 +64,7 @@ const Page = async ({ params }: any) => {
             />
           </Suspense>
           <ControlsBox>
-            {rights.upload && <UploadExamForm courseId={course.id} />}
+            {rights.upload && <UploadExam courseId={course.id} />}
             {rights.rename && (
               <RenameCourse currentName={course.name} courseId={course.id} />
             )}

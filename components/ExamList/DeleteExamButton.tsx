@@ -1,6 +1,7 @@
-'use client'
-import { MouseEvent } from 'react'
-import { useRouter } from 'next/navigation'
+import { urlForCourse } from '@lib/courses'
+import { deleteExam, findCourseByExamId } from '@services/archive'
+import { getSession, validateRights } from '@services/tkoUserService'
+import { revalidatePath } from 'next/cache'
 
 interface DeleteExamProps {
   examId: number
@@ -8,41 +9,41 @@ interface DeleteExamProps {
 }
 
 const DeleteExamButton = ({ examId, fileName }: DeleteExamProps) => {
-  const router = useRouter()
+  const handleDeleteExam = async (formData: FormData) => {
+    'use server'
+    const { rights } = await getSession()
 
-  const deleteExam = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-
-    if (!confirm('Are you sure you want to delete this exam?')) {
-      return
+    const isRights = validateRights(rights, 'remove')
+    if (!isRights) {
+      return `Unauthorized`
     }
 
-    const request = await fetch(`/api/exam/delete`, {
-      method: 'POST',
-      body: JSON.stringify({ examId }),
-      credentials: 'same-origin'
-    })
+    const examId = parseInt(formData.get('examId') as string, 10) // TODO: make better type check
 
-    const response = await request.json()
+    const course = await findCourseByExamId(examId)
 
-    if (!request.ok) {
-      alert(response.error)
-      return
+    if (!course) {
+      return 'Exam does not exist.'
     }
 
-    router.refresh()
+    await deleteExam(examId)
+
+    revalidatePath(urlForCourse(course.id, course.name))
   }
 
   return (
     <div className="delete-exam-button">
-      <button
-        className="delete-exam-button__button"
-        aria-label={`Delete exam "${fileName}"`}
-        title={`Delete exam "${fileName}"`}
-        onClick={deleteExam}
-      >
-        <img aria-hidden="true" src="/img/delete.png" alt="Delete" />
-      </button>
+      <form action={handleDeleteExam}>
+        <input hidden name="examId" value={examId} />
+        <button
+          className="delete-exam-button__button"
+          aria-label={`Delete exam "${fileName}"`}
+          title={`Delete exam "${fileName}"`}
+          type="submit"
+        >
+          <img aria-hidden="true" src="/img/delete.png" alt="Delete" />
+        </button>
+      </form>
     </div>
   )
 }

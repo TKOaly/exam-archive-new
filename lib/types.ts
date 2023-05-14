@@ -159,3 +159,6 @@ export type AdminS3Object = z.infer<typeof AdminS3Object>
 
 export const CourseName = z.string().min(1)
 export type CourseName = z.infer<typeof CourseName>
+
+export const ExamName = z.string().min(1)
+export type ExamName = z.infer<typeof ExamName>

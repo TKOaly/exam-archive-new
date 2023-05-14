@@ -46,9 +46,9 @@ const Page = async ({ params }: any) => {
     return <></>
   }
 
-  if (courseSlug !== slugifyCourseName(course.name)) {
-    return redirect(urlForCourse(course.id, course.name))
-  }
+  // if (courseSlug !== slugifyCourseName(course.name)) {
+  //   return redirect(urlForCourse(course.id, course.name))
+  // }
 
   return (
     <>

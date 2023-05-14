@@ -92,15 +92,21 @@ export const deleteExam = async (examId: ExamId) =>
 export const renameCourse = async (
   id: CourseId,
   newName: string
-): Promise<any> =>
-  await dbPool.query(
+): Promise<any> => {
+  const result = await dbPool.query(
     `
     UPDATE courses
     SET name = $2
     WHERE id = $1 AND removed_at IS NULL
+    RETURNING
+      id, name, (SELECT MAX(e.upload_date) FROM exams e WHERE e.course_id = id AND removed_at IS NULL) AS last_modified
   `,
     [id, newName]
   )
+  const renamedCourse = CourseLI.parse(result.rows[0])
+
+  return renamedCourse
+}
 
 export const getCourseListing = async (): Promise<CourseListItem[]> => {
   const results = await dbPool.query(`

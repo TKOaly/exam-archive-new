@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getSession, validateRights } from '@services/tkoUserService'
 import { findCourseByName, createCourse } from '@services/archive'
 import { urlForCourse } from '@lib/courses'
-import { CreateCourseBody } from '@lib/types'
+import { CourseName } from '@lib/types'
 
 const CreateCourse = () => {
   const handleCourseCreation = async (formData: FormData) => {
@@ -15,7 +15,7 @@ const CreateCourse = () => {
       return `Unauthorized`
     }
 
-    const body = CreateCourseBody.safeParse(formData.get('courseName'))
+    const body = CourseName.safeParse(formData.get('courseName'))
     if (!body.success) {
       return 'Invalid course name'
     }

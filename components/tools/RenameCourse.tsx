@@ -18,7 +18,7 @@ const RenameCourse = ({ currentName, courseId }: RenameCourseProps) => {
     'use server'
     const { rights } = await getSession()
 
-    const isRights = validateRights(rights, 'upload')
+    const isRights = validateRights(rights, 'rename')
     if (!isRights) {
       return `Unauthorized`
     }

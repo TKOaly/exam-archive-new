@@ -1,40 +1,44 @@
-'use client'
-import { MouseEvent } from 'react'
-import { useRouter } from 'next/navigation'
-
 import { urlForCourseListing } from '@lib/courses'
+import { deleteCourse } from '@services/archive'
+import { getSession, validateRights } from '@services/tkoUserService'
+import { redirect } from 'next/navigation'
 
 interface DeleteCourseProps {
   courseId: number
 }
 
 const DeleteCourse = ({ courseId }: DeleteCourseProps) => {
-  const router = useRouter()
+  const handleDeleteCourse = async (formData: FormData) => {
+    'use server'
+    const { rights } = await getSession()
 
-  const deleteCourse = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    const request = await fetch(`/api/course/delete`, {
-      method: 'POST',
-      body: JSON.stringify({ courseId }),
-      credentials: 'same-origin'
-    })
-
-    const response = await request.json()
-
-    if (!request.ok) {
-      alert(response.error)
-      return
+    const isRights = validateRights(rights, 'upload')
+    if (!isRights) {
+      return `Unauthorized`
     }
 
-    router.push(urlForCourseListing())
+    const courseId = parseInt(formData.get('courseId') as string, 10) // TODO: make better type check
+
+    const deletedCourse = await deleteCourse(courseId)
+    redirect(urlForCourseListing())
   }
 
   return (
-    <>
+    <div className="delete-course-form">
       <h3>Delete course</h3>
       <p>Course can only be deleted after all exams have been deleted.</p>
-      <button onClick={deleteCourse}>delete</button>
-    </>
+      <form action={handleDeleteCourse}>
+        <input hidden name="courseId" value={courseId} />
+        <button
+          className="delete-course-form__submit"
+          type="submit"
+          name="delete"
+          value="Delete course"
+        >
+          Delete course
+        </button>
+      </form>
+    </div>
   )
 }
 

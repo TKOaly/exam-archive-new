@@ -137,12 +137,18 @@ export const Count = z
   .transform(count => count.count)
 export type Count = z.infer<typeof Count>
 
-export const FileName = z
+export const ExamInfo = z
   .object({
-    file_name: z.string()
+    file_name: z.string(),
+    course_id: z.number(),
+    name: z.string()
   })
-  .transform(fileName => fileName.file_name)
-export type FileName = z.infer<typeof FileName>
+  .transform(obj => ({
+    fileName: obj.file_name,
+    courseId: obj.course_id,
+    courseName: obj.name
+  }))
+export type ExamInfo = z.infer<typeof ExamInfo>
 
 export const AdminS3Object = z
   .object({

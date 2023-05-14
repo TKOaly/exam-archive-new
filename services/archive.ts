@@ -11,7 +11,7 @@ import {
   CreateExam,
   CreateCourse,
   Count,
-  FileName
+  ExamInfo
 } from '@lib/types'
 export class CourseNotFoundError extends Error {
   constructor(message?: string) {
@@ -242,25 +242,28 @@ export const findCourseByExamId = async (
 
 export const getExamFileNameById = async (
   examId: ExamId
-): Promise<FileName | null> => {
+): Promise<ExamInfo | null> => {
   const result = await dbPool.query(
     `
     SELECT
-      e.file_name
+      e.file_name,
+      e.course_id,
+      c.name
     FROM exams e
+    LEFT JOIN courses c ON c.id = e.course_id
     WHERE e.id = $1 AND e.removed_at IS NULL
     LIMIT 1
   `,
     [examId]
   )
 
-  const filename = FileName.safeParse(result.rows[0])
+  const info = ExamInfo.safeParse(result.rows[0])
 
-  if (!filename.success) {
+  if (!info.success) {
     return null
   }
 
-  return filename.data
+  return info.data
 }
 
 export const renameExamFile = async (

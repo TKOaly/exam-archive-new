@@ -1,6 +1,8 @@
-'use client'
-import { MouseEvent } from 'react'
-import { useRouter } from 'next/navigation'
+import { urlForCourse } from '@lib/courses'
+import { ExamName } from '@lib/types'
+import { getExamFileNameById, renameExamFile } from '@services/archive'
+import { getSession, validateRights } from '@services/tkoUserService'
+import { revalidatePath } from 'next/cache'
 
 interface RenameCourseProps {
   currentName: string
@@ -8,40 +10,59 @@ interface RenameCourseProps {
 }
 
 const RenameCourse = ({ currentName, examId }: RenameCourseProps) => {
-  const router = useRouter()
+  const handleRenameExam = async (formData: FormData) => {
+    'use server'
+    const { rights } = await getSession()
 
-  const renameExam = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    const newName = prompt(
-      `Please enter the new filename for this exam:`,
-      currentName
-    )
-    if (!newName) {
-      return
+    const isRights = validateRights(rights, 'rename')
+    if (!isRights) {
+      return `Unauthorized`
     }
 
-    const request = await fetch(`/api/exam/rename`, {
-      method: 'POST',
-      body: JSON.stringify({ examId, name: newName }),
-      credentials: 'same-origin'
-    })
-
-    const response = await request.json()
-
-    if (!request.ok) {
-      alert(response.error)
-      return
+    const body = ExamName.safeParse(formData.get('examName'))
+    if (!body.success) {
+      return 'Invalid exam name'
     }
 
-    router.refresh()
+    const examId = parseInt(formData.get('examId') as string, 10) // TODO: make better type check
+
+    const info = await getExamFileNameById(examId)
+    if (!info) {
+      return `Exam not found`
+    }
+
+    if (body.data === currentName) {
+      return 'No changes needed'
+    }
+
+    await renameExamFile(examId, body.data)
+    revalidatePath(urlForCourse(info.courseId, info.courseName))
   }
 
   return (
-    <>
-      <button className="exam-list-item__rename-button" onClick={renameExam}>
-        rename
-      </button>
-    </>
+    <div className="rename-exam-form">
+      <details>
+        <summary className="exam-list-item__rename-button">rename</summary>
+        <form action={handleRenameExam}>
+          <input
+            name="examName"
+            className="rename-course-form__name"
+            aria-label="Exam name"
+            type="text"
+            defaultValue={currentName}
+          ></input>
+          <input hidden name="examId" value={examId} />
+          <button
+            className="rename-course-form__submit"
+            type="submit"
+            name="rename"
+            value="rename"
+          >
+            Rename exam
+          </button>
+        </form>
+      </details>
+    </div>
   )
 }
 

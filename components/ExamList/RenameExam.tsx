@@ -41,27 +41,25 @@ const RenameCourse = ({ currentName, examId }: RenameCourseProps) => {
 
   return (
     <div className="rename-exam-form">
-      <details>
-        <summary className="exam-list-item__rename-button">rename</summary>
-        <form action={handleRenameExam}>
-          <input
-            name="examName"
-            className="rename-course-form__name"
-            aria-label="Exam name"
-            type="text"
-            defaultValue={currentName}
-          ></input>
-          <input hidden name="examId" value={examId} />
-          <button
-            className="rename-course-form__submit"
-            type="submit"
-            name="rename"
-            value="rename"
-          >
-            Rename exam
-          </button>
-        </form>
-      </details>
+      <h3>Rename exam</h3>
+      <form action={handleRenameExam}>
+        <input
+          name="examName"
+          className="rename-course-form__name"
+          aria-label="Exam name"
+          type="text"
+          defaultValue={currentName}
+        ></input>
+        <input hidden name="examId" value={examId} />
+        <button
+          className="rename-course-form__submit"
+          type="submit"
+          name="rename"
+          value="rename"
+        >
+          Rename exam
+        </button>
+      </form>
     </div>
   )
 }

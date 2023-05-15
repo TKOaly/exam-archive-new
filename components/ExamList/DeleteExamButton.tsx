@@ -33,6 +33,7 @@ const DeleteExamButton = ({ examId, fileName }: DeleteExamProps) => {
 
   return (
     <div className="delete-exam-button">
+      <h3>Delete exam</h3>
       <form action={handleDeleteExam}>
         <input hidden name="examId" value={examId} />
         <button
@@ -41,7 +42,7 @@ const DeleteExamButton = ({ examId, fileName }: DeleteExamProps) => {
           title={`Delete exam "${fileName}"`}
           type="submit"
         >
-          <img aria-hidden="true" src="/img/delete.png" alt="Delete" />
+          Delete exam
         </button>
       </form>
     </div>

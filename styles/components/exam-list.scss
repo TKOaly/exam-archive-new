@@ -9,7 +9,7 @@ $mobile-course-header-name-margin: $link-margin;
 
 $last-modified-colwidth: 90px;
 $last-modified-mr: 6px;
-$rename-header-colwidth: 52px;
+$rename-header-colwidth: 22px;
 
 .menu-button {
   background: none;
@@ -82,6 +82,7 @@ $rename-header-colwidth: 52px;
   align-items: center;
   font-size: 14px;
   border-bottom: 1px solid #e6e6e6;
+  border-radius: 0;
 
   &__icon {
     flex: 0 0 auto;
@@ -156,6 +157,22 @@ $rename-header-colwidth: 52px;
       color: #595959;
       text-decoration: underline;
     }
+  }
+  &__summary::marker {
+    content: none;
+  }
+  &__edit-icon {
+    height: $row-height;
+    line-height: $row-height;
+    margin-right: $icon-margin;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  &__manage-container {
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid #e6e6e6;
   }
 }
 

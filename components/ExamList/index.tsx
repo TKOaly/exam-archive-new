@@ -4,6 +4,7 @@ import ExamListHeader from '@components/ExamList/ExamListHeader'
 import ExamListItem from '@components/ExamList/ExamListItem'
 import NoExamsFound from '@components/ExamList/NoExamsFound'
 import { AccessRight } from '@lib/types'
+import ExamListItemWrapper from './ExamListItemWrapper'
 
 const ExamList = ({
   courseId,
@@ -27,12 +28,17 @@ const ExamList = ({
       <div role="table" aria-label="Exams" className="exam-list">
         <ExamListHeader showDelete={rights.remove} showRename={rights.rename} />
         {exams.map(exam => (
-          <ExamListItem
-            key={exam.id}
-            exam={exam}
+          <ExamListItemWrapper
+            examId={exam.id}
+            fileName={exam.fileName}
             showDelete={rights.remove}
             showRename={rights.rename}
-          />
+          >
+            <ExamListItem
+              exam={exam}
+              showManage={rights.remove || rights.rename}
+            />
+          </ExamListItemWrapper>
         ))}
       </div>
     </div>

@@ -6,8 +6,6 @@ import Link from 'next/link'
 import { ExamListItem } from '@lib/types'
 
 import { DocumentIcon, PdfIcon, PhotoIcon } from '@components/icons/File'
-import DeleteExamButton from '@components/ExamList/DeleteExamButton'
-import RenameExam from '@components/ExamList/RenameExam'
 
 const iconForFile = (mimeType: string) => {
   if (mimeType.startsWith('image/')) {
@@ -28,23 +26,17 @@ const splitExtension = (fileName: string) => {
 
 interface ExamListItemProps {
   exam: ExamListItem
-  showDelete: boolean
-  showRename: boolean
+  showManage: boolean
 }
 
-const ExamListItem = ({ exam, showDelete, showRename }: ExamListItemProps) => {
+const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
   const { id, fileName, mimeType, uploadDate, downloadUrl } = exam
   const Icon = iconForFile(mimeType)
 
   const { extname, basename } = splitExtension(fileName)
 
   return (
-    <div
-      role="row"
-      className="exam-list-item"
-      data-exam-id={id}
-      data-exam-name={fileName}
-    >
+    <div role="row" className="exam-list-item">
       <Icon
         role="cell"
         ariaHidden={true}
@@ -72,15 +64,11 @@ const ExamListItem = ({ exam, showDelete, showRename }: ExamListItemProps) => {
           </time>
         )}
       </div>
-      {showDelete && (
-        <div role="cell" className="exam-list-item__delete">
-          <DeleteExamButton fileName={fileName} examId={id} />
-        </div>
-      )}
-      {showRename && (
-        <div role="cell" className="exam-list-item__rename">
-          <RenameExam currentName={fileName} examId={id} />
-        </div>
+      {showManage && (
+        <i
+          role="cell"
+          className="bi bi-pencil-square exam-list-item__edit-icon"
+        />
       )}
     </div>
   )

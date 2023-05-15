@@ -21,6 +21,7 @@
     "@aws-sdk/s3-request-presigner": "^3.328.0",
     "@aws-sdk/signature-v4-crt": "^3.329.0",
     "aws-crt": "^1.15.16",
+    "bootstrap-icons": "^1.10.5",
     "classnames": "^2.3.2",
     "content-disposition": "^0.5.4",
     "date-fns": "^2.30.0",

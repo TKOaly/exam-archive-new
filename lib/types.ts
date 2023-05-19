@@ -72,6 +72,12 @@ export interface AuthData {
   rights: { [right in AccessRight]: boolean }
 }
 
+export interface Session {
+  user: UserServiceUser
+  rights: { [right in AccessRight]: boolean }
+  token: string
+}
+
 export const ExamLI = z
   .object({
     id: z.number(),

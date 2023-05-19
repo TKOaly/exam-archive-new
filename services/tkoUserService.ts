@@ -110,12 +110,6 @@ export const authenticateUserServiceToken = async (token: string) => {
   }
 }
 
-const getDevSession = () => ({
-  user: { username: 'dev', membership: 'jasen', role: 'yllapitaja' },
-  rights: { access: true, upload: true, remove: true, rename: true },
-  token: 'totally-valid-token'
-})
-
 export const validateRights = (
   userRights: { [right in AccessRight]: boolean },
   ...neededRights: AccessRight[]

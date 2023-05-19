@@ -5,12 +5,12 @@ import { getExamFileNameById, renameExamFile } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
 import { revalidatePath } from 'next/cache'
 
-interface RenameCourseProps {
+interface RenameExamProps {
   currentName: string
   examId: number
 }
 
-const RenameCourse = ({ currentName, examId }: RenameCourseProps) => {
+const RenameExam = ({ currentName, examId }: RenameExamProps) => {
   const handleRenameExam = async (formData: FormData) => {
     'use server'
     const { rights } = await getSession()
@@ -65,4 +65,4 @@ const RenameCourse = ({ currentName, examId }: RenameCourseProps) => {
   )
 }
 
-export default RenameCourse
+export default RenameExam

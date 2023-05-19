@@ -9,7 +9,7 @@ interface DeleteExamProps {
   fileName: string
 }
 
-const DeleteExamButton = ({ examId, fileName }: DeleteExamProps) => {
+const DeleteExam = ({ examId, fileName }: DeleteExamProps) => {
   const handleDeleteExam = async (formData: FormData) => {
     'use server'
     const { rights } = await getSession()
@@ -50,4 +50,4 @@ const DeleteExamButton = ({ examId, fileName }: DeleteExamProps) => {
   )
 }
 
-export default DeleteExamButton
+export default DeleteExam

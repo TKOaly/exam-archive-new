@@ -1,7 +1,7 @@
 import React from 'react'
 
-import DeleteExamButton from '@components/ExamList/DeleteExamButton'
-import RenameExam from '@components/ExamList/RenameExam'
+import DeleteExamButton from '@components/tools/DeleteExam'
+import RenameExam from '@components/tools/RenameExam'
 
 interface ExamListItemWrapperProps {
   children: React.ReactNode

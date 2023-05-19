@@ -1,7 +1,8 @@
-import { urlForCourseListing } from '@lib/courses'
-import { deleteCourse } from '@services/archive'
-import { getSession, validateRights } from '@services/tkoUserService'
 import { redirect } from 'next/navigation'
+import { urlForCourseListing } from '@lib/courses'
+import { getSession } from '@lib/sessions'
+import { deleteCourse } from '@services/archive'
+import { validateRights } from '@services/tkoUserService'
 
 interface DeleteCourseProps {
   courseId: number

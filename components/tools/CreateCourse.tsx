@@ -1,9 +1,10 @@
 import { redirect } from 'next/navigation'
 
-import { getSession, validateRights } from '@services/tkoUserService'
+import { validateRights } from '@services/tkoUserService'
 import { findCourseByName, createCourse } from '@services/archive'
 import { urlForCourse } from '@lib/courses'
 import { CourseName } from '@lib/types'
+import { getSession } from '@lib/sessions'
 
 const CreateCourse = () => {
   const handleCourseCreation = async (formData: FormData) => {

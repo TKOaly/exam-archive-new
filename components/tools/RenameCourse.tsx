@@ -1,4 +1,4 @@
-import { getSession, validateRights } from '@services/tkoUserService'
+import { validateRights } from '@services/tkoUserService'
 import { CourseName } from '@lib/types'
 import {
   findCourseByName,
@@ -7,6 +7,7 @@ import {
 } from '@services/archive'
 import { revalidatePath } from 'next/cache'
 import { urlForCourse } from '@lib/courses'
+import { getSession } from '@lib/sessions'
 
 interface RenameCourseProps {
   currentName: string

@@ -6,7 +6,7 @@ const Logout = ({ username }: LogoutProps) => {
   return (
     <div className="log-out">
       Logged in: {username} (
-      <a className="log-out__link" href="/api/auth/signout">
+      <a className="log-out__link" href="/auth/signout">
         Log out
       </a>
       )

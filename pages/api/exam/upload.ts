@@ -11,7 +11,7 @@ import { getCourseInfo, createExam } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
 import s3 from '@services/s3'
 import configs from '@lib/config'
-import { withSessionRoute } from '@lib/sessions'
+import { getLegacyApiSession } from '@lib/sessions'
 
 export const config = {
   api: {
@@ -48,7 +48,11 @@ const parseFile = (
 const upload = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     try {
-      const isRights = validateRights(req.session.rights, 'upload')
+      const session = await getLegacyApiSession(req)
+      if (!session) {
+        return res.status(401).json({ error: '401 Unauthorized' })
+      }
+      const isRights = validateRights(session.rights, 'upload')
       if (!isRights) {
         return res.status(401).json({ error: '401 Unauthorized' })
       }
@@ -98,6 +102,6 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 }
 
-const handler = withSessionRoute(upload)
+const handler = upload
 
 export default handler

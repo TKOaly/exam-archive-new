@@ -1,8 +1,6 @@
 import querystring from 'querystring'
-import { cookies, headers } from 'next/headers'
-import { redirect, notFound } from 'next/navigation'
-import config, { sessionOptions } from '@lib/config'
-import { unsealData, IronSessionData } from 'iron-session'
+import { notFound } from 'next/navigation'
+import config from '@lib/config'
 
 import {
   UserRole,
@@ -108,44 +106,15 @@ export const authenticateUserServiceToken = async (token: string) => {
   return {
     user,
     rights: roleRights[user.role],
-    token,
-    timestamp: Date.now()
+    token
   }
 }
 
 const getDevSession = () => ({
   user: { username: 'dev', membership: 'jasen', role: 'yllapitaja' },
   rights: { access: true, upload: true, remove: true, rename: true },
-  token: 'totally-valid-token',
-  timestamp: Date.now()
+  token: 'totally-valid-token'
 })
-
-export const getSession = async () => {
-  const cookiesStore = cookies()
-  const token = cookiesStore.get('token')
-  const sealedSession = cookiesStore.get(sessionOptions.cookieName)
-
-  if (!sealedSession || !token) {
-    if (config.NODE_ENV === 'development') {
-      return getDevSession()
-    }
-    return redirect(getUserServiceLoginUrl())
-  }
-
-  const session: IronSessionData = await unsealData(
-    sealedSession.value,
-    sessionOptions
-  )
-
-  if (
-    session.token !== token.value ||
-    session.timestamp < config.SERVER_START_TIMESTAMP
-  ) {
-    return redirect(getUserServiceLoginUrl())
-  }
-
-  return session
-}
 
 export const validateRights = (
   userRights: { [right in AccessRight]: boolean },

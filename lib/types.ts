@@ -72,15 +72,6 @@ export interface AuthData {
   rights: { [right in AccessRight]: boolean }
 }
 
-declare module 'iron-session' {
-  interface IronSessionData {
-    user: UserServiceUser
-    rights: { [right in AccessRight]: boolean }
-    token: string
-    timestamp: number
-  }
-}
-
 export const ExamLI = z
   .object({
     id: z.number(),

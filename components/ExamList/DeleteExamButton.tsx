@@ -1,7 +1,8 @@
-import { urlForCourse } from '@lib/courses'
-import { deleteExam, findCourseByExamId } from '@services/archive'
-import { getSession, validateRights } from '@services/tkoUserService'
 import { revalidatePath } from 'next/cache'
+import { urlForCourse } from '@lib/courses'
+import { getSession } from '@lib/sessions'
+import { deleteExam, findCourseByExamId } from '@services/archive'
+import { validateRights } from '@services/tkoUserService'
 
 interface DeleteExamProps {
   examId: number

@@ -7,7 +7,7 @@ import ListingNavigation from '@components/Navigation'
 import { ControlsBox, Logout } from '@components/Controls'
 
 import { adminGetS3Objects, sortByPrefixThenObjNameAsc } from '@services/admin'
-import { getSession } from '@services/tkoUserService'
+import { getSession } from '@lib/sessions'
 
 import config from '@lib/config'
 

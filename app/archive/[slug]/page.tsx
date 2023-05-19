@@ -13,7 +13,7 @@ import { slugifyCourseName, urlForCourse } from '@lib/courses'
 import RenameCourse from '@components/tools/RenameCourse'
 import DeleteCourse from '@components/tools/DeleteCourse'
 
-import { getSession } from '@services/tkoUserService'
+import { getSession } from '@lib/sessions'
 import { getCourseInfo } from '@services/archive'
 
 export const metadata = {

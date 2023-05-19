@@ -7,7 +7,7 @@ import CourseList from '@components/CourseList'
 import { ControlsBox, Logout } from '@components/Controls'
 import CreateCourse from '@components/tools/CreateCourse'
 
-import { getSession } from '@services/tkoUserService'
+import { getSession } from '@lib/sessions'
 import { getCourseListing } from '@services/archive'
 
 export const metadata = {

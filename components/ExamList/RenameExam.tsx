@@ -1,7 +1,8 @@
 import { urlForCourse } from '@lib/courses'
+import { getSession } from '@lib/sessions'
 import { ExamName } from '@lib/types'
 import { getExamFileNameById, renameExamFile } from '@services/archive'
-import { getSession, validateRights } from '@services/tkoUserService'
+import { validateRights } from '@services/tkoUserService'
 import { revalidatePath } from 'next/cache'
 
 interface RenameCourseProps {

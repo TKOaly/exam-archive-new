@@ -1,5 +1,4 @@
 import React from 'react'
-import { ExamListItem as ExamListItemType } from '@lib/types'
 
 import DeleteExamButton from '@components/ExamList/DeleteExamButton'
 import RenameExam from '@components/ExamList/RenameExam'

@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const path = require('path')
 
+const csp =
+  process.env.NODE_ENV === 'development'
+    ? ''
+    : "default-src 'self'; img-src 'self'; media-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline';"
+
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
@@ -10,6 +15,7 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')]
   },
+  poweredByHeader: false,
   async headers() {
     return [
       {
@@ -34,8 +40,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value:
-              "default-src 'self'; img-src 'self'; media-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline';"
+            value: csp
           }
         ]
       }

@@ -1,34 +1,52 @@
-import z from 'zod'
-import { IronSessionOptions } from 'iron-session'
-
-const EnvSchema = z.object({
-  NODE_ENV: z.string(),
-  PG_CONNECTION_STRING: z.string(),
-  COOKIE_NAME: z.string(),
-  COOKIE_SECRET: z.string(),
-  USER_SERVICE_SERVICE_ID: z.string(),
-  USER_SERVICE_URL: z.string(),
-  AWS_REGION: z.string(),
-  AWS_ACCESS_KEY_ID: z.string(),
-  AWS_SECRET_ACCESS_KEY: z.string(),
-  AWS_S3_ENDPOINT: z.string(),
-  AWS_S3_FORCE_PATH_STYLE: z.string(),
-  AWS_S3_BUCKET_ID: z.string()
-})
-
-export const SERVER_START_TIMESTAMP = Date.now()
-
-const config = EnvSchema.parse(process.env)
-
-export default { ...config, SERVER_START_TIMESTAMP }
-
-export const sessionOptions: IronSessionOptions = {
-  cookieName: config.COOKIE_NAME as string,
-  password: config.COOKIE_SECRET as string,
-  cookieOptions: {
-    httpOnly: true,
-    sameSite: 'strict', // should be strict
-    maxAge: 86400, // 24h
-    secure: config.NODE_ENV === 'production'
+const checkExists = (...values: (string | undefined)[]) => {
+  for (const value of values) {
+    if (!value || value.length === 0) {
+      throw new Error(`The environment variable ${value} is not set.`)
+    }
   }
+}
+
+const NODE_ENV: string | undefined = process.env.NODE_ENV!
+const PG_CONNECTION_STRING: string | undefined =
+  process.env.PG_CONNECTION_STRING!
+const COOKIE_NAME: string | undefined = process.env.COOKIE_NAME!
+const COOKIE_SECRET: string | undefined = process.env.COOKIE_SECRET!
+const COOKIE_ISSUER: string = 'tkoaly'
+const COOKIE_SUBJECT: string = 'tarpisto'
+const COOKIE_JWTID: string = 'tarpisto'
+const USER_SERVICE_SERVICE_ID: string | undefined =
+  process.env.USER_SERVICE_SERVICE_ID!
+const USER_SERVICE_URL: string | undefined = process.env.USER_SERVICE_URL!
+const AWS_REGION: string | undefined = process.env.AWS_REGION!
+const AWS_ACCESS_KEY_ID: string | undefined = process.env.AWS_ACCESS_KEY_ID!
+const AWS_SECRET_ACCESS_KEY: string | undefined =
+  process.env.AWS_SECRET_ACCESS_KEY!
+const AWS_S3_ENDPOINT: string | undefined = process.env.AWS_S3_ENDPOINT!
+const AWS_S3_FORCE_PATH_STYLE: string | undefined =
+  process.env.AWS_S3_FORCE_PATH_STYLE!
+const AWS_S3_BUCKET_ID: string | undefined = process.env.AWS_S3_BUCKET_ID!
+const SERVER_START_TIMESTAMP: number = Date.now()
+
+checkExists(NODE_ENV, PG_CONNECTION_STRING, COOKIE_NAME, COOKIE_SECRET)
+checkExists(USER_SERVICE_SERVICE_ID, USER_SERVICE_URL)
+checkExists(AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+checkExists(AWS_S3_ENDPOINT, AWS_S3_FORCE_PATH_STYLE, AWS_S3_BUCKET_ID)
+
+export default {
+  NODE_ENV,
+  PG_CONNECTION_STRING,
+  COOKIE_NAME,
+  COOKIE_SECRET,
+  COOKIE_ISSUER,
+  COOKIE_SUBJECT,
+  COOKIE_JWTID,
+  USER_SERVICE_SERVICE_ID,
+  USER_SERVICE_URL,
+  AWS_REGION,
+  AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY,
+  AWS_S3_ENDPOINT,
+  AWS_S3_FORCE_PATH_STYLE,
+  AWS_S3_BUCKET_ID,
+  SERVER_START_TIMESTAMP
 }

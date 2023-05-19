@@ -1,12 +1,11 @@
-import Header from '@components/Header'
-import Footer from '@components/Footer'
+import Link from 'next/link'
 
 const NotFoundPage = () => {
   return (
     <div className="page-container">
       <main>
         <h1>404 - Not Found</h1>
-        <a href="/">Back to listing</a>
+        <Link href="/">Back to listing</Link>
       </main>
     </div>
   )

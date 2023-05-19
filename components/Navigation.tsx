@@ -1,4 +1,5 @@
 import classnames from 'classnames'
+import Link from 'next/link'
 import ArrowBack from '@components/icons/ArrowBack'
 
 const BackButton = ({
@@ -8,14 +9,13 @@ const BackButton = ({
   href: string
   className: string
 }) => (
-  <a
-    data-instant
+  <Link
     href={href}
     aria-label="Back to course listing"
     className={classnames('back-button', className)}
   >
     <ArrowBack className="back-button__icon" alt="Arrow pointing to the left" />
-  </a>
+  </Link>
 )
 
 interface NavigationProps {

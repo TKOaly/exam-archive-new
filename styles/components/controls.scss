@@ -1,21 +1,49 @@
+@use '../common' as common;
+
 .controls {
+  width: 100%;
   font-size: smaller;
-  border: 1px solid black;
   margin: 30px 0;
-  padding: 10px;
   display: inline-block;
+  box-shadow: common.$box-shadow-elevation-1;
+  background: #fff;
+  border-radius: 5px;
 }
 
-.create-course-form__control {
+.create-course-form {
   display: block;
+  padding: 0 0 0 10px;
 }
 
-.rename-course-form__control {
+.rename-course-form {
   display: block;
+  padding: 0 0 0 10px;
+}
+
+.delete-course-form {
+  display: block;
+  padding: 0 0 0 10px;
+}
+
+.exam-upload-form {
+  display: block;
+  padding: 0 0 0 10px;
+}
+
+.delete-exam-form {
+  display: block;
+  padding: 0 0 0 10px;
+}
+
+.rename-exam-form {
+  display: block;
+  padding: 0 0 0 10px;
 }
 
 .log-out {
   margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 0 0 0 10px;
   font-size: 8pt;
 
   &__link,

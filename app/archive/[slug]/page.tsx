@@ -35,19 +35,13 @@ const parseSlug = (slug: string) => {
   }
 }
 
-const fetchCourse = async (id: number) => {
+export const generateMetadata = async ({ params }: any): Promise<Metadata> => {
+  const { id, courseSlug } = parseSlug(params.slug)
   const course = await getCourseInfo(id)
 
   if (!course) {
     notFound()
   }
-
-  return course
-}
-
-export const generateMetadata = async ({ params }: any): Promise<Metadata> => {
-  const { id, courseSlug } = parseSlug(params.slug)
-  const course = await fetchCourse(id)
 
   return {
     title: `${course.name} - Tärpistö - TKO-äly ry`,
@@ -65,7 +59,10 @@ const Page = async ({ params }: any) => {
 
   const { id, courseSlug } = parseSlug(params.slug)
 
-  const course = await fetchCourse(id)
+  const course = await getCourseInfo(id)
+  if (!course) {
+    notFound()
+  }
 
   // if (courseSlug !== slugifyCourseName(course.name)) {
   //   return redirect(urlForCourse(course.id, course.name))

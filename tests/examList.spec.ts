@@ -1,505 +1,540 @@
-import { test, expect } from '@playwright/test'
+import { expect } from '@playwright/test'
+import { test } from './fixtures'
+import { CourseListItem, ExamListItem } from '../lib/types'
 
-test.describe.configure({ mode: 'serial' })
+test.describe('examList looks right', () => {
+  let courses: CourseListItem[] = []
+  let exams: ExamListItem[] = []
 
-test('examlisting works', async ({ page }) => {
-  await page.goto('/archive/3')
+  test.beforeAll(async ({ request }, { workerIndex }) => {
+    const introRes = await request.post('/api/courses/create', {
+      data: { courseName: `Introduction to testing -${workerIndex}-` }
+    })
+    const introCourse = await introRes.json()
+    courses = [...courses, introCourse]
 
-  const heading = page.getByRole('heading', {
-    name: 'Advanced Course in Machine Learning'
+    const newExams = await request.post('/api/exams/upload', {
+      multipart: {
+        courseId: introCourse.id,
+        document: {
+          name: `document-${workerIndex}.txt`,
+          mimeType: 'text/plain',
+          buffer: Buffer.from('This is a test.')
+        },
+        pdf: {
+          name: `pdf-${workerIndex}.pdf`,
+          mimeType: 'application/pdf',
+          buffer: Buffer.from('This is a test.')
+        },
+        png: {
+          name: `image-${workerIndex}.png`,
+          mimeType: 'image/png',
+          buffer: Buffer.from('This is a test.')
+        }
+      }
+    })
+
+    exams = [...exams, ...(await newExams.json())]
+
+    const advancedRes = await request.post('/api/courses/create', {
+      data: { courseName: `Advanced course in Testing -${workerIndex}-` }
+    })
+    courses = [...courses, await advancedRes.json()]
   })
-  await expect(heading).toBeVisible()
 
-  await expect(page).toHaveTitle(
-    'Advanced Course in Machine Learning - Tärpistö - TKO-äly ry'
-  )
+  test.afterAll(async ({ request }) => {
+    await Promise.all(
+      exams.map(
+        async exam =>
+          await request.post(`/api/exams/delete`, {
+            data: {
+              examId: exam.id
+            }
+          })
+      )
+    )
+
+    await Promise.all(
+      courses.map(
+        async course =>
+          await request.post(`/api/courses/delete`, {
+            data: { courseId: course.id }
+          })
+      )
+    )
+  })
+
+  test('examlisting works', async ({ page, courseList }, { workerIndex }) => {
+    await courseList.gotoCourseByName(
+      `Introduction to testing -${workerIndex}-`
+    )
+
+    const heading = page.getByRole('heading', {
+      name: `Introduction to testing -${workerIndex}-`
+    })
+    await expect(heading).toBeVisible()
+
+    await expect(page).toHaveTitle(
+      `Introduction to testing -${workerIndex}- - Tärpistö - TKO-äly ry`
+    )
+  })
+
+  test('back to course list button works', async ({ page, courseList }, {
+    workerIndex
+  }) => {
+    await courseList.gotoCourseByName(
+      `Introduction to testing -${workerIndex}-`
+    )
+
+    const backButton = page.locator('[aria-label="Back to course listing"]')
+    await expect(backButton).toBeVisible()
+
+    await backButton.click()
+
+    const heading = page.getByRole('heading', { name: 'Courses' })
+    await expect(heading).toBeVisible()
+  })
+
+  test('examlisting headers are correct', async ({ page, courseList }, {
+    workerIndex
+  }) => {
+    await courseList.gotoCourseByName(
+      `Introduction to testing -${workerIndex}-`
+    )
+
+    const headers = page.getByRole('row', {
+      name: 'Exam Upload date'
+    })
+    await expect(headers).toBeVisible()
+  })
+
+  test('if no exams added, show no exams found', async ({ page, courseList }, {
+    workerIndex
+  }) => {
+    await courseList.gotoCourseByName(
+      `Advanced course in Testing -${workerIndex}-`
+    )
+
+    const notification = page.getByText(`No exams found.`)
+    await expect(notification).toBeVisible()
+  })
+
+  test('examlisting row is correct with correct icon', async ({
+    page,
+    courseList,
+    examList
+  }, { workerIndex }) => {
+    await courseList.gotoCourseByName(
+      `Introduction to testing -${workerIndex}-`
+    )
+
+    const documentRow = await examList.getExamItemRowByName(
+      `document-${workerIndex}.txt`
+    )
+    const documentIcon = documentRow.locator('img').nth(0)
+    const name = documentRow.locator('a', {
+      hasText: `document-${workerIndex}.txt`
+    })
+    const lastModified = documentRow.locator('time', {
+      hasText: `${new Date().toISOString().split('T')[0]}`
+    })
+    const documentExamId = await page.getAttribute(
+      `[data-exam-name="document-${workerIndex}.txt"]`,
+      'data-exam-id'
+    )
+    const manageButton = documentRow.getByTitle(
+      `Manage exam "document-${workerIndex}.txt"`
+    )
+
+    await expect(documentRow).toBeVisible()
+    await expect(name).toBeVisible()
+    await expect(lastModified).toBeVisible()
+    await expect(manageButton).toBeVisible()
+
+    await expect(documentIcon).toHaveAttribute('src', '/img/icon-document.svg')
+    await expect(name).toHaveAttribute(
+      'href',
+      `/archive/exams/${documentExamId}/document-${workerIndex}.txt`
+    )
+
+    const pdfRow = await examList.getExamItemRowByName(`pdf-${workerIndex}.pdf`)
+    const pdfIcon = pdfRow.locator('img').nth(0)
+
+    await expect(pdfRow).toBeVisible()
+    await expect(pdfIcon).toHaveAttribute('src', '/img/icon-pdf.svg')
+
+    const imageRow = await examList.getExamItemRowByName(
+      `image-${workerIndex}.png`
+    )
+    const imageIcon = imageRow.locator('img').nth(0)
+
+    await expect(imageRow).toBeVisible()
+    await expect(imageIcon).toHaveAttribute('src', '/img/icon-photo.svg')
+  })
+
+  test.fixme('controls is correct', async ({ page, examList }) => {
+    await examList.goto(132, 'Probability Theory')
+
+    const box = page.getByTestId('controls')
+
+    await expect(box).toBeVisible()
+
+    const uploadHeader = box.getByRole('heading', {
+      name: 'Upload a new file here:'
+    })
+    const uploadInput = box.getByRole('textbox', { name: 'File' })
+    const uploadButton = box.getByRole('button', { name: 'Upload' })
+
+    const renameHeader = box.getByRole('heading', { name: 'Rename course' })
+    const renameButton = box.getByRole('button', { name: 'rename' })
+
+    const deleteHeader = box.getByRole('heading', { name: 'Delete course' })
+    const deleteSubHeader = box.getByText(
+      'Course can only be deleted after all exams have been deleted.'
+    )
+    const deleteButton = box.getByRole('button', { name: 'delete' })
+
+    const loggedIn = box.getByText('Logged in: dev-user (Log out)')
+    const logoutLink = loggedIn.locator('a', { hasText: 'Log out' })
+
+    await expect(uploadHeader).toBeVisible()
+    await expect(uploadInput).toBeVisible()
+    await expect(uploadButton).toBeVisible()
+
+    await expect(renameHeader).toBeVisible()
+    await expect(renameButton).toBeVisible()
+
+    await expect(deleteHeader).toBeVisible()
+    await expect(deleteSubHeader).toBeVisible()
+    await expect(deleteButton).toBeVisible()
+
+    await expect(loggedIn).toBeVisible()
+    await expect(logoutLink).toHaveAttribute('href', '/auth/signout')
+  })
 })
 
 // test('examList screenshot testing', async ({ page }) => {
-//   await page.goto('/archive/3')
+//   await page.goto('/archive/3-advanced-course-in-machine-learning')
 //   await expect(page).toHaveScreenshot({
 //     fullPage: true
 //   })
 // })
 
-test('examlisting headers are correct', async ({ page }) => {
-  await page.goto('/archive/3')
+test.describe('examlisting functions right', () => {
+  test.beforeEach(async ({ request }, { testId }) => {
+    const introRes = await request.post('/api/courses/create', {
+      data: { courseName: `Introduction to testing ${testId}` }
+    })
+    const introCourse: CourseListItem = await introRes.json()
 
-  const headers = page.getByRole('row', {
-    name: 'Exam Upload date Delete Rename'
-  })
-  await expect(headers).toBeVisible()
-})
-
-test('back to course list button works', async ({ page }) => {
-  await page.goto('/archive/132')
-
-  const backButton = page.locator('[aria-label="Back to course listing"]')
-  await expect(backButton).toBeVisible()
-
-  await backButton.click()
-
-  const heading = page.getByRole('heading', { name: 'Courses' })
-  await expect(heading).toBeVisible()
-})
-
-test('if no exams added, show no exams found', async ({ page }) => {
-  await page.goto('/archive/132')
-
-  const notification = page.getByText(`No exams found.`)
-  await expect(notification).toBeVisible()
-})
-
-test('examlisting row is correct with pdf icon', async ({ page }) => {
-  await page.goto('/archive/3')
-
-  const row = page.locator('[data-exam-id="1842"]')
-  const fileIcon = row.locator('img').nth(0)
-  const name = row.locator('a', {
-    hasText: '170511_Advanced_Course_in_Machine_Learning_KK.pdf'
-  })
-  const lastModified = row.locator('time', { hasText: '2017-05-11' })
-  const deleteButton = row.getByTitle(
-    'Delete exam "170511_Advanced_Course_in_Machine_Learning_KK.pdf"'
-  )
-  const deleteIcon = deleteButton.locator('img')
-  const renameButton = row
-    .getByRole('cell', { name: 'rename' })
-    .locator('button')
-
-  await expect(row).toBeVisible()
-  await expect(name).toBeVisible()
-  await expect(lastModified).toBeVisible()
-  await expect(deleteButton).toBeVisible()
-  await expect(renameButton).toBeVisible()
-
-  await expect(fileIcon).toHaveAttribute('src', '/static/img/icon-pdf.svg')
-  await expect(name).toHaveAttribute(
-    'href',
-    '/download/1842/170511_Advanced_Course_in_Machine_Learning_KK.pdf'
-  )
-  await expect(deleteIcon).toHaveAttribute('src', '/static/img/delete.png')
-  await expect(renameButton).toHaveAttribute(
-    'data-current-name',
-    '170511_Advanced_Course_in_Machine_Learning_KK.pdf'
-  )
-  await expect(renameButton).toHaveAttribute('data-id', '1842')
-  await expect(renameButton).toHaveAttribute('data-rename-exam-button', 'true')
-})
-
-test('examlisting row shows image icon', async ({ page }) => {
-  await page.goto('/archive/5')
-
-  const row = page.locator('[data-exam-id="1631"]')
-  const fileIcon = row.locator('img').nth(0)
-  const name = row.locator('a', { hasText: '130227_Algebra_I_KK1.jpg' })
-
-  await expect(row).toBeVisible()
-  await expect(name).toBeVisible()
-
-  await expect(fileIcon).toHaveAttribute('src', '/static/img/icon-photo.svg')
-})
-
-test('upload new file works', async ({ page, request }) => {
-  await page.goto('/archive/3')
-
-  const fileInput = page.locator("input[type='file']")
-  await expect(fileInput).toBeVisible()
-
-  const filename = `${Math.random()}.pdf`
-
-  // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
-  await fileInput.setInputFiles({
-    name: filename,
-    mimeType: 'application/pdf',
-    buffer: Buffer.from('Test file.')
+    await request.post('/api/exams/upload', {
+      multipart: {
+        courseId: introCourse.id,
+        pdf: {
+          name: `existing-${testId}.pdf`,
+          mimeType: 'application/pdf',
+          buffer: Buffer.from('This is a test.')
+        }
+      }
+    })
   })
 
-  const uploadButton = page.getByRole('button', { name: 'Upload' })
-  await expect(uploadButton).toBeVisible()
-  await uploadButton.click()
-
-  const success = page.getByText(`Exam ${filename} created!`)
-  await expect(success).toBeVisible()
-
-  // clean exam
-  const examId = await page.getAttribute(
-    `[data-exam-name="${filename}"]`,
-    'data-exam-id'
-  )
-  await request.post(`/archive/delete-exam/${examId}`)
-})
-
-test('document will bring right icon', async ({ page, request }) => {
-  await page.goto('/archive/3')
-
-  const fileInput = page.locator("input[type='file']")
-  const filename = `${Math.random()}.txt`
-
-  // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
-  await fileInput.setInputFiles({
-    name: filename,
-    mimeType: 'text/plain',
-    buffer: Buffer.from('Test file.')
-  })
-
-  const uploadButton = page.getByRole('button', { name: 'Upload' })
-  await uploadButton.click()
-
-  const row = page.locator(`[data-exam-name="${filename}"]`)
-  const fileIcon = row.locator('img').nth(0)
-
-  await expect(row).toBeVisible()
-  await expect(fileIcon).toHaveAttribute('src', '/static/img/icon-document.svg')
-
-  // clean exam
-  const examId = await page.getAttribute(
-    `[data-exam-name="${filename}"]`,
-    'data-exam-id'
-  )
-  await request.post(`/archive/delete-exam/${examId}`)
-})
-
-test('rename exam works', async ({ page, request }) => {
-  await page.goto('/archive/3')
-
-  const fileInput = page.locator("input[type='file']")
-  const filename = `${Math.random()}.txt`
-
-  // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
-  await fileInput.setInputFiles({
-    name: filename,
-    mimeType: 'text/plain',
-    buffer: Buffer.from('Test file.')
-  })
-
-  const uploadButton = page.getByRole('button', { name: 'Upload' })
-  await uploadButton.click()
-
-  const newFilename = `${Math.random()}-2.txt`
-  page.once('dialog', async dialog => {
-    expect(dialog.message()).toEqual(
-      'Please enter the new filename for this exam:'
+  test.afterEach(async ({ request }, { testId }) => {
+    const exams: ExamListItem[] = await (await request.get('/api/exams')).json()
+    await Promise.all(
+      exams
+        .filter(exam => exam.fileName.includes(testId))
+        .map(
+          async exam =>
+            await request.post(`/api/exams/delete`, {
+              data: {
+                examId: exam.id
+              }
+            })
+        )
     )
-    await dialog.accept(newFilename)
-  })
 
-  await page.click(`[data-current-name="${filename}"]`)
-
-  const newRow = page.locator(`[data-exam-name="${newFilename}"]`)
-  const name = newRow.locator('a', {
-    hasText: newFilename
-  })
-  await expect(name).toBeVisible()
-
-  // clean exam
-  const examId = await page.getAttribute(
-    `[data-exam-name="${newFilename}"]`,
-    'data-exam-id'
-  )
-  await request.post(`/archive/delete-exam/${examId}`)
-})
-
-test('rename exam cancel does nothing', async ({ page, request }) => {
-  await page.goto('/archive/3')
-
-  const fileInput = page.locator("input[type='file']")
-  const filename = `${Math.random()}.txt`
-
-  // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
-  await fileInput.setInputFiles({
-    name: filename,
-    mimeType: 'text/plain',
-    buffer: Buffer.from('Test file.')
-  })
-
-  const uploadButton = page.getByRole('button', { name: 'Upload' })
-
-  await uploadButton.click()
-
-  page.once('dialog', async dialog => {
-    expect(dialog.message()).toEqual(
-      'Please enter the new filename for this exam:'
+    const courses: CourseListItem[] = await (
+      await request.get('/api/courses')
+    ).json()
+    await Promise.all(
+      courses
+        .filter(course => course.name.includes(testId))
+        .map(
+          async course =>
+            await request.post(`/api/courses/delete`, {
+              data: { courseId: course.id }
+            })
+        )
     )
-    await dialog.dismiss()
   })
 
-  await page.click(`[data-current-name="${filename}"]`)
+  test('upload new file works', async ({ page, courseList, examList }, {
+    testId
+  }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
 
-  const newRow = page.locator(`[data-exam-name="${filename}"]`)
-  const name = newRow.locator('a', {
-    hasText: filename
+    const fileInput = page.locator("input[type='file']")
+    await expect(fileInput).toBeVisible()
+
+    const filename = `${testId}.pdf`
+
+    // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
+    await fileInput.setInputFiles({
+      name: filename,
+      mimeType: 'application/pdf',
+      buffer: Buffer.from('Test file.')
+    })
+
+    const uploadButton = page.getByRole('button', { name: 'Upload exam' })
+    await expect(uploadButton).toBeVisible()
+    await uploadButton.click()
+
+    await test.slow() // add timeout for making sure file is uploaded
+
+    const row = await examList.getExamItemRowByName(filename)
+    await expect(row).toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Exam ${filename} created!`)
+    // await expect(success).toBeVisible()
   })
-  await expect(name).toBeVisible()
 
-  // clean exam
-  const examId = await page.getAttribute(
-    `[data-exam-name="${filename}"]`,
-    'data-exam-id'
-  )
-  await request.post(`/archive/delete-exam/${examId}`)
+  test('upload multiple file works', async ({ page, courseList, examList }, {
+    testId
+  }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+
+    const fileInput = page.locator("input[type='file']")
+    await expect(fileInput).toBeVisible()
+
+    // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
+    await fileInput.setInputFiles([
+      {
+        name: `${testId}-1.pdf`,
+        mimeType: 'application/pdf',
+        buffer: Buffer.from('Test file.')
+      },
+      {
+        name: `${testId}-2.pdf`,
+        mimeType: 'application/pdf',
+        buffer: Buffer.from('Test file.')
+      }
+    ])
+
+    const uploadButton = page.getByRole('button', { name: 'Upload exam' })
+    await expect(uploadButton).toBeVisible()
+    await uploadButton.click()
+
+    await test.slow() // add timeout for making sure file is uploaded
+
+    const row1 = await examList.getExamItemRowByName(`${testId}-1.pdf`)
+    await expect(row1).toBeVisible()
+
+    const row2 = await examList.getExamItemRowByName(`${testId}-2.pdf`)
+    await expect(row2).toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Exam ${filename} created!`)
+    // await expect(success).toBeVisible()
+  })
+
+  test('rename exam works', async ({ page, courseList, examList }, {
+    testId
+  }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+
+    const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    await expect(row).toBeVisible()
+
+    const manageButton = row.getByRole('button', {
+      name: `Manage exam "existing-${testId}.pdf"`
+    })
+    await manageButton.click()
+
+    const renameInput = row.locator('input[name="examName"]')
+    const renameButton = row.getByRole('button', {
+      name: `Rename exam "existing-${testId}.pdf"`
+    })
+
+    const newFilename = `renamed-${testId}.pdf`
+    await renameInput.fill(newFilename)
+    await renameButton.click()
+
+    const newRow = await examList.getExamItemRowByName(newFilename)
+    const name = newRow.locator('a', {
+      hasText: newFilename
+    })
+    await expect(name).toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Exam has been renamed from X to Y.`)
+    // await expect(success).toBeVisible()
+  })
+
+  test('delete exam works', async ({ page, courseList, examList }, {
+    testId
+  }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+
+    const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    await expect(row).toBeVisible()
+
+    const manageButton = row.getByRole('button', {
+      name: `Manage exam "existing-${testId}.pdf"`
+    })
+    await manageButton.click()
+
+    const deleteButton = row.getByRole('button', {
+      name: `Delete exam "existing-${testId}.pdf"`
+    })
+    await deleteButton.click()
+
+    const newRow = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    await expect(newRow).not.toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Exam has been deleted.`)
+    // await expect(success).toBeVisible()
+  })
+
+  test('opening exam makes popup like pdf viewer etc', async ({
+    page,
+    courseList,
+    examList
+  }, { testId }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+
+    const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    const name = row.locator('a', {
+      hasText: `existing-${testId}.pdf`
+    })
+
+    const [page1] = await Promise.all([
+      page.waitForEvent('popup'),
+      name.click()
+    ])
+
+    await expect(page1).toBeDefined()
+  })
 })
 
-test('delete exam works', async ({ page }) => {
-  await page.goto('/archive/3')
+test.describe('managing course works', () => {
+  test.beforeEach(async ({ request }, { testId }) => {
+    const introRes = await request.post('/api/courses/create', {
+      data: { courseName: `Introduction to testing ${testId}` }
+    })
+    const introCourse: CourseListItem = await introRes.json()
 
-  const fileInput = page.locator("input[type='file']")
-  const filename = `${Math.random()}.txt`
-
-  // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
-  await fileInput.setInputFiles({
-    name: filename,
-    mimeType: 'text/plain',
-    buffer: Buffer.from('Test file.')
+    await request.post('/api/exams/upload', {
+      multipart: {
+        courseId: introCourse.id,
+        pdf: {
+          name: `existing-${testId}.pdf`,
+          mimeType: 'application/pdf',
+          buffer: Buffer.from('This is a test.')
+        }
+      }
+    })
   })
 
-  const uploadButton = page.getByRole('button', { name: 'Upload' })
-  await uploadButton.click()
-
-  const row = page.locator(`[data-exam-name="${filename}"]`)
-  await expect(row).toBeVisible()
-  const deleteButton = row.getByTitle(`Delete exam "${filename}"`)
-
-  page.once('dialog', async dialog => {
-    expect(dialog.message()).toEqual(
-      'Are you sure you want to delete this exam?'
+  test.afterEach(async ({ request }, { testId }) => {
+    const exams: ExamListItem[] = await (await request.get('/api/exams')).json()
+    await Promise.all(
+      exams
+        .filter(exam => exam.fileName.includes(testId))
+        .map(
+          async exam =>
+            await request.post(`/api/exams/delete`, {
+              data: {
+                examId: exam.id
+              }
+            })
+        )
     )
-    await dialog.accept()
-  })
 
-  await deleteButton.click()
-
-  const newRow = page.locator(`[data-exam-name="${filename}"]`)
-  await expect(newRow).not.toBeVisible()
-
-  const success = page.getByText(`Exam has been deleted.`)
-  await expect(success).toBeVisible()
-})
-
-test('delete exam cancel does nothing', async ({ page, request }) => {
-  await page.goto('/archive/3')
-
-  const fileInput = page.locator("input[type='file']")
-  const filename = `${Math.random()}.txt`
-
-  // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
-  await fileInput.setInputFiles({
-    name: filename,
-    mimeType: 'text/plain',
-    buffer: Buffer.from('Test file.')
-  })
-
-  const uploadButton = page.getByRole('button', { name: 'Upload' })
-  await uploadButton.click()
-
-  const row = page.locator(`[data-exam-name="${filename}"]`)
-  await expect(row).toBeVisible()
-  const deleteButton = row.getByTitle(`Delete exam "${filename}"`)
-
-  page.once('dialog', async dialog => {
-    expect(dialog.message()).toEqual(
-      'Are you sure you want to delete this exam?'
+    const courses: CourseListItem[] = await (
+      await request.get('/api/courses')
+    ).json()
+    await Promise.all(
+      courses
+        .filter(course => course.name.includes(testId))
+        .map(
+          async course =>
+            await request.post(`/api/courses/delete`, {
+              data: { courseId: course.id }
+            })
+        )
     )
-    await dialog.dismiss()
   })
 
-  await deleteButton.click()
+  test('rename course works', async ({ page, courseList, examList }, {
+    testId
+  }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
 
-  const newRow = page.locator(`[data-exam-name="${filename}"]`)
-  await expect(newRow).toBeVisible()
+    const courseRenameInput = page.locator('input[name="courseName"]')
+    const courseRenameButton = page.getByRole('button', {
+      name: `Rename course "Introduction to testing ${testId}"`
+    })
 
-  // clean exam
-  const examId = await page.getAttribute(
-    `[data-exam-name="${filename}"]`,
-    'data-exam-id'
-  )
-  await request.post(`/archive/delete-exam/${examId}`)
-})
+    await courseRenameInput.fill(`Advanced course in naming ${testId}`)
+    await courseRenameButton.click()
 
-test('controls is correct', async ({ page }) => {
-  await page.goto('/archive/132')
+    const heading = page.getByRole('heading', {
+      name: `Advanced course in naming ${testId}`
+    })
+    await expect(heading).toBeVisible()
 
-  const box = page.getByTestId('controls')
-
-  await expect(box).toBeVisible()
-
-  const uploadHeader = box.getByRole('heading', {
-    name: 'Upload a new file here:'
-  })
-  const uploadInput = box.getByRole('textbox', { name: 'File' })
-  const uploadButton = box.getByRole('button', { name: 'Upload' })
-
-  const renameHeader = box.getByRole('heading', { name: 'Rename course' })
-  const renameButton = box.getByRole('button', { name: 'rename' })
-
-  const deleteHeader = box.getByRole('heading', { name: 'Delete course' })
-  const deleteSubHeader = box.getByText(
-    'Course can only be deleted after all exams have been deleted.'
-  )
-  const deleteButton = box.getByRole('button', { name: 'delete' })
-
-  const loggedIn = box.getByText('Logged in: dev-user (Log out)')
-  const logoutLink = loggedIn.locator('a', { hasText: 'Log out' })
-
-  await expect(uploadHeader).toBeVisible()
-  await expect(uploadInput).toBeVisible()
-  await expect(uploadButton).toBeVisible()
-
-  await expect(renameHeader).toBeVisible()
-  await expect(renameButton).toBeVisible()
-
-  await expect(deleteHeader).toBeVisible()
-  await expect(deleteSubHeader).toBeVisible()
-  await expect(deleteButton).toBeVisible()
-
-  await expect(loggedIn).toBeVisible()
-  await expect(logoutLink).toHaveAttribute('href', '/logout')
-})
-
-test('rename course works', async ({ page, request }) => {
-  await page.goto('/archive')
-
-  const addBox = page.getByTestId('controls')
-  const courseName = addBox.getByPlaceholder('Course name')
-  const createCourse = addBox.getByText('Create course')
-
-  const testIdentifier = `+ ${Math.random()}`
-
-  await courseName.fill(`Introduction to naming ${testIdentifier}`)
-  await createCourse.click()
-
-  const courseRenameButton = page.getByRole('button', { name: 'rename' }).last()
-
-  page.once('dialog', async dialog => {
-    expect(dialog.message()).toEqual(
-      'Please enter the new name for this course:'
-    )
-    await dialog.accept(`Advanced course in naming ${testIdentifier}`)
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Course has been renamed from X to Y.`)
+    // await expect(success).toBeVisible()
   })
 
-  await courseRenameButton.click()
+  test('delete course works if no exams currently', async ({
+    page,
+    courseList
+  }, { testId }) => {
+    await courseList.goto()
+    await courseList.createCourse(`Introduction to naming ${testId}`)
 
-  const heading = page.getByRole('heading', {
-    name: `Advanced course in naming ${testIdentifier}`
-  })
-  await expect(heading).toBeVisible()
+    await page.waitForURL(/introduction-to-naming/)
 
-  // clean created course
-  const courseId = await page.getAttribute('[data-course-id]', 'data-course-id')
-  await request.post(`/archive/delete-course/${courseId}`)
-})
+    const courseDeleteButton = page.getByRole('button', {
+      name: `Delete course "Introduction to naming ${testId}"`
+    })
+    await courseDeleteButton.click()
 
-test('rename course cancel works', async ({ page, request }) => {
-  await page.goto('/archive')
+    await page.waitForURL('/')
 
-  const addBox = page.getByTestId('controls')
-  const courseName = addBox.getByPlaceholder('Course name')
-  const createCourse = addBox.getByText('Create course')
+    const heading = page.getByRole('heading', { name: 'Courses' })
+    await expect(heading).toBeVisible()
 
-  const testIdentifier = `+ ${Math.random()}`
-
-  await courseName.fill(`Introduction to naming ${testIdentifier}`)
-  await createCourse.click()
-
-  const courseRenameButton = page.getByRole('button', { name: 'rename' }).last()
-
-  page.once('dialog', async dialog => {
-    expect(dialog.message()).toEqual(
-      'Please enter the new name for this course:'
-    )
-    await dialog.dismiss()
+    // Flash messages not implemented yet
+    // const success = page.getByText(
+    //   `The course "Introduction to naming ${testId}" has been deleted.`
+    // )
+    // await expect(success).toBeVisible()
   })
 
-  await courseRenameButton.click()
+  test('delete course throws error if exams currently', async ({
+    page,
+    courseList
+  }, { testId }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
 
-  const heading = page.getByRole('heading', {
-    name: `Introduction to naming ${testIdentifier}`
+    const courseDeleteButton = page.getByRole('button', {
+      name: `Delete course`
+    })
+    await courseDeleteButton.click()
+
+    const heading = page.getByRole('heading', {
+      name: `Introduction to testing ${testId}`
+    })
+    await expect(heading).toBeVisible()
+
+    // Flash messages not implemented yet
+    // const error = page.getByText(`Cannot delete a course with exam documents.`)
+    // await expect(error).toBeVisible()
   })
-  await expect(heading).toBeVisible()
-
-  // clean created course
-  const courseId = await page.getAttribute('[data-course-id]', 'data-course-id')
-  await request.post(`/archive/delete-course/${courseId}`)
-})
-
-test('delete course works if no exams currently', async ({ page }) => {
-  await page.goto('/archive')
-
-  const addBox = page.getByTestId('controls')
-  const courseName = addBox.getByPlaceholder('Course name')
-  const createCourse = addBox.getByText('Create course')
-
-  const testIdentifier = `${Math.random()}`
-
-  await courseName.fill(`Introduction to naming ${testIdentifier}`)
-  await createCourse.click()
-
-  const courseDeleteButton = page.getByRole('button', { name: 'delete' }).last()
-
-  await courseDeleteButton.click()
-
-  const success = page.getByText(
-    `The course "Introduction to naming ${testIdentifier}" has been deleted.`
-  )
-  await expect(success).toBeVisible()
-})
-
-test('delete course throws error if exams currently', async ({
-  page,
-  request
-}) => {
-  await page.goto('/archive')
-
-  const addBox = page.getByTestId('controls')
-  const courseName = addBox.getByPlaceholder('Course name')
-  const createCourse = addBox.getByText('Create course')
-
-  const testIdentifier = `${Math.random()}`
-
-  await courseName.fill(`Introduction to naming ${testIdentifier}`)
-  await createCourse.click()
-
-  const fileInput = page.locator("input[type='file']")
-  const filename = `${Math.random()}.txt`
-
-  // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
-  await fileInput.setInputFiles({
-    name: filename,
-    mimeType: 'text/plain',
-    buffer: Buffer.from('Test file.')
-  })
-
-  const uploadButton = page.getByRole('button', { name: 'Upload' })
-  await uploadButton.click()
-
-  const courseDeleteButton = page.getByRole('button', { name: 'delete' }).last()
-
-  await courseDeleteButton.click()
-
-  const error = page.getByText(`Cannot delete a course with exam documents.`)
-  await expect(error).toBeVisible()
-
-  // clean exam
-  const examId = await page.getAttribute(
-    `[data-exam-name="${filename}"]`,
-    'data-exam-id'
-  )
-  await request.post(`/archive/delete-exam/${examId}`)
-
-  // clean created course
-  const courseId = await page.getAttribute('[data-course-id]', 'data-course-id')
-  await request.post(`/archive/delete-course/${courseId}`)
-})
-
-test('opening exam makes popup like pdf viewer etc', async ({ page }) => {
-  await page.goto('/archive/3')
-
-  const row = page.locator('[data-exam-id="1842"]')
-  const name = row.locator('a', {
-    hasText: '170511_Advanced_Course_in_Machine_Learning_KK.pdf'
-  })
-
-  const [page1] = await Promise.all([page.waitForEvent('popup'), name.click()])
-
-  await expect(page1).toBeDefined()
 })

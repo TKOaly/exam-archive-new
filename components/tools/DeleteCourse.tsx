@@ -12,16 +12,21 @@ interface DeleteCourseProps {
 const DeleteCourse = ({ courseId, courseName }: DeleteCourseProps) => {
   const handleDeleteCourse = async (formData: FormData) => {
     'use server'
-    const { rights } = await getSession()
+    try {
+      const { rights } = await getSession()
 
-    const isRights = validateRights(rights, 'upload')
-    if (!isRights) {
-      return `Unauthorized`
+      const isRights = validateRights(rights, 'upload')
+      if (!isRights) {
+        return `Unauthorized`
+      }
+
+      const courseId = parseInt(formData.get('courseId') as string, 10) // TODO: make better type check
+
+      const deletedCourse = await deleteCourse(courseId)
+    } catch (e) {
+      console.error(e)
+      return
     }
-
-    const courseId = parseInt(formData.get('courseId') as string, 10) // TODO: make better type check
-
-    const deletedCourse = await deleteCourse(courseId)
     redirect(urlForCourseListing())
   }
 

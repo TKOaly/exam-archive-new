@@ -10,7 +10,6 @@ import {
   UserRole,
   UserServiceUser
 } from './types'
-import { NextApiRequest } from 'next'
 
 export const getSessionCookie = () => {
   const cookiesStore = cookies()
@@ -51,24 +50,6 @@ export const getSession = async (): Promise<AuthData> => {
       return getDevAuthData()
     }
     redirect(getUserServiceLoginUrl())
-  }
-
-  return decryptSession(session)
-}
-
-export const getLegacyApiSession = async (
-  req: NextApiRequest
-): Promise<AuthData | null> => {
-  if (!req.cookies) {
-    return null
-  }
-  const session = req.cookies[config.COOKIE_NAME]
-
-  if (!session) {
-    if (config.NODE_ENV === 'development') {
-      return getDevAuthData()
-    }
-    return null
   }
 
   return decryptSession(session)

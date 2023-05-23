@@ -77,6 +77,7 @@ const Page = async ({ params }: any) => {
           <Suspense fallback={<div>Loading...</div>}>
             <ExamList
               courseId={course.id}
+              courseName={course.name}
               exams={course.exams}
               rights={rights}
             />
@@ -86,7 +87,9 @@ const Page = async ({ params }: any) => {
             {rights.rename && (
               <RenameCourse currentName={course.name} courseId={course.id} />
             )}
-            {rights.remove && <DeleteCourse courseId={course.id} />}
+            {rights.remove && (
+              <DeleteCourse courseId={course.id} courseName={course.name} />
+            )}
             <Logout username={user.username} />
           </ControlsBox>
         </main>

@@ -54,7 +54,8 @@
 
 .exam-upload-form__file:not(:valid) + .exam-upload-form__submit,
 .create-course-form__name:not(:valid) + .create-course-form__submit,
-.rename-course-form__name:not(:valid) + .rename-course-form__submit {
+.rename-course-form__name:not(:valid) + .rename-course-form__submit,
+.rename-exam-form__name:not(:valid) + .rename-exam-form__submit {
   pointer-events: none;
   opacity: 0.7;
 }

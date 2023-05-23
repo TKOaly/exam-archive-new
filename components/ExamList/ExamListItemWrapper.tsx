@@ -19,17 +19,25 @@ const ExamListItemWrapper = ({
   showRename
 }: ExamListItemWrapperProps) => {
   if (!showDelete && !showRename) {
-    return <>{children}</>
+    return (
+      <div key={examId} data-exam-id={examId} data-exam-name={fileName}>
+        {children}
+      </div>
+    )
   }
 
   return (
-    <details key={examId} data-exam-id={examId} data-exam-name={fileName}>
-      <summary className="exam-list-item__summary">{children}</summary>
-      <div className="exam-list-item__manage-container">
-        {showRename && <RenameExam currentName={fileName} examId={examId} />}
-        {showDelete && <DeleteExamButton fileName={fileName} examId={examId} />}
-      </div>
-    </details>
+    <div data-exam-id={examId} data-exam-name={fileName}>
+      <details>
+        <summary className="exam-list-item__summary">{children}</summary>
+        <div className="exam-list-item__manage-container">
+          {showRename && <RenameExam currentName={fileName} examId={examId} />}
+          {showDelete && (
+            <DeleteExamButton fileName={fileName} examId={examId} />
+          )}
+        </div>
+      </details>
+    </div>
   )
 }
 

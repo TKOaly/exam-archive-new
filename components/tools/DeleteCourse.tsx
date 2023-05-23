@@ -6,9 +6,10 @@ import { validateRights } from '@services/tkoUserService'
 
 interface DeleteCourseProps {
   courseId: number
+  courseName: string
 }
 
-const DeleteCourse = ({ courseId }: DeleteCourseProps) => {
+const DeleteCourse = ({ courseId, courseName }: DeleteCourseProps) => {
   const handleDeleteCourse = async (formData: FormData) => {
     'use server'
     const { rights } = await getSession()
@@ -29,12 +30,13 @@ const DeleteCourse = ({ courseId }: DeleteCourseProps) => {
       <h3>Delete course</h3>
       <p>Course can only be deleted after all exams have been deleted.</p>
       <form action={handleDeleteCourse}>
-        <input hidden name="courseId" value={courseId} />
+        <input hidden name="courseId" defaultValue={courseId} />
         <button
-          className="delete-course-form__submit"
           type="submit"
-          name="delete"
-          value="Delete course"
+          className="delete-course-form__submit"
+          name="deleteCourse"
+          aria-label={`Delete course "${courseName}"`}
+          title={`Delete course "${courseName}"`}
         >
           Delete course
         </button>

@@ -36,12 +36,13 @@ const DeleteExam = ({ examId, fileName }: DeleteExamProps) => {
     <div className="delete-exam-form">
       <h3>Delete exam</h3>
       <form action={handleDeleteExam}>
-        <input hidden name="examId" value={examId} />
+        <input hidden name="examId" defaultValue={examId} />
         <button
+          type="submit"
           className="delete-exam-button__button"
+          name="deleteExam"
           aria-label={`Delete exam "${fileName}"`}
           title={`Delete exam "${fileName}"`}
-          type="submit"
         >
           Delete exam
         </button>

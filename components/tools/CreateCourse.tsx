@@ -36,17 +36,19 @@ const CreateCourse = () => {
       <h3>Add a new course:</h3>
       <form action={handleCourseCreation}>
         <input
-          name="courseName"
-          className="create-course-form__name"
-          aria-label="Course name"
-          placeholder="Course name"
           type="text"
+          className="create-course-form__name"
+          name="courseName"
+          aria-label={`Give name for new course`}
+          title={`Give name for new course`}
+          placeholder="Course name"
         ></input>
         <button
-          className="create-course-form__submit"
           type="submit"
-          name="create"
-          value="Create course"
+          className="create-course-form__submit"
+          name="createCourse"
+          aria-label={`Create course`}
+          title={`Create course`}
         >
           Create course
         </button>

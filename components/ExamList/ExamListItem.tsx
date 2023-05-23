@@ -65,10 +65,14 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
         )}
       </div>
       {showManage && (
-        <i
-          role="cell"
-          className="bi bi-pencil-square exam-list-item__edit-icon"
-        />
+        <div role="cell">
+          <i
+            role="button"
+            aria-label={`Manage exam "${fileName}"`}
+            title={`Manage exam "${fileName}"`}
+            className="bi bi-pencil-square exam-list-item__edit-icon"
+          />
+        </div>
       )}
     </div>
   )

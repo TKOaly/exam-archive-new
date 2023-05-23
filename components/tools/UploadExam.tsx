@@ -72,18 +72,20 @@ const UploadExam = ({ courseId }: UploadExamProps) => {
       <h3>Upload a new file here:</h3>
       <form action={uploadExam}>
         <input
-          className="exam-upload-form__file"
-          aria-label="File"
           type="file"
+          className="exam-upload-form__file"
           name="file"
+          aria-label="Select files to upload"
+          title="Select files to upload"
           multiple
         />
         <input hidden name="courseId" defaultValue={courseId} />
         <button
-          className="exam-upload-form__submit"
           type="submit"
-          name="upload"
-          value="Upload"
+          className="exam-upload-form__submit"
+          name="uploadExam"
+          aria-label="Upload exam"
+          title="Upload exam"
         >
           Upload
         </button>

@@ -9,7 +9,12 @@ import FolderIcon from '@components/icons/Folder'
 
 const CourseListItem = ({ id, name, url, lastModified }: CourseListItem) => {
   return (
-    <div role="row" className="course-list-item" data-course-id={id}>
+    <div
+      role="row"
+      className="course-list-item"
+      data-course-id={id}
+      data-course-name={name}
+    >
       <FolderIcon
         alt=""
         role="cell"
@@ -21,12 +26,7 @@ const CourseListItem = ({ id, name, url, lastModified }: CourseListItem) => {
         lang="fi-FI"
         className="course-list-item__link-container"
       >
-        <Link
-          data-instant
-          href={url}
-          title={name}
-          className="course-list-item__link"
-        >
+        <Link href={url} title={name} className="course-list-item__link">
           {name}
         </Link>
       </div>

@@ -53,18 +53,20 @@ const RenameCourse = ({ currentName, courseId }: RenameCourseProps) => {
       <h3>Rename course</h3>
       <form action={handleRenameCourse}>
         <input
-          name="courseName"
-          className="rename-course-form__name"
-          aria-label="Course name"
           type="text"
+          className="rename-course-form__name"
+          name="courseName"
+          aria-label={`Give new name for course "${currentName}"`}
+          title={`Give new name for course "${currentName}"`}
           defaultValue={currentName}
         ></input>
-        <input hidden name="courseId" value={courseId} />
+        <input hidden name="courseId" defaultValue={courseId} />
         <button
-          className="rename-course-form__submit"
           type="submit"
-          name="rename"
-          value="rename"
+          className="rename-course-form__submit"
+          name="renameCourse"
+          aria-label={`Rename course "${currentName}"`}
+          title={`Rename course "${currentName}"`}
         >
           Rename course
         </button>

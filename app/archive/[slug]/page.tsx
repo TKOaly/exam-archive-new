@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { notFound, redirect } from 'next/navigation'
 
 import Footer from '@components/Footer'
-import FlashMessage from '@components/FlashMessage'
+// import FlashMessage from '@components/FlashMessage'
 import ListingNavigation from '@components/Navigation'
 import ExamList from '@components/ExamList'
 import { ControlsBox, Logout } from '@components/Controls'
@@ -52,10 +52,10 @@ export const generateMetadata = async ({ params }: any): Promise<Metadata> => {
 const Page = async ({ params }: any) => {
   const { user, rights } = await getSession()
 
-  const flash = {
-    msg: 'toot',
-    type: 'info'
-  }
+  // const flash = {
+  //   msg: 'toot',
+  //   type: 'info'
+  // }
 
   const { id, courseSlug } = parseSlug(params.slug)
 
@@ -72,7 +72,7 @@ const Page = async ({ params }: any) => {
     <>
       <ListingNavigation title={course.name} backButtonHref="/" />
       <div className="page-container">
-        <FlashMessage flash={flash} />
+        {/* <FlashMessage flash={flash} /> */}
         <main>
           <Suspense fallback={<div>Loading...</div>}>
             <ExamList

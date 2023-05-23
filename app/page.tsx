@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 
 import Footer from '@components/Footer'
-import FlashMessage from '@components/FlashMessage'
+// import FlashMessage from '@components/FlashMessage'
 import ListingNavigation from '@components/Navigation'
 import CourseList from '@components/CourseList'
 import { ControlsBox, Logout } from '@components/Controls'
@@ -19,10 +19,10 @@ export const metadata = {
 }
 
 const Page = async () => {
-  const flash = {
-    msg: 'toot',
-    type: 'info'
-  }
+  // const flash = {
+  //   msg: 'toot',
+  //   type: 'info'
+  // }
 
   const { user, rights } = await getSession()
 
@@ -32,9 +32,7 @@ const Page = async () => {
     <>
       <ListingNavigation title="Courses" />
       <div className="page-container">
-        <FlashMessage flash={flash} />
-        <div>{JSON.stringify(user, null, 4)}</div>
-        <div>{JSON.stringify(rights, null, 4)}</div>
+        {/* <FlashMessage flash={flash} /> */}
         <main>
           <Suspense fallback={<div>Loading...</div>}>
             <CourseList courses={courses} />

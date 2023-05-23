@@ -9,7 +9,7 @@ $mobile-course-header-name-margin: $link-margin;
 
 $last-modified-colwidth: 90px;
 $last-modified-mr: 6px;
-$rename-header-colwidth: 22px;
+$rename-header-colwidth: 30px;
 
 .menu-button {
   background: none;
@@ -139,25 +139,6 @@ $rename-header-colwidth: 22px;
     margin: 0 $last-modified-mr 0 auto;
     padding-left: 10px; /* add some space in case the name is extra long */
   }
-
-  &__rename {
-    font-size: 12px;
-    width: $rename-header-colwidth;
-    margin-right: 6px;
-  }
-
-  &__rename-button {
-    border: none;
-    background: none;
-    border-radius: 0;
-    cursor: pointer;
-    color: rgba(0, 0, 0, 0.56);
-
-    &:hover {
-      color: #595959;
-      text-decoration: underline;
-    }
-  }
   &__summary::marker {
     content: none;
   }
@@ -165,7 +146,7 @@ $rename-header-colwidth: 22px;
     height: $row-height;
     line-height: $row-height;
     margin-right: $icon-margin;
-    font-size: 16px;
+    margin-left: $icon-margin/2;
     cursor: pointer;
   }
   &__manage-container {

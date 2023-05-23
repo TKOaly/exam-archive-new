@@ -7,6 +7,8 @@ import { ExamListItem } from '@lib/types'
 
 import { DocumentIcon, PdfIcon, PhotoIcon } from '@components/icons/File'
 
+import { Edit } from 'react-feather'
+
 const iconForFile = (mimeType: string) => {
   if (mimeType.startsWith('image/')) {
     return PhotoIcon
@@ -66,12 +68,13 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
       </div>
       {showManage && (
         <div role="cell">
-          <i
+          <div
             role="button"
             aria-label={`Manage exam "${fileName}"`}
             title={`Manage exam "${fileName}"`}
-            className="bi bi-pencil-square exam-list-item__edit-icon"
-          />
+          >
+            <Edit size={18} className="exam-list-item__edit-icon" />
+          </div>
         </div>
       )}
     </div>

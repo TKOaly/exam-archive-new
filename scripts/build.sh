@@ -34,7 +34,7 @@ function main() {
     export NODE_ENV=${NODE_ENV:-"production"}
 
     npm run db:migrate
-    npm run next:build
+    npm run build
 
     popd
 }

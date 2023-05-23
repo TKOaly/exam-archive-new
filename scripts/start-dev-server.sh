@@ -34,7 +34,7 @@ function main() {
     export NODE_ENV=${NODE_ENV:-"development"}
 
     npm run db:migrate
-    npm run next:dev
+    npm run dev
 
     popd
 }

@@ -5,16 +5,15 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start:e2e": "npm run db:migrate && NODE_ENV=development npm run db:seed && NODE_ENV=development node dist/index.js",
+    "dev": "next dev",
+    "start": "next start",
+    "build": "next build",
     "db:migrate": "knex migrate:latest",
     "db:seed": "knex seed:run",
     "prettier": "prettier --write .",
     "test": "playwright test",
     "test:install": "playwright install --with-deps",
-    "test:update-screenshots": "playwright test --update-snapshots",
-    "next:dev": "next dev",
-    "next:start": "next start",
-    "next:build": "next build"
+    "test:update-screenshots": "playwright test --update-snapshots"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.335.0",

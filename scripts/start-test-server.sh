@@ -46,7 +46,9 @@ function main() {
     export APP_ENV=${APP_ENV:-"development"}
 
     npm run db:migrate
-    npm run dev
+    npm run build
+    npm run start
+
 
     popd
 }

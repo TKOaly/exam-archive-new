@@ -9,7 +9,6 @@ const csp =
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    appDir: true,
     serverActions: true
   },
   sassOptions: {

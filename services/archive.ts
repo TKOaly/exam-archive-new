@@ -13,7 +13,7 @@ import {
   Count,
   ExamInfo
 } from '@lib/types'
-import { cache } from 'react'
+
 export class CourseNotFoundError extends Error {
   constructor(message?: string) {
     // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html#example
@@ -109,7 +109,7 @@ export const renameCourse = async (
   return renamedCourse
 }
 
-export const getCourseListing = cache(async (): Promise<CourseListItem[]> => {
+export const getCourseListing = async (): Promise<CourseListItem[]> => {
   const results = await dbPool.query(`
     SELECT
       c.id,
@@ -124,18 +124,19 @@ export const getCourseListing = cache(async (): Promise<CourseListItem[]> => {
   const courses = results.rows.map(course => CourseLI.parse(course))
 
   return courses
-})
+}
 
-export const getCourseInfo = cache(
-  async (courseId: number): Promise<CourseInfo | null> => {
-    const course = await findCourseById(courseId)
+export const getCourseInfo = async (
+  courseId: number
+): Promise<CourseInfo | null> => {
+  const course = await findCourseById(courseId)
 
-    if (!course) {
-      return null
-    }
+  if (!course) {
+    return null
+  }
 
-    const examsResult = await dbPool.query(
-      `
+  const examsResult = await dbPool.query(
+    `
     SELECT
       e.id,
       e.course_id,
@@ -147,22 +148,22 @@ export const getCourseInfo = cache(
     WHERE e.course_id = $1 AND e.removed_at IS NULL
     ORDER BY LOWER(e.file_name) DESC
     `,
-      [courseId]
-    )
+    [courseId]
+  )
 
-    const exams = examsResult.rows.map(exam => ExamLI.parse(exam))
+  const exams = examsResult.rows.map(exam => ExamLI.parse(exam))
 
-    return {
-      ...course,
-      exams
-    }
+  return {
+    ...course,
+    exams
   }
-)
+}
 
-export const findCourseByName = cache(
-  async (courseName: string): Promise<Course | null> => {
-    const result = await dbPool.query(
-      `
+export const findCourseByName = async (
+  courseName: string
+): Promise<Course | null> => {
+  const result = await dbPool.query(
+    `
     SELECT
       c.id,
       c.name,
@@ -173,23 +174,23 @@ export const findCourseByName = cache(
     GROUP BY c.id
     LIMIT 1
   `,
-      [courseName]
-    )
+    [courseName]
+  )
 
-    const course = CourseLI.safeParse(result.rows[0])
+  const course = CourseLI.safeParse(result.rows[0])
 
-    if (!course.success) {
-      return null
-    }
-
-    return course.data
+  if (!course.success) {
+    return null
   }
-)
 
-export const findCourseById = cache(
-  async (courseId: CourseId): Promise<Course | null> => {
-    const result = await dbPool.query(
-      `
+  return course.data
+}
+
+export const findCourseById = async (
+  courseId: CourseId
+): Promise<Course | null> => {
+  const result = await dbPool.query(
+    `
     SELECT
       c.id,
       c.name,
@@ -200,22 +201,22 @@ export const findCourseById = cache(
     GROUP BY c.id
     LIMIT 1
   `,
-      [courseId]
-    )
-    const course = CourseLI.safeParse(result.rows[0])
+    [courseId]
+  )
+  const course = CourseLI.safeParse(result.rows[0])
 
-    if (!course.success) {
-      return null
-    }
-
-    return course.data
+  if (!course.success) {
+    return null
   }
-)
 
-export const findCourseByExamId = cache(
-  async (examId: ExamId): Promise<Course | null> => {
-    const result = await dbPool.query(
-      `
+  return course.data
+}
+
+export const findCourseByExamId = async (
+  examId: ExamId
+): Promise<Course | null> => {
+  const result = await dbPool.query(
+    `
     SELECT
       c.id,
       c.name,
@@ -228,23 +229,23 @@ export const findCourseByExamId = cache(
     GROUP BY c.id
     LIMIT 1
   `,
-      [examId]
-    )
+    [examId]
+  )
 
-    const course = CourseLI.safeParse(result.rows[0])
+  const course = CourseLI.safeParse(result.rows[0])
 
-    if (!course.success) {
-      return null
-    }
-
-    return course.data
+  if (!course.success) {
+    return null
   }
-)
 
-export const getExamFileNameById = cache(
-  async (examId: ExamId): Promise<ExamInfo | null> => {
-    const result = await dbPool.query(
-      `
+  return course.data
+}
+
+export const getExamFileNameById = async (
+  examId: ExamId
+): Promise<ExamInfo | null> => {
+  const result = await dbPool.query(
+    `
     SELECT
       e.file_name,
       e.course_id,
@@ -254,18 +255,17 @@ export const getExamFileNameById = cache(
     WHERE e.id = $1 AND e.removed_at IS NULL
     LIMIT 1
   `,
-      [examId]
-    )
+    [examId]
+  )
 
-    const info = ExamInfo.safeParse(result.rows[0])
+  const info = ExamInfo.safeParse(result.rows[0])
 
-    if (!info.success) {
-      return null
-    }
-
-    return info.data
+  if (!info.success) {
+    return null
   }
-)
+
+  return info.data
+}
 
 export const renameExamFile = async (
   examId: ExamId,
@@ -320,7 +320,7 @@ export const createExam = async (exam: CreateExam) => {
   return createdExam
 }
 
-export const findExamById = cache(async (examId: number) => {
+export const findExamById = async (examId: number) => {
   const result = await dbPool.query(
     `
     SELECT
@@ -344,4 +344,4 @@ export const findExamById = cache(async (examId: number) => {
   }
 
   return exam.data
-})
+}

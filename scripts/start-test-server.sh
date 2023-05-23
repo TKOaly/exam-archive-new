@@ -4,9 +4,20 @@ set -o errexit -o nounset -o pipefail
 readonly repository="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd)"
 source "$repository/scripts/common.sh"
 
+function stop() {
+  pushd "$repository"
+  required_command docker
+  COMPOSE_PROJECT_NAME="exam-archive-new-test" docker-compose down || true
+  popd
+}
+trap stop EXIT
+
 function main() {
     required_command npm
     pushd "$repository"
+
+    export COMPOSE_PROJECT_NAME="exam-archive-new-test"
+    docker-compose up -d db s3
 
     db_health_check
     s3_health_check
@@ -31,7 +42,7 @@ function main() {
     export AWS_S3_FORCE_PATH_STYLE=${AWS_S3_FORCE_PATH_STYLE:-true}
     export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"exam-archive-local"}
 
-    export NODE_ENV=${NODE_ENV:-"test"}
+    export NODE_ENV=${NODE_ENV:-"development"}
 
     npm run db:migrate
     NODE_ENV=development npm run db:seed

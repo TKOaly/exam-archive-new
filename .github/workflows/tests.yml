@@ -9,28 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - name: Install dependencies
-        run: npm ci
-      - name: copy example .env
-        run: cp .env-sample .env
-      - name: Start database and S3
-        run: docker-compose up -d
-      - name: Install Playwright Browsers
-        run: npm run test:install
       - name: Run tests
-        run: npm run test
+        run: ./run-tests.sh
       - name: Upload screenshots and videos
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: test-results
-          path: test-results
+          name: playwright-results
+          path: test-results/playwright
       - name: Upload accessibility reports
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: axe-reports
-          path: axe-reports
+          path: test-results/axe-reports

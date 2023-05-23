@@ -1,13 +1,40 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
 
-readonly repository="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd)"
+readonly repository="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 source "$repository/scripts/common.sh"
+
+function stop() {
+  pushd "$repository"
+  required_command docker
+  required_command docker-compose
+  COMPOSE_PROJECT_NAME="exam-archive-new-test" docker-compose down || true
+  popd
+}
+trap stop EXIT
 
 function main() {
     required_command npm
+    required_command docker
+    required_command docker-compose
+
     pushd "$repository"
 
+    echo "::group::Installing node and dependencies"
+    check_node_version
+    npm_ci
+    npm run test:install
+    echo "::endgroup::"
+
+    echo "::group::Starting database and S3"
+    export COMPOSE_PROJECT_NAME="exam-archive-new-test"
+    docker-compose up -d db s3
+
+    db_health_check
+    s3_health_check
+    echo "::endgroup::"
+
+    echo "::group::Building application"
     export PORT=${PORT:-"9010"}
     export PG_CONNECTION_STRING=${PG_CONNECTION_STRING:-"postgresql://tarpisto:tarpisto@$(docker-compose port db 5432)/tarpisto"}
 
@@ -32,7 +59,12 @@ function main() {
     export APP_ENV=${APP_ENV:-"development"}
 
     npm run db:migrate
-    npm run start
+    npm run build
+    echo "::endgroup::"
+
+    echo "::group::Running tests"
+    npm run test
+    echo "::endgroup::"
 
     popd
 }

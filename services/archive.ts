@@ -320,6 +320,26 @@ export const createExam = async (exam: CreateExam) => {
   return createdExam
 }
 
+export const getAllExams = async () => {
+  const results = await dbPool.query(
+    `
+    SELECT
+      e.id,
+      e.course_id,
+      e.file_name,
+      e.mime_type,
+      e.upload_date,
+      e.file_path
+    FROM exams e
+    WHERE e.removed_at IS NULL
+  `
+  )
+
+  const exams = results.rows.map(exam => ExamLI.parse(exam))
+
+  return exams
+}
+
 export const findExamById = async (examId: number) => {
   const result = await dbPool.query(
     `

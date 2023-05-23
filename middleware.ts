@@ -41,7 +41,7 @@ const setCookieResponse = (signedSession: string) => {
     httpOnly: true,
     maxAge: 60 * 60 * 24,
     sameSite: 'strict',
-    secure: configs.NODE_ENV === 'production'
+    secure: configs.APP_ENV === 'production'
   })
   return res
 }
@@ -49,7 +49,7 @@ const setCookieResponse = (signedSession: string) => {
 export const middleware = async (req: NextRequest) => {
   const userServiceToken = req.cookies.get('token')
   if (!userServiceToken) {
-    if (configs.NODE_ENV === 'development') {
+    if (configs.APP_ENV === 'development') {
       const signedSession = await signSession(getDevSession())
       return setCookieResponse(signedSession)
     }

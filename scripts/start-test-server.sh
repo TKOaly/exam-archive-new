@@ -42,7 +42,8 @@ function main() {
     export AWS_S3_FORCE_PATH_STYLE=${AWS_S3_FORCE_PATH_STYLE:-true}
     export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"exam-archive-local"}
 
-    export NODE_ENV=${NODE_ENV:-"development"}
+    export NODE_ENV=${NODE_ENV:-"production"}
+    export APP_ENV=${APP_ENV:-"development"}
 
     npm run db:migrate
     npm run dev

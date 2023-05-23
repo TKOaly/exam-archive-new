@@ -6,7 +6,15 @@ const checkExists = (...values: (string | undefined)[]) => {
   }
 }
 
+// APP_ENV is different from NODE_ENV as Next.js defines just
+// development for `next dev` and productiong`next build  && next start`.
+// This does not allow usage of production build with development stuff
+// like auto - login. There is Next RFP
+// https://github.com/vercel/next.js/discussions/25764 but it is not yet
+// implemented.
+
 const NODE_ENV: string | undefined = process.env.NODE_ENV!
+const APP_ENV: string | undefined = process.env.APP_ENV!
 const PG_CONNECTION_STRING: string | undefined =
   process.env.PG_CONNECTION_STRING!
 const COOKIE_NAME: string | undefined = process.env.COOKIE_NAME!
@@ -27,7 +35,7 @@ const AWS_S3_FORCE_PATH_STYLE: string | undefined =
 const AWS_S3_BUCKET_ID: string | undefined = process.env.AWS_S3_BUCKET_ID!
 const SERVER_START_TIMESTAMP: number = Date.now()
 
-checkExists(NODE_ENV, PG_CONNECTION_STRING)
+checkExists(NODE_ENV, APP_ENV, PG_CONNECTION_STRING)
 checkExists(
   COOKIE_NAME,
   COOKIE_SECRET,
@@ -41,6 +49,7 @@ checkExists(AWS_S3_ENDPOINT, AWS_S3_FORCE_PATH_STYLE, AWS_S3_BUCKET_ID)
 
 export default {
   NODE_ENV,
+  APP_ENV,
   PG_CONNECTION_STRING,
   COOKIE_NAME,
   COOKIE_SECRET: new TextEncoder().encode(COOKIE_SECRET),

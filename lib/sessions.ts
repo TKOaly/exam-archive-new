@@ -46,7 +46,7 @@ export const getSession = async (): Promise<AuthData> => {
   const session = getSessionCookie()
 
   if (!session) {
-    if (config.NODE_ENV === 'development') {
+    if (config.APP_ENV === 'development') {
       return getDevAuthData()
     }
     redirect(getUserServiceLoginUrl())

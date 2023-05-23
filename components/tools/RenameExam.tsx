@@ -26,6 +26,9 @@ const RenameExam = ({ currentName, examId }: RenameExamProps) => {
     }
 
     const examId = parseInt(formData.get('examId') as string, 10) // TODO: make better type check
+    if (isNaN(examId)) {
+      return 'Invalid exam id'
+    }
 
     const info = await getExamFileNameById(examId)
     if (!info) {

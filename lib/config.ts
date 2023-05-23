@@ -11,9 +11,9 @@ const PG_CONNECTION_STRING: string | undefined =
   process.env.PG_CONNECTION_STRING!
 const COOKIE_NAME: string | undefined = process.env.COOKIE_NAME!
 const COOKIE_SECRET: string | undefined = process.env.COOKIE_SECRET!
-const COOKIE_ISSUER: string = 'tkoaly'
-const COOKIE_SUBJECT: string = 'tarpisto'
-const COOKIE_JWTID: string = 'tarpisto'
+const COOKIE_ISSUER: string | undefined = process.env.COOKIE_ISSUER!
+const COOKIE_SUBJECT: string | undefined = process.env.COOKIE_SUBJECT!
+const COOKIE_JWTID: string | undefined = process.env.COOKIE_JWTID!
 const USER_SERVICE_SERVICE_ID: string | undefined =
   process.env.USER_SERVICE_SERVICE_ID!
 const USER_SERVICE_URL: string | undefined = process.env.USER_SERVICE_URL!
@@ -27,7 +27,14 @@ const AWS_S3_FORCE_PATH_STYLE: string | undefined =
 const AWS_S3_BUCKET_ID: string | undefined = process.env.AWS_S3_BUCKET_ID!
 const SERVER_START_TIMESTAMP: number = Date.now()
 
-checkExists(NODE_ENV, PG_CONNECTION_STRING, COOKIE_NAME, COOKIE_SECRET)
+checkExists(NODE_ENV, PG_CONNECTION_STRING)
+checkExists(
+  COOKIE_NAME,
+  COOKIE_SECRET,
+  COOKIE_ISSUER,
+  COOKIE_SUBJECT,
+  COOKIE_JWTID
+)
 checkExists(USER_SERVICE_SERVICE_ID, USER_SERVICE_URL)
 checkExists(AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
 checkExists(AWS_S3_ENDPOINT, AWS_S3_FORCE_PATH_STYLE, AWS_S3_BUCKET_ID)

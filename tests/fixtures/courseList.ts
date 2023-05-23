@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test'
-import { urlForCourseListing } from '../../lib/courses'
+import { urlForCourseListing, slugifyCourseName } from '../../lib/courses'
 
 export class CourseList {
   private readonly createInput: Locator
@@ -27,19 +27,27 @@ export class CourseList {
   }
 
   async gotoCourseById(courseId: number) {
+    await this.page.goto(urlForCourseListing())
     const row = await this.getCourseItemRowById(courseId)
     const link = await row.locator('a')
     await link.click()
+    await this.page.waitForURL(new RegExp(`${courseId}`))
   }
 
   async gotoCourseByName(courseName: string) {
+    await this.page.goto(urlForCourseListing())
     const row = await this.getCourseItemRowByName(courseName)
     const link = await row.locator('a')
     await link.click()
+    const slug = slugifyCourseName(courseName)
+    await this.page.waitForURL(new RegExp(slug))
   }
 
   async createCourse(name: string) {
+    await this.page.goto(urlForCourseListing())
     await this.createInput.fill(name)
     await this.createSubmit.click()
+    const slug = slugifyCourseName(name)
+    await this.page.waitForURL(new RegExp(slug))
   }
 }

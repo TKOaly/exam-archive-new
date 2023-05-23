@@ -3,7 +3,13 @@ import { jwtDecrypt } from 'jose'
 import { cookies } from 'next/headers'
 import { getUserServiceLoginUrl } from '@services/tkoUserService'
 import { redirect } from 'next/navigation'
-import { AccessRight, AuthData, UserServiceUser } from './types'
+import {
+  AccessRight,
+  AuthData,
+  UserMembership,
+  UserRole,
+  UserServiceUser
+} from './types'
 import { NextApiRequest } from 'next'
 
 export const getSessionCookie = () => {
@@ -28,11 +34,22 @@ export const decryptSession = async (session: string) => {
   }
 }
 
+const getDevAuthData = (): AuthData => ({
+  user: {
+    username: 'dev',
+    membership: UserMembership.Jasen,
+    role: UserRole.Yllapitaja
+  },
+  rights: { access: true, upload: true, remove: true, rename: true }
+})
+
 export const getSession = async (): Promise<AuthData> => {
   const session = getSessionCookie()
 
   if (!session) {
-    console.log('No session found, redirecting to login')
+    if (config.NODE_ENV === 'development') {
+      return getDevAuthData()
+    }
     redirect(getUserServiceLoginUrl())
   }
 
@@ -48,6 +65,9 @@ export const getLegacyApiSession = async (
   const session = req.cookies[config.COOKIE_NAME]
 
   if (!session) {
+    if (config.NODE_ENV === 'development') {
+      return getDevAuthData()
+    }
     return null
   }
 

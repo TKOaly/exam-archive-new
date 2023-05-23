@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 interface FolderIconProps {
   alt: string
   className: string
@@ -6,12 +8,14 @@ interface FolderIconProps {
 }
 
 const FolderIcon = ({ alt, className, role, ariaHidden }: FolderIconProps) => (
-  <img
+  <Image
     role={role}
     aria-hidden={ariaHidden}
     className={className}
     alt={alt}
     src="/img/icon-folder.svg"
+    width={20}
+    height={20}
   />
 )
 

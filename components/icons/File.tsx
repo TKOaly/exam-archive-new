@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 interface IconProps {
   alt: string
   className: string
@@ -11,12 +13,14 @@ const [DocumentIcon, PdfIcon, PhotoIcon] = [
   '/img/icon-photo.svg'
 ].map(src => ({ alt, className, role, ariaHidden }: IconProps) => {
   return (
-    <img
+    <Image
       src={src}
       role={role}
       aria-hidden={ariaHidden}
       className={className}
       alt={alt}
+      width={20}
+      height={20}
     />
   )
 })

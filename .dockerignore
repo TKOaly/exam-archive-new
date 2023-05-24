@@ -1,10 +1,11 @@
 *
+!.next/
 !migrations/
-!scripts/
-!src/
-!static/
+!public/
+!scripts/common.sh
+!scripts/start-prod-server.sh
 !knexfile.js
+!next-env.d.ts
+!next.config.js
 !package-lock.json
 !package.json
-!README.md
-!tsconfig.json

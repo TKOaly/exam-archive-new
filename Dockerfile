@@ -1,24 +1,18 @@
-FROM node:16-alpine AS builder
+FROM node:20.2.0
 
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci
-
-COPY . .
-RUN npm run build
-
-FROM node:16-alpine AS runner
+ENV PORT 9000
+ENV NODE_ENV production
+ENV APP_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
 
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-COPY --from=builder /app/dist ./dist
-
 COPY . .
 
-EXPOSE 9001
 
-CMD ["npm", "start"]
+EXPOSE ${PORT}
+
+CMD ["./scripts/start-prod-server.sh"]

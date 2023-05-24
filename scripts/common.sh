@@ -57,14 +57,14 @@ function db_health_check() {
 
     echo "::debug::Database health check with COMPOSE_PROJECT_NAME: $COMPOSE_PROJECT_NAME"
     COUNTER=0
-    until docker-compose exec db pg_isready -U tarpisto &>/dev/null; do
+    until docker-compose exec -p $COMPOSE_PROJECT_NAME db pg_isready -U tarpisto &>/dev/null; do
         echo "Waiting for database to be healthy. Trying again in 5 seconds."
 
         COUNTER=$((COUNTER+1))
 
         if [ $COUNTER -gt 10 ]
         then
-            echo "Database not responding after 10 tries. Exiting."
+            echo "::error title={"DB Health check"}::Database not responding after 10 tries. Exiting."
             exit 1
         fi
 
@@ -90,7 +90,7 @@ function s3_health_check() {
 
         if [ $COUNTER -gt 10 ]
         then
-            echo "Database not responding after 10 tries. Exiting."
+            echo "::error title={"S3 Health check"}::Database not responding after 10 tries. Exiting."
             exit 1
         fi
 

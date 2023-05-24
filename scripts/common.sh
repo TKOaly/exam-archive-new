@@ -3,6 +3,7 @@ readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd)"
 
 function check_node_version() {
     pushd "$repository"
+    echo "::debug::Setting up right Node version"
 
     # This will use always repo provided nvm if nvm is not in PATH etc.
     export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
@@ -31,6 +32,7 @@ function docker_health_check() {
 
 function npm_ci() {
     pushd "$repository"
+    echo "::debug::Installing dependencies with npm ci"
 
     required_command shasum
 
@@ -53,8 +55,19 @@ function db_health_check() {
     required_command docker
     required_command docker-compose
 
+    echo "::debug::Database health check with COMPOSE_PROJECT_NAME: $COMPOSE_PROJECT_NAME"
+    COUNTER=0
     until docker-compose exec db pg_isready -U tarpisto &>/dev/null; do
         echo "Waiting for database to be healthy. Trying again in 5 seconds."
+
+        COUNTER=$((COUNTER+1))
+
+        if [ $COUNTER -gt 10 ]
+        then
+            echo "Database not responding after 10 tries. Exiting."
+            exit 1
+        fi
+
         sleep 5;
     done
 
@@ -68,8 +81,19 @@ function s3_health_check() {
     required_command docker
     required_command docker-compose
 
+    echo "::debug::S3 health check with COMPOSE_PROJECT_NAME: $COMPOSE_PROJECT_NAME"
+    COUNTER=0
     until curl -I "http://$(docker-compose port s3 9000)/minio/health/live" &>/dev/null; do
         echo "Waiting for s3 to be healthy. Trying again in 5 seconds."
+
+        COUNTER=$((COUNTER+1))
+
+        if [ $COUNTER -gt 10 ]
+        then
+            echo "Database not responding after 10 tries. Exiting."
+            exit 1
+        fi
+
         sleep 5;
     done
 

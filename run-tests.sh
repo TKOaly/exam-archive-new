@@ -30,8 +30,8 @@ function main() {
     export COMPOSE_PROJECT_NAME="exam-archive-new-test"
     docker-compose up -d db s3
 
-    db_health_check
-    s3_health_check
+    COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME db_health_check
+    COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME s3_health_check
     echo "::endgroup::"
 
     echo "::group::Building application"
@@ -58,7 +58,9 @@ function main() {
     export NODE_ENV=${NODE_ENV:-"production"}
     export APP_ENV=${APP_ENV:-"development"}
 
+    echo "::debug::Running database migrations"
     npm run db:migrate
+    echo "::debug::Building application"
     npm run build
     echo "::endgroup::"
 

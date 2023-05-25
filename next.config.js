@@ -45,6 +45,25 @@ const nextConfig = {
         ]
       }
     ]
+  },
+  async redirects() {
+    return [
+      {
+        source: '/archive',
+        destination: '/',
+        permanent: true
+      },
+      {
+        source: '/archive/:path*',
+        destination: '/courses/:path*',
+        permanent: true
+      },
+      {
+        source: '/download/:path*',
+        destination: '/exams/:path*',
+        permanent: true
+      }
+    ]
   }
 }
 

@@ -109,7 +109,7 @@ test.describe('courseList looks right', () => {
     await expect(icon).toHaveAttribute('src', '/img/icon-folder.svg')
     await expect(name).toHaveAttribute(
       'href',
-      `/archive/${courseId}-introduction-to-testing-${workerIndex}`
+      `/courses/${courseId}-introduction-to-testing-${workerIndex}`
     )
   })
 

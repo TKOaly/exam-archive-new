@@ -154,7 +154,7 @@ test.describe('examList looks right', () => {
     await expect(documentIcon).toHaveAttribute('src', '/img/icon-document.svg')
     await expect(name).toHaveAttribute(
       'href',
-      `/archive/exams/${documentExamId}/document-${workerIndex}.txt`
+      `/exams/${documentExamId}/document-${workerIndex}.txt`
     )
 
     const pdfRow = await examList.getExamItemRowByName(`pdf-${workerIndex}.pdf`)

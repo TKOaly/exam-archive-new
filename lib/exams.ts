@@ -1,2 +1,2 @@
 export const examDownloadUrl = (examId: number, fileName: string) =>
-  `/archive/exams/${examId}/${fileName}`
+  `/exams/${examId}/${fileName}`

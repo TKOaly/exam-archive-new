@@ -1,0 +1,23 @@
+@use '../common' as common;
+
+$row-height: 36px;
+
+.loading {
+  @keyframes loading {
+    0% {
+      background-position: -468px 0;
+    }
+    100% {
+      background-position: 468px 0;
+    }
+  }
+  &__list-item {
+    width: 100%;
+    margin: 0 6px;
+    animation: loading 1s infinite linear forwards;
+    background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+    background-size: (common.$content-width * 2) $row-height;
+    height: ($row-height - 2 * 6px);
+    border-radius: 5px;
+  }
+}

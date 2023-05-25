@@ -8,8 +8,7 @@
 @use './components/flash-message';
 @use './components/controls';
 @use './components/admin';
-
-@import '~bootstrap-icons/font/bootstrap-icons.css';
+@use './components/loading.scss';
 
 body {
   margin: 0;

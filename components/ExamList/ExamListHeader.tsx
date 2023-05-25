@@ -1,10 +1,4 @@
-const ExamListHeader = ({
-  showDelete,
-  showRename
-}: {
-  showDelete: boolean
-  showRename: boolean
-}) => {
+const ExamListHeader = ({ showManage }: { showManage: boolean }) => {
   return (
     <div role="row" className="exam-list-header">
       <div role="columnheader" className="exam-list-header__name">
@@ -13,14 +7,7 @@ const ExamListHeader = ({
       <div role="columnheader" className="exam-list-header__last-modified">
         Upload date
       </div>
-      {showDelete && <div role="columnheader" aria-label="Delete" />}
-      {showRename && (
-        <div
-          role="columnheader"
-          aria-label="Rename"
-          className="exam-list-header__rename"
-        />
-      )}
+      {showManage && <div role="columnheader" aria-label="Manage" />}
     </div>
   )
 }

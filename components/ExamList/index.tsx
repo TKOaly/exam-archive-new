@@ -1,28 +1,25 @@
-import { ExamListItem as ExamListItemType } from '@lib/types'
-
 import ExamListHeader from '@components/ExamList/ExamListHeader'
 import ExamListItem from '@components/ExamList/ExamListItem'
 import NoExamsFound from '@components/ExamList/NoExamsFound'
-import { AccessRight } from '@lib/types'
 import ExamListItemWrapper from './ExamListItemWrapper'
+import { getSession } from '@lib/sessions'
+import { getCourseInfo } from '@services/archive'
+import { notFound } from 'next/navigation'
 
-const ExamList = ({
-  courseId,
-  courseName,
-  exams,
-  rights
-}: {
-  courseId: number
-  courseName: string
-  exams: ExamListItemType[]
-  rights: { [right in AccessRight]: boolean }
-}) => {
-  if (exams.length === 0) {
+const ExamList = async ({ courseId }: { courseId: number }) => {
+  const { rights } = await getSession()
+
+  const course = await getCourseInfo(courseId)
+  if (!course) {
+    notFound()
+  }
+
+  if (course.exams.length === 0) {
     return (
       <div
         className="exam-list-container"
-        data-course-id={courseId}
-        data-course-name={courseName}
+        data-course-id={course.id}
+        data-course-name={course.name}
       >
         <NoExamsFound className="exam-list__not-found" />
       </div>
@@ -32,16 +29,15 @@ const ExamList = ({
   return (
     <div
       className="exam-list-container"
-      data-course-id={courseId}
-      data-course-name={courseName}
+      data-course-id={course.id}
+      data-course-name={course.name}
     >
       <div role="table" aria-label="Exams" className="exam-list">
-        <ExamListHeader showDelete={rights.remove} showRename={rights.rename} />
-        {exams.map(exam => (
+        <ExamListHeader showManage={rights.remove || rights.rename} />
+        {course.exams.map(exam => (
           <ExamListItemWrapper
             key={exam.id}
-            examId={exam.id}
-            fileName={exam.fileName}
+            exam={exam}
             showDelete={rights.remove}
             showRename={rights.rename}
           >

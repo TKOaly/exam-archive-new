@@ -9,7 +9,7 @@ interface DeleteCourseProps {
   courseName: string
 }
 
-const DeleteCourse = ({ courseId, courseName }: DeleteCourseProps) => {
+const DeleteCourse = async ({ courseId, courseName }: DeleteCourseProps) => {
   const handleDeleteCourse = async (formData: FormData) => {
     'use server'
     try {
@@ -28,6 +28,11 @@ const DeleteCourse = ({ courseId, courseName }: DeleteCourseProps) => {
       return
     }
     redirect(urlForCourseListing())
+  }
+
+  const { rights } = await getSession()
+  if (!rights.remove) {
+    return null
   }
 
   return (

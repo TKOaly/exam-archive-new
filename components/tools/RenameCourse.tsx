@@ -14,7 +14,7 @@ interface RenameCourseProps {
   courseId: number
 }
 
-const RenameCourse = ({ currentName, courseId }: RenameCourseProps) => {
+const RenameCourse = async ({ currentName, courseId }: RenameCourseProps) => {
   const handleRenameCourse = async (formData: FormData) => {
     'use server'
     const { rights } = await getSession()
@@ -46,6 +46,11 @@ const RenameCourse = ({ currentName, courseId }: RenameCourseProps) => {
 
     const renamedCourse = await renameCourse(course.id, body.data)
     revalidatePath(urlForCourse(renamedCourse.id, renamedCourse.name))
+  }
+
+  const { rights } = await getSession()
+  if (!rights.rename) {
+    return null
   }
 
   return (

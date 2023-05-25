@@ -14,7 +14,7 @@ interface UploadExamProps {
   courseId: number
 }
 
-const UploadExam = ({ courseId }: UploadExamProps) => {
+const UploadExam = async ({ courseId }: UploadExamProps) => {
   const uploadExam = async (formData: FormData) => {
     'use server'
     const { rights } = await getSession()
@@ -65,6 +65,11 @@ const UploadExam = ({ courseId }: UploadExamProps) => {
       })
     )
     revalidatePath(urlForCourse(course.id, course.name))
+  }
+
+  const { rights } = await getSession()
+  if (!rights.upload) {
+    return null
   }
 
   return (

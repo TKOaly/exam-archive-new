@@ -13,8 +13,12 @@ const GlobalError = ({ error, reset }: { error: Error; reset: () => void }) => {
       <body>
         <div className="layout">
           <Header className="layout__header" />
-          <h2>Something went wrong!</h2>
-          <button onClick={() => reset()}>Try again</button>
+          <div className="page-container">
+            <main>
+              <h2>Something went wrong!</h2>
+              <button onClick={() => reset()}>Try again</button>
+            </main>
+          </div>
         </div>
       </body>
     </html>

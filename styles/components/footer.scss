@@ -1,4 +1,7 @@
+@use '../common';
+
 .layout-footer {
+  @extend %responsive-container;
   font-size: 13px;
   color: #595959;
   padding: 0 10px;

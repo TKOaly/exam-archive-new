@@ -1,11 +1,10 @@
-interface LogoutProps {
-  username: string
-}
+import { getSession } from '@lib/sessions'
 
-const Logout = ({ username }: LogoutProps) => {
+const Logout = async () => {
+  const { user } = await getSession()
   return (
     <div className="log-out">
-      Logged in: {username} (
+      Logged in: {user.username} (
       <a className="log-out__link" href="/auth/signout">
         Log out
       </a>

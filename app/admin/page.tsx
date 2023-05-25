@@ -68,7 +68,8 @@ const Page = async () => {
             </table>
           </div>
           <ControlsBox>
-            <Logout username={user.username} />
+            {/* @ts-expect-error Server Component */}
+            <Logout />
           </ControlsBox>
         </main>
         <Footer />

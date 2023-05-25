@@ -6,7 +6,7 @@ import { urlForCourse } from '@lib/courses'
 import { CourseName } from '@lib/types'
 import { getSession } from '@lib/sessions'
 
-const CreateCourse = () => {
+const CreateCourse = async () => {
   const handleCourseCreation = async (formData: FormData) => {
     'use server'
     const { rights } = await getSession()
@@ -29,6 +29,12 @@ const CreateCourse = () => {
     const createdCourse = await createCourse({ name: body.data })
 
     redirect(urlForCourse(createdCourse.id, createdCourse.name))
+  }
+
+  const { rights } = await getSession()
+
+  if (!rights.upload) {
+    return null
   }
 
   return (

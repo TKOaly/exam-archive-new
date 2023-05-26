@@ -28,7 +28,7 @@ export const GET = async (
     const exam = await findExamById(examId)
     return NextResponse.json(exam)
   } catch (e) {
-    console.error('Error while getting courses', e)
+    console.error('Error while getting exam', e)
     return NextResponse.json(
       { error: '500 Internal Server Error' },
       {

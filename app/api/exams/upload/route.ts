@@ -13,7 +13,7 @@ import { getSession } from '@lib/sessions'
 export const POST = async (req: NextRequest) => {
   try {
     const { rights } = await getSession()
-    const isRights = validateRights(rights, 'remove')
+    const isRights = validateRights(rights, 'upload')
     if (!isRights) {
       return NextResponse.json(
         { error: '401 Unauthorized' },
@@ -72,7 +72,7 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json(exams)
   } catch (e) {
-    console.error('Error while renaming exam', e)
+    console.error('Error while uploading exam', e)
     return NextResponse.json(
       { error: '500 Internal Server Error' },
       {

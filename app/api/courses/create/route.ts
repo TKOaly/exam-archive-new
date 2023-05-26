@@ -41,7 +41,7 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json(createdCourse)
   } catch (e) {
-    console.error('Error while deleting course', e)
+    console.error('Error while creating course', e)
 
     return NextResponse.json(
       { error: '500 Internal Server Error' },

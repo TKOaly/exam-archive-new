@@ -16,7 +16,7 @@ const RenameCourseBody = z.object({
 export const POST = async (req: NextRequest) => {
   try {
     const { rights } = await getSession()
-    const isRights = validateRights(rights, 'remove')
+    const isRights = validateRights(rights, 'rename')
     if (!isRights) {
       return NextResponse.json(
         { error: '401 Unauthorized' },

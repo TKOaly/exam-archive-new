@@ -34,7 +34,6 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json({ ok: true })
   } catch (e) {
-    console.error('Error while deleting course', e)
     if (e instanceof CourseNotFoundError) {
       return NextResponse.json(
         { error: e.message },
@@ -51,6 +50,8 @@ export const POST = async (req: NextRequest) => {
         }
       )
     }
+
+    console.error('Error while deleting course', e)
     return NextResponse.json(
       { error: '500 Internal Server Error' },
       {

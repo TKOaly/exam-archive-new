@@ -33,7 +33,6 @@ export class ExamList {
   }
 
   async uploadFile(fileName: string) {
-    // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
     await this.fileInput.setInputFiles({
       name: fileName,
       mimeType: 'text/plain',

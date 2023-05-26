@@ -4,9 +4,6 @@ import ExamList from '@components/ExamList'
 
 import { slugifyCourseName, urlForCourse } from '@lib/courses'
 
-import { getCourseInfo } from '@services/archive'
-import { Metadata } from 'next'
-
 const parseSlug = (slug: string) => {
   const parsedSlug = slug.match(/(?<id>\d+)-(?<courseSlug>.*)/)
   if (!parsedSlug || !parsedSlug.groups) {
@@ -22,24 +19,6 @@ const parseSlug = (slug: string) => {
   return {
     id,
     courseSlug: parsedSlug.groups.courseSlug
-  }
-}
-
-export const generateMetadata = async ({
-  params
-}: {
-  params: { slug: string }
-}): Promise<Metadata> => {
-  const { id } = parseSlug(params.slug)
-  const course = await getCourseInfo(id)
-
-  if (!course) {
-    notFound()
-  }
-
-  return {
-    title: `${course.name} - Tärpistö - TKO-äly ry`,
-    viewport: 'width=device-width'
   }
 }
 

@@ -7,6 +7,7 @@ import RenameCourse from '@components/tools/RenameCourse'
 import DeleteCourse from '@components/tools/DeleteCourse'
 import { notFound } from 'next/navigation'
 import { getCourseInfo } from '@services/archive'
+import { Metadata } from 'next'
 
 const parseSlug = (slug: string) => {
   const parsedSlug = slug.match(/(?<id>\d+)-(?<courseSlug>.*)/)
@@ -23,6 +24,24 @@ const parseSlug = (slug: string) => {
   return {
     id,
     courseSlug: parsedSlug.groups.courseSlug
+  }
+}
+
+export const generateMetadata = async ({
+  params
+}: {
+  params: { slug: string }
+}): Promise<Metadata> => {
+  const { id } = parseSlug(params.slug)
+  const course = await getCourseInfo(id)
+
+  if (!course) {
+    notFound()
+  }
+
+  return {
+    title: `${course.name} - Tärpistö - TKO-äly ry`,
+    description: 'The TKO-äly ry exam archive'
   }
 }
 

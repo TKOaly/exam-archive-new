@@ -7,6 +7,7 @@ source "$repository/scripts/common.sh"
 function main() {
     required_command npm
     pushd "$repository"
+    export COMPOSE_PROJECT_NAME="exam-archive-new-test"
 
     export PORT=${PORT:-"9010"}
     export PG_CONNECTION_STRING=${PG_CONNECTION_STRING:-"postgresql://tarpisto:tarpisto@$(docker-compose port db 5432)/tarpisto"}

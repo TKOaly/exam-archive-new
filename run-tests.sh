@@ -8,7 +8,7 @@ function stop() {
   pushd "$repository"
   required_command docker
   required_command docker-compose
-  COMPOSE_PROJECT_NAME="exam-archive-new-test" docker-compose down || true
+  COMPOSE_PROJECT_NAME="exam-archive-new-test" docker-compose down -v || true
   popd
 }
 trap stop EXIT

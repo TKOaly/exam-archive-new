@@ -7,7 +7,13 @@ const ExamListHeader = ({ showManage }: { showManage: boolean }) => {
       <div role="columnheader" className="exam-list-header__last-modified">
         Upload date
       </div>
-      {showManage && <div role="columnheader" aria-label="Manage" />}
+      {showManage && (
+        <div
+          role="columnheader"
+          className="exam-list-header__manage"
+          aria-label="Manage"
+        />
+      )}
     </div>
   )
 }

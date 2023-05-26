@@ -1,7 +1,7 @@
 const Loading = () => {
   return (
     <div role="row" className="course-list-item">
-      <div className="loading__list-item" aria-label="Loading..."></div>
+      <div role="cell" className="loading__list-item"></div>
     </div>
   )
 }

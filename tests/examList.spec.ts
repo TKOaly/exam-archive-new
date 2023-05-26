@@ -10,10 +10,10 @@ test.describe('examList looks right', () => {
     const introRes = await request.post('/api/courses/create', {
       data: { courseName: `Introduction to testing -${workerIndex}-` }
     })
-    const introCourse = await introRes.json()
+    const introCourse: CourseListItem = await introRes.json()
     courses = [...courses, introCourse]
 
-    const newExams = await request.post('/api/exams/upload', {
+    const newExamsRes = await request.post('/api/exams/upload', {
       multipart: {
         courseId: introCourse.id,
         document: {
@@ -33,13 +33,15 @@ test.describe('examList looks right', () => {
         }
       }
     })
+    const newExams: ExamListItem[] = await newExamsRes.json()
 
-    exams = [...exams, ...(await newExams.json())]
+    exams = [...exams, ...newExams]
 
     const advancedRes = await request.post('/api/courses/create', {
       data: { courseName: `Advanced course in Testing -${workerIndex}-` }
     })
-    courses = [...courses, await advancedRes.json()]
+    const advanced: CourseListItem = await advancedRes.json()
+    courses = [...courses, advanced]
   })
 
   test.afterAll(async ({ request }) => {
@@ -172,8 +174,10 @@ test.describe('examList looks right', () => {
     await expect(imageIcon).toHaveAttribute('src', '/img/icon-photo.svg')
   })
 
-  test.fixme('controls is correct', async ({ page, examList }) => {
-    await examList.goto(132, 'Probability Theory')
+  test('controls is correct', async ({ page, courseList }, { workerIndex }) => {
+    await courseList.gotoCourseByName(
+      `Introduction to testing -${workerIndex}-`
+    )
 
     const box = page.getByTestId('controls')
 
@@ -194,7 +198,7 @@ test.describe('examList looks right', () => {
     )
     const deleteButton = box.getByRole('button', { name: 'delete' })
 
-    const loggedIn = box.getByText('Logged in: dev-user (Log out)')
+    const loggedIn = box.getByText('Logged in: dev (Log out)')
     const logoutLink = loggedIn.locator('a', { hasText: 'Log out' })
 
     await expect(uploadHeader).toBeVisible()

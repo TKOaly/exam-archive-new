@@ -10,10 +10,10 @@ test.describe('courseList looks right', () => {
     const introRes = await request.post('/api/courses/create', {
       data: { courseName: `Introduction to testing -${workerIndex}-` }
     })
-    const introCourse = await introRes.json()
+    const introCourse: CourseListItem = await introRes.json()
     courses = [...courses, introCourse]
 
-    const newExams = await request.post('/api/exams/upload', {
+    const newExamsRes = await request.post('/api/exams/upload', {
       multipart: {
         courseId: introCourse.id,
         document: {
@@ -33,13 +33,15 @@ test.describe('courseList looks right', () => {
         }
       }
     })
+    const newExams: ExamListItem[] = await newExamsRes.json()
 
-    exams = [...exams, ...(await newExams.json())]
+    exams = [...exams, ...newExams]
 
     const advancedRes = await request.post('/api/courses/create', {
       data: { courseName: `Advanced course in Testing -${workerIndex}-` }
     })
-    courses = [...courses, await advancedRes.json()]
+    const advanced: CourseListItem = await advancedRes.json()
+    courses = [...courses, advanced]
   })
 
   test.afterAll(async ({ request }) => {

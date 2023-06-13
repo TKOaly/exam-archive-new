@@ -27,7 +27,7 @@
     "test:install": "playwright install --with-deps"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.202.0",
+    "@aws-sdk/client-s3": "^3.350.0",
     "@aws-sdk/cloudfront-signer": "^3.201.0",
     "@aws-sdk/s3-request-presigner": "^3.202.0",
     "axios": "^1.1.3",

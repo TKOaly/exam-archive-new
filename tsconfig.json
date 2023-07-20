@@ -19,7 +19,8 @@
       "@components/*": ["components/*"],
       "@services/*": ["services/*"],
       "@lib/*": ["lib/*"],
-      "@styles/*": ["styles/*"]
+      "@styles/*": ["styles/*"],
+      "@media/*": ["media/*"]
     },
     "plugins": [
       {

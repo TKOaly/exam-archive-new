@@ -36,6 +36,7 @@ const RootLayout = ({
         <Header />
         <div className="bg-yellow-500 pb-5">
           <div className="container mx-auto box-border max-w-screen-lg bg-gray-50 px-5 shadow-xl">
+            {modal}
             {children}
           </div>
         </div>

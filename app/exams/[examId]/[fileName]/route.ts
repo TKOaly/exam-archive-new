@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 
+import config from '@lib/config'
+import { getSession } from '@lib/sessions'
 import { findExamById } from '@services/archive'
 import s3 from '@services/s3'
-import { getSession } from '@lib/sessions'
-import config from '@lib/config'
 
 export const GET = async (
   req: Request,

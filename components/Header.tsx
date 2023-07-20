@@ -31,7 +31,8 @@ const Header = async () => {
             </h1>
           </Link>
         </div>
-        <div className="hidden grow basis-1/2 flex-row items-center gap-x-1 border-0 border-b-4 border-gray-800 bg-transparent transition-all md:flex">
+
+        {/* <div className="hidden grow basis-1/2 flex-row items-center gap-x-1 border-0 border-b-4 border-gray-800 bg-transparent transition-all md:flex">
           <MagnifyingGlassIcon className="mx-2 h-7 w-7 shrink-0 stroke-gray-800" />
           <input
             type="text"
@@ -47,7 +48,7 @@ const Header = async () => {
           >
             Search
           </button>
-        </div>
+        </div> */}
 
         <div className="flex shrink basis-1/4 flex-row items-center justify-end md:shrink-0">
           <MainMenu>

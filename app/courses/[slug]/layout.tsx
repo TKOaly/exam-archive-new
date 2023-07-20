@@ -1,13 +1,13 @@
-import '@styles/main.scss'
 import React from 'react'
-import ListingNavigation from '@components/Navigation'
-import { ControlsBox, Logout } from '@components/Controls'
-import UploadExam from '@components/tools/UploadExam'
-import RenameCourse from '@components/tools/RenameCourse'
-import DeleteCourse from '@components/tools/DeleteCourse'
-import { notFound } from 'next/navigation'
-import { getCourseInfo } from '@services/archive'
 import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+
+import Link from 'next/link'
+
+import { urlForCourse } from '@lib/courses'
+import { getCourseInfo } from '@services/archive'
+
+import ListingNavigation from '@components/Navigation'
 
 const parseSlug = (slug: string) => {
   const parsedSlug = slug.match(/(?<id>\d+)-(?<courseSlug>.*)/)
@@ -61,21 +61,16 @@ const Layout = async ({
 
   return (
     <>
-      <ListingNavigation title={course.name} backButtonHref="/" />
+      <ListingNavigation title={course.name} backButtonHref="/">
+        <Link
+          href={`${urlForCourse(course.id, course.name)}/upload`}
+          className="box-border bg-transparent p-3 font-serif lowercase text-gray-800 shadow-lg ring ring-inset ring-gray-800 hover:bg-gray-600 hover:text-white focus:ring-gray-400"
+        >
+          upload
+        </Link>
+      </ListingNavigation>
       <div className="page-container">
-        <main>
-          {children}
-          <ControlsBox>
-            {/* @ts-expect-error Server Component */}
-            <UploadExam courseId={course.id} />
-            {/* @ts-expect-error Server Component */}
-            <RenameCourse courseId={course.id} currentName={course.name} />
-            {/* @ts-expect-error Server Component */}
-            <DeleteCourse courseId={course.id} courseName={course.name} />
-            {/* @ts-expect-error Server Component */}
-            <Logout />
-          </ControlsBox>
-        </main>
+        <main>{children}</main>
       </div>
     </>
   )

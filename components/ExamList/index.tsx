@@ -1,10 +1,11 @@
+import { notFound } from 'next/navigation'
+
+import { getSession } from '@lib/sessions'
+import { getCourseInfo } from '@services/archive'
+
 import ExamListHeader from '@components/ExamList/ExamListHeader'
 import ExamListItem from '@components/ExamList/ExamListItem'
 import NoExamsFound from '@components/ExamList/NoExamsFound'
-import ExamListItemWrapper from './ExamListItemWrapper'
-import { getSession } from '@lib/sessions'
-import { getCourseInfo } from '@services/archive'
-import { notFound } from 'next/navigation'
 
 const ExamList = async ({ courseId }: { courseId: number }) => {
   const { rights } = await getSession()
@@ -17,37 +18,29 @@ const ExamList = async ({ courseId }: { courseId: number }) => {
   if (course.exams.length === 0) {
     return (
       <div
-        className="exam-list-container"
+        aria-label="Exams"
+        className="divide-y pb-5"
         data-course-id={course.id}
         data-course-name={course.name}
       >
-        <NoExamsFound className="exam-list__not-found" />
+        <ExamListHeader showManage={false} />
+        <NoExamsFound />
       </div>
     )
   }
 
   return (
     <div
-      className="exam-list-container"
+      role="table"
+      aria-label="Exams"
+      className="divide-y pb-5"
       data-course-id={course.id}
       data-course-name={course.name}
     >
-      <div role="table" aria-label="Exams" className="exam-list">
-        <ExamListHeader showManage={rights.remove || rights.rename} />
-        {course.exams.map(exam => (
-          <ExamListItemWrapper
-            key={exam.id}
-            exam={exam}
-            showDelete={rights.remove}
-            showRename={rights.rename}
-          >
-            <ExamListItem
-              exam={exam}
-              showManage={rights.remove || rights.rename}
-            />
-          </ExamListItemWrapper>
-        ))}
-      </div>
+      <ExamListHeader showManage={rights.remove || rights.rename} />
+      {course.exams.map(exam => (
+        <ExamListItem exam={exam} showManage={rights.remove || rights.rename} />
+      ))}
     </div>
   )
 }

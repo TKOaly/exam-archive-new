@@ -1,5 +1,9 @@
 import Image from 'next/image'
 
+import DocumentIconFile from '@media/icon-document.svg'
+import PdfIconFile from '@media/icon-pdf.svg'
+import PhotoIconFile from '@media/icon-photo.svg'
+
 interface IconProps {
   alt: string
   className: string
@@ -8,9 +12,9 @@ interface IconProps {
 }
 
 const [DocumentIcon, PdfIcon, PhotoIcon] = [
-  '/img/icon-document.svg',
-  '/img/icon-pdf.svg',
-  '/img/icon-photo.svg'
+  DocumentIconFile,
+  PdfIconFile,
+  PhotoIconFile
 ].map(src => ({ alt, className, role, ariaHidden }: IconProps) => {
   return (
     <Image
@@ -19,8 +23,6 @@ const [DocumentIcon, PdfIcon, PhotoIcon] = [
       aria-hidden={ariaHidden}
       className={className}
       alt={alt}
-      width={20}
-      height={20}
     />
   )
 })

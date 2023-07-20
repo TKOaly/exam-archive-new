@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 
 import ExamList from '@components/ExamList'
 
-import { slugifyCourseName, urlForCourse } from '@lib/courses'
+// import { slugifyCourseName, urlForCourse } from '@lib/courses'
 
 const parseSlug = (slug: string) => {
   const parsedSlug = slug.match(/(?<id>\d+)-(?<courseSlug>.*)/)
@@ -31,7 +31,6 @@ const Page = async ({ params }: any) => {
 
   return (
     <>
-      {/* @ts-expect-error Server Component */}
       <ExamList courseId={id} />
     </>
   )

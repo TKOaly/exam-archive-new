@@ -1,5 +1,5 @@
-import LoadingItem from '@components/ExamList/Loading'
 import ExamListHeader from '@components/ExamList/ExamListHeader'
+import LoadingItem from '@components/ExamList/Loading'
 
 const Loading = () => {
   return (

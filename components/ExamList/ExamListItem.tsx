@@ -1,13 +1,13 @@
 import path from 'path'
 import formatDate from 'date-fns/format'
 import fiLocale from 'date-fns/locale/fi'
+
 import Link from 'next/link'
+import { PencilSquareIcon } from '@heroicons/react/24/solid'
 
 import { ExamListItem } from '@lib/types'
 
 import { DocumentIcon, PdfIcon, PhotoIcon } from '@components/icons/File'
-
-import { Edit } from 'react-feather'
 
 const iconForFile = (mimeType: string) => {
   if (mimeType.startsWith('image/')) {
@@ -21,7 +21,7 @@ const iconForFile = (mimeType: string) => {
 
 const splitExtension = (fileName: string) => {
   const extname = path.extname(fileName)
-  const basename = path.basename(fileName, extname)
+  const basename = path.basename(fileName, extname).replace(/_/g, '_\u200b')
 
   return { extname, basename }
 }
@@ -38,27 +38,41 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
   const { extname, basename } = splitExtension(fileName)
 
   return (
-    <div role="row" className="exam-list-item">
-      <Icon
-        role="cell"
-        ariaHidden={true}
-        alt=""
-        className="exam-list-item__icon"
-      />
-      <div role="cell" className="exam-list-item__link-container">
+    <div
+      role="row"
+      className="flex flex-row items-center px-1 hover:bg-slate-100"
+    >
+      <div role="cell" className="m-2 shrink-0">
+        <Icon role="cell" ariaHidden={true} alt="" className="h-6 w-6" />
+      </div>
+      <div role="cell" className="mx-1 my-2 grow overflow-hidden text-ellipsis">
         <Link
           href={downloadUrl}
           title={fileName}
           target="_blank"
-          className="exam-list-item__link"
+          className="hover:underline hover:decoration-cyan-500"
         >
-          <span className="exam-list-item__basename">{basename}</span>
-          <span className="exam-list-item__extname">{extname}</span>
+          {basename}
+          {extname}
         </Link>
+
+        {uploadDate && (
+          <>
+            <br />
+            <time
+              className="block font-mono text-xs text-gray-600 sm:hidden"
+              title={uploadDate.toISOString()}
+              dateTime={uploadDate.toISOString()}
+            >
+              {formatDate(uploadDate, 'yyyy-MM-dd', { locale: fiLocale })}
+            </time>
+          </>
+        )}
       </div>
-      <div role="cell" className="exam-list-item__last-modified">
+      <div role="cell" className="mx-2 hidden sm:block">
         {uploadDate && (
           <time
+            className="font-mono text-xs text-gray-600"
             title={uploadDate.toISOString()}
             dateTime={uploadDate.toISOString()}
           >
@@ -67,14 +81,16 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
         )}
       </div>
       {showManage && (
-        <div role="cell">
-          <div
-            role="button"
+        <div role="cell" className="m-2 shrink-0">
+          <Link
             aria-label={`Manage exam "${fileName}"`}
             title={`Manage exam "${fileName}"`}
+            href={`${downloadUrl}/manage`}
+            className="flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"
           >
-            <Edit size={18} className="exam-list-item__edit-icon" />
-          </div>
+            <PencilSquareIcon className="h-4 w-4 self-center" />{' '}
+            <span className="sr-only">{`Manage exam "${fileName}"`}</span>
+          </Link>
         </div>
       )}
     </div>

@@ -22,3 +22,7 @@ body {
 .page-container {
   @extend %responsive-container;
 }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;

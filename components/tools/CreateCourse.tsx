@@ -1,10 +1,13 @@
 import { redirect } from 'next/navigation'
 
+import { urlForCourse } from '@lib/courses'
+import { getSession } from '@lib/sessions'
+import { CourseName } from '@lib/types'
 import { validateRights } from '@services/tkoUserService'
 import { findCourseByName, createCourse } from '@services/archive'
-import { urlForCourse } from '@lib/courses'
-import { CourseName } from '@lib/types'
-import { getSession } from '@lib/sessions'
+
+import Input from '@components/Input'
+import Button from '@components/Button'
 
 const CreateCourse = async () => {
   const handleCourseCreation = async (formData: FormData) => {
@@ -38,28 +41,25 @@ const CreateCourse = async () => {
   }
 
   return (
-    <div className="create-course-form">
-      <h3>Add a new course:</h3>
-      <form action={handleCourseCreation}>
-        <input
-          type="text"
-          className="create-course-form__name"
+    <form action={handleCourseCreation}>
+      <div className="flex flex-col gap-2">
+        <p className="font-serif text-xl font-bold leading-tight">
+          Add a new course
+        </p>
+        <Input
           name="courseName"
-          aria-label={`Give name for new course`}
           title={`Give name for new course`}
           placeholder="Course name"
-        ></input>
-        <button
+          className="w-full lg:w-1/2"
+        />
+        <Button
           type="submit"
-          className="create-course-form__submit"
           name="createCourse"
-          aria-label={`Create course`}
-          title={`Create course`}
-        >
-          Create course
-        </button>
-      </form>
-    </div>
+          title="Create course"
+          className="w-fit text-left"
+        />
+      </div>
+    </form>
   )
 }
 

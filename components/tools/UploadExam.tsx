@@ -1,14 +1,18 @@
 import { PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3'
-import { getCourseInfo, createExam } from '@services/archive'
-import s3 from '@services/s3'
-import { validateRights } from '@services/tkoUserService'
 import contentDisposition from 'content-disposition'
 import { randomUUID as uuidv4 } from 'crypto'
 import { transliterate } from 'transliteration'
+
+import { redirect } from 'next/navigation'
+
 import configs from '@lib/config'
 import { urlForCourse } from '@lib/courses'
-import { revalidatePath } from 'next/cache'
 import { getSession } from '@lib/sessions'
+import { getCourseInfo, createExam } from '@services/archive'
+import s3 from '@services/s3'
+import { validateRights } from '@services/tkoUserService'
+
+import Button from '@components/Button'
 
 interface UploadExamProps {
   courseId: number
@@ -64,7 +68,7 @@ const UploadExam = async ({ courseId }: UploadExamProps) => {
         return exam
       })
     )
-    revalidatePath(urlForCourse(course.id, course.name))
+    redirect(urlForCourse(course.id, course.name))
   }
 
   const { rights } = await getSession()
@@ -73,29 +77,29 @@ const UploadExam = async ({ courseId }: UploadExamProps) => {
   }
 
   return (
-    <div className="exam-upload-form">
-      <h3>Upload a new file here:</h3>
-      <form action={uploadExam}>
+    <form action={uploadExam}>
+      <div className="flex flex-col gap-2">
+        <p className="font-serif text-xl font-bold leading-tight">
+          Upload a new file here
+        </p>
         <input
           type="file"
-          className="exam-upload-form__file"
           name="file"
           aria-label="Select files to upload"
           title="Select files to upload"
           multiple
+          className="my-2 box-border file:box-border file:cursor-pointer file:border-0 file:bg-transparent file:p-3 file:font-serif file:lowercase file:text-gray-800 file:shadow-lg file:ring file:ring-inset file:ring-gray-800 hover:file:bg-gray-600 hover:file:text-white focus:file:ring-gray-400"
         />
         <input hidden name="courseId" defaultValue={courseId} />
-        <button
+        <Button
           type="submit"
-          className="exam-upload-form__submit"
           name="uploadExam"
-          aria-label="Upload exam"
-          title="Upload exam"
-        >
-          Upload
-        </button>
-      </form>
-    </div>
+          title={`Upload exam`}
+          text={`Upload`}
+          className="w-fit text-left"
+        />
+      </div>
+    </form>
   )
 }
 

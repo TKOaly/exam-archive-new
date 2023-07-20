@@ -1,8 +1,11 @@
 import { redirect } from 'next/navigation'
+
 import { urlForCourseListing } from '@lib/courses'
 import { getSession } from '@lib/sessions'
 import { deleteCourse } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
+
+import Button from '@components/Button'
 
 interface DeleteCourseProps {
   courseId: number
@@ -31,27 +34,28 @@ const DeleteCourse = async ({ courseId, courseName }: DeleteCourseProps) => {
   }
 
   const { rights } = await getSession()
+
   if (!rights.remove) {
     return null
   }
 
   return (
-    <div className="delete-course-form">
-      <h3>Delete course</h3>
-      <p>Course can only be deleted after all exams have been deleted.</p>
-      <form action={handleDeleteCourse}>
-        <input hidden name="courseId" defaultValue={courseId} />
-        <button
-          type="submit"
-          className="delete-course-form__submit"
-          name="deleteCourse"
-          aria-label={`Delete course "${courseName}"`}
-          title={`Delete course "${courseName}"`}
-        >
+    <form action={handleDeleteCourse}>
+      <div className="flex flex-col gap-2">
+        <p className="font-serif text-xl font-bold leading-tight">
           Delete course
-        </button>
-      </form>
-    </div>
+        </p>
+        <p>Course can only be deleted after all exams have been deleted.</p>
+        <input hidden name="courseId" defaultValue={courseId} />
+        <Button
+          type="submit"
+          name="deleteCourse"
+          title={`Delete course "${courseName}"`}
+          text={`Delete course`}
+          className="w-fit text-left"
+        />
+      </div>
+    </form>
   )
 }
 

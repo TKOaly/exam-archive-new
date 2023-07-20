@@ -1,16 +1,20 @@
+import { redirect } from 'next/navigation'
+
 import { urlForCourse } from '@lib/courses'
 import { getSession } from '@lib/sessions'
 import { ExamName } from '@lib/types'
 import { getExamFileNameById, renameExamFile } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
-import { revalidatePath } from 'next/cache'
+
+import Button from '@components/Button'
+import Input from '@components/Input'
 
 interface RenameExamProps {
   currentName: string
   examId: number
 }
 
-const RenameExam = ({ currentName, examId }: RenameExamProps) => {
+const RenameExam = async ({ currentName, examId }: RenameExamProps) => {
   const handleRenameExam = async (formData: FormData) => {
     'use server'
     const { rights } = await getSession()
@@ -40,33 +44,37 @@ const RenameExam = ({ currentName, examId }: RenameExamProps) => {
     }
 
     await renameExamFile(examId, body.data)
-    revalidatePath(urlForCourse(info.courseId, info.courseName))
+    redirect(urlForCourse(info.courseId, info.courseName))
+  }
+
+  const { rights } = await getSession()
+
+  if (!rights.rename) {
+    return null
   }
 
   return (
-    <div className="rename-exam-form">
-      <h3>Rename exam</h3>
-      <form action={handleRenameExam}>
-        <input
-          type="text"
-          className="rename-exam-form__name"
+    <form action={handleRenameExam}>
+      <div className="flex flex-col gap-2">
+        <p className="font-serif text-xl font-bold leading-tight">
+          Rename exam
+        </p>
+        <Input
           name="examName"
-          aria-label={`Give new name for exam "${currentName}"`}
           title={`Give new name for exam "${currentName}"`}
           defaultValue={currentName}
-        ></input>
+          className="w-full lg:w-1/2"
+        />
         <input hidden name="examId" defaultValue={examId} />
-        <button
+        <Button
           type="submit"
-          className="rename-exam-form__submit"
           name="renameExam"
-          aria-label={`Rename exam "${currentName}"`}
           title={`Rename exam "${currentName}"`}
-        >
-          Rename exam
-        </button>
-      </form>
-    </div>
+          text={`Rename exam`}
+          className="w-fit text-left"
+        />
+      </div>
+    </form>
   )
 }
 

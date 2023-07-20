@@ -1,15 +1,18 @@
-import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+
 import { urlForCourse } from '@lib/courses'
 import { getSession } from '@lib/sessions'
 import { deleteExam, findCourseByExamId } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
+
+import Button from '@components/Button'
 
 interface DeleteExamProps {
   examId: number
   fileName: string
 }
 
-const DeleteExam = ({ examId, fileName }: DeleteExamProps) => {
+const DeleteExam = async ({ examId, fileName }: DeleteExamProps) => {
   const handleDeleteExam = async (formData: FormData) => {
     'use server'
     const { rights } = await getSession()
@@ -29,25 +32,31 @@ const DeleteExam = ({ examId, fileName }: DeleteExamProps) => {
 
     await deleteExam(examId)
 
-    revalidatePath(urlForCourse(course.id, course.name))
+    redirect(urlForCourse(course.id, course.name))
+  }
+
+  const { rights } = await getSession()
+
+  if (!rights.remove) {
+    return null
   }
 
   return (
-    <div className="delete-exam-form">
-      <h3>Delete exam</h3>
-      <form action={handleDeleteExam}>
-        <input hidden name="examId" defaultValue={examId} />
-        <button
-          type="submit"
-          className="delete-exam-button__button"
-          name="deleteExam"
-          aria-label={`Delete exam "${fileName}"`}
-          title={`Delete exam "${fileName}"`}
-        >
+    <form action={handleDeleteExam}>
+      <div className="flex flex-col gap-2">
+        <p className="font-serif text-xl font-bold leading-tight">
           Delete exam
-        </button>
-      </form>
-    </div>
+        </p>
+        <input hidden name="examId" defaultValue={examId} />
+        <Button
+          type="submit"
+          name="deleteExam"
+          title={`Delete exam "${fileName}"`}
+          text={`Delete exam`}
+          className="w-fit text-left"
+        />
+      </div>
+    </form>
   )
 }
 

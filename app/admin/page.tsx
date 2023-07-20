@@ -4,8 +4,6 @@ import { redirect } from 'next/navigation'
 import Footer from '@components/Footer'
 import ListingNavigation from '@components/Navigation'
 
-import { ControlsBox, Logout } from '@components/Controls'
-
 import { adminGetS3Objects, sortByPrefixThenObjNameAsc } from '@services/admin'
 import { getSession } from '@lib/sessions'
 
@@ -24,7 +22,7 @@ const Page = async () => {
     redirect('/')
   }
 
-  const { user, rights } = await getSession()
+  const { rights } = await getSession()
 
   if (!rights.rename && !rights.remove) {
     redirect('/')
@@ -67,10 +65,6 @@ const Page = async () => {
               </tbody>
             </table>
           </div>
-          <ControlsBox>
-            {/* @ts-expect-error Server Component */}
-            <Logout />
-          </ControlsBox>
         </main>
         <Footer />
       </div>

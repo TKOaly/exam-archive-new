@@ -6,21 +6,19 @@ import CourseListHeader from '@components/CourseList/CourseListHeader'
 const CourseList = async () => {
   const courses = await getCourseListing()
   return (
-    <div className="course-list-container">
-      <div role="table" aria-label="Courses" className="course-list">
-        <CourseListHeader />
-        {courses.map(course => {
-          return (
-            <CourseListItem
-              key={course.id}
-              id={course.id}
-              name={course.name}
-              url={course.url}
-              lastModified={course.lastModified}
-            />
-          )
-        })}
-      </div>
+    <div role="table" aria-label="Courses" className="divide-y pb-5">
+      <CourseListHeader />
+      {courses.map(course => {
+        return (
+          <CourseListItem
+            key={course.id}
+            id={course.id}
+            name={course.name}
+            url={course.url}
+            lastModified={course.lastModified}
+          />
+        )
+      })}
     </div>
   )
 }

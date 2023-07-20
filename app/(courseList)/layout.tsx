@@ -1,8 +1,8 @@
-import '@styles/main.scss'
 import React from 'react'
+
+import Link from 'next/link'
+
 import ListingNavigation from '@components/Navigation'
-import { ControlsBox, Logout } from '@components/Controls'
-import CreateCourse from '@components/tools/CreateCourse'
 
 export const metadata = {
   title: 'Tärpistö - TKO-äly ry',
@@ -12,18 +12,15 @@ export const metadata = {
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <ListingNavigation title="Courses" />
-      <div className="page-container">
-        <main>
-          {children}
-          <ControlsBox>
-            {/* @ts-expect-error Server Component */}
-            <CreateCourse />
-            {/* @ts-expect-error Server Component */}
-            <Logout />
-          </ControlsBox>
-        </main>
-      </div>
+      <ListingNavigation title="Courses">
+        <Link
+          href={'/courses/create'}
+          className="box-border bg-transparent p-3 font-serif lowercase text-gray-800 shadow-lg ring ring-inset ring-gray-800 hover:bg-gray-600 hover:text-white focus:ring-gray-400"
+        >
+          create
+        </Link>
+      </ListingNavigation>
+      <main>{children}</main>
     </>
   )
 }

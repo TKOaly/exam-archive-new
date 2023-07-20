@@ -1,51 +1,32 @@
-import classnames from 'classnames'
 import Link from 'next/link'
-import ArrowBack from '@components/icons/ArrowBack'
 
-const BackButton = ({
-  href,
-  className
-}: {
-  href: string
-  className: string
-}) => (
-  <Link
-    href={href}
-    aria-label="Back to course listing"
-    className={classnames('back-button', className)}
-  >
-    <ArrowBack className="back-button__icon" alt="Arrow pointing to the left" />
-  </Link>
-)
+import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid'
 
 interface NavigationProps {
+  children?: React.ReactNode
   title: string
   backButtonHref?: string
-  className?: string
 }
 
 const ListingNavigation = ({
+  children,
   title,
-  backButtonHref,
-  className
+  backButtonHref
 }: NavigationProps) => (
-  <nav
-    className={classnames('listing-navigation', className)}
-    title="Listing navigation"
-  >
-    <div className="listing-navigation__content">
-      {backButtonHref && (
-        <nav className="listing-navigation__button-container">
-          <BackButton
-            className="listing-navigation__back-button"
-            href={backButtonHref}
-          />
-        </nav>
-      )}
-      <div className="listing-navigation__title">
-        <h2 className="listing-navigation__text">{title}</h2>
-      </div>
-    </div>
+  <nav className="flex flex-row flex-wrap items-center px-1 py-5 ">
+    {backButtonHref && (
+      <Link
+        href={backButtonHref}
+        aria-label="Back to course listing"
+        className="my-2 me-4 ms-2 box-border shrink-0"
+      >
+        <ArrowUturnLeftIcon className="h-6 w-6 stroke-gray-800 stroke-2 " />
+      </Link>
+    )}
+    <h2 className="mx-1 my-2 shrink font-serif text-3xl font-extrabold leading-tight">
+      {title}
+    </h2>
+    {children && <div className="me-2 ms-auto ">{children}</div>}
   </nav>
 )
 

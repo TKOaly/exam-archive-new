@@ -6,27 +6,60 @@ test.describe('frontpage of Tärpistö works', () => {
 
     await expect(page).toHaveTitle(/Tärpistö - TKO-äly ry/)
 
+    const logo = page.getByRole('img', { name: 'TKO-äly logo' })
     const heading = page.getByRole('heading', { name: 'Tärpistö' })
-    const subheading = page
-      .getByRole('banner')
-      .getByText('The TKO-äly ry exam archive')
+    const menu = page.getByRole('button', { name: 'Open menu' })
 
+    await expect(logo).toBeVisible()
     await expect(heading).toBeVisible()
-    await expect(subheading).toBeVisible()
+    await expect(menu).toBeVisible()
+  })
+
+  test('menu is right', async ({ page }) => {
+    await page.goto('/')
+
+    const menuButton = page.getByRole('button', { name: 'Open menu' })
+
+    await expect(menuButton).toBeVisible()
+    await menuButton.click()
+
+    const menu = page.getByTestId('menu')
+    await expect(menu).toBeVisible()
+
+    const user = menu.getByTestId('current-user')
+    await expect(user).toBeVisible()
+
+    const userIcon = user.locator('svg')
+    const userInfo = user.getByText('Logged in:')
+    const userName = user.getByText('dev')
+
+    await expect(userIcon).toBeVisible()
+    await expect(userInfo).toBeVisible()
+    await expect(userName).toBeVisible()
+
+    const signOutButton = menu.getByRole('link', { name: 'sign out' })
+    await expect(signOutButton).toBeVisible()
+    await expect(signOutButton).toHaveAttribute(
+      'href',
+      '/auth/signout'
+    )
+
   })
 
   test('footer is right', async ({ page }) => {
     await page.goto('/')
 
     const footer = page.getByText('Tärpistö - The TKO-äly ry exam archive.')
-    const contact = page.getByText('Contact: tarpisto@tko-aly.fi')
-    const links = page.getByTestId('footer-links')
     await expect(footer).toBeVisible()
+
+    const contact = page.getByText('tarpisto@tko-aly.fi')
     await expect(contact).toBeVisible()
-    await expect(contact.locator('a')).toHaveAttribute(
+    await expect(contact).toHaveAttribute(
       'href',
       'mailto:tarpisto@tko-aly.fi'
     )
+
+    const links = page.getByTestId('footer-links')
     await expect(links).toBeVisible()
     await expect(links.locator('a', { hasText: 'TKO-äly ry' })).toHaveAttribute(
       'href',

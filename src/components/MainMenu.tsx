@@ -6,8 +6,8 @@ import { Bars3Icon } from '@heroicons/react/24/outline'
 
 const MainMenu = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Popover className="relative">
-      <Popover.Button className="rounded-full p-2 hover:bg-white/20 active:bg-white/50">
+    <Popover className="relative" data-test-id="menu">
+      <Popover.Button className="rounded-full p-2 hover:bg-white/20 active:bg-white/50" title={"Open menu"} aria-label={"Open menu"}>
         <Bars3Icon className="h-10 w-10 stroke-gray-800" />
       </Popover.Button>
       <Popover.Overlay className="fixed inset-0 bg-black opacity-30" />

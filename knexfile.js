@@ -22,10 +22,11 @@ module.exports = {
       max: 3
     },
     migrations: {
-      tableName: 'knex_migrations'
+      tableName: 'knex_migrations',
+      directory: './src/migrations'
     },
     seeds: {
-      directory: './seeds'
+      directory: './src/seeds'
     }
   },
   test: {
@@ -37,10 +38,11 @@ module.exports = {
       max: 3
     },
     seeds: {
-      directory: './seeds'
+      directory: './src/seeds'
     },
     migrations: {
-      tableName: 'knex_migrations'
+      tableName: 'knex_migrations',
+      directory: './src/migrations'
     }
   },
   production: {
@@ -52,7 +54,8 @@ module.exports = {
       max: 3
     },
     migrations: {
-      tableName: 'knex_migrations'
+      tableName: 'knex_migrations',
+      directory: './src/migrations'
     }
   },
 

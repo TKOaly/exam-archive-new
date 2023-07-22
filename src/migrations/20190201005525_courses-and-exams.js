@@ -1,7 +1,7 @@
 // @ts-check
 /** @typedef {import("knex")} Knex */
 
-const { onUpdateTrigger } = require('../knexfile')
+const { onUpdateTrigger } = require('../../knexfile')
 
 /**
  * @param {Knex} knex

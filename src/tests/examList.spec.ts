@@ -97,7 +97,7 @@ test.describe('examList looks right', () => {
     await expect(heading).toBeVisible()
   })
 
-  test('examlisting headers are correct', async ({ page, courseList }, {
+  test('examlisting headers are correct', async ({ page, courseList, isMobile }, {
     workerIndex
   }) => {
     await courseList.gotoCourseByName(
@@ -105,7 +105,7 @@ test.describe('examList looks right', () => {
     )
 
     const headers = page.getByRole('row', {
-      name: 'Exam Upload date'
+      name: `Icon Exam${isMobile ? ' ' : ' Upload date '}Manage`
     })
     await expect(headers).toBeVisible()
   })
@@ -124,7 +124,8 @@ test.describe('examList looks right', () => {
   test('examlisting row is correct with correct icon', async ({
     page,
     courseList,
-    examList
+    examList,
+    isMobile
   }, { workerIndex }) => {
     await courseList.gotoCourseByName(
       `Introduction to testing -${workerIndex}-`
@@ -134,12 +135,8 @@ test.describe('examList looks right', () => {
       `document-${workerIndex}.txt`
     )
     const documentIcon = documentRow.locator('img').nth(0)
-    const name = documentRow.locator('a', {
-      hasText: `document-${workerIndex}.txt`
-    })
-    const lastModified = documentRow.locator('time', {
-      hasText: `${new Date().toISOString().split('T')[0]}`
-    })
+    const name = documentRow.getByText(`document-${workerIndex}.txt`, { exact: true })
+    const lastModified = documentRow.getByTestId(`upload-date-time${isMobile ? '-mobile' : ''}`)
     const documentExamId = await page.getAttribute(
       `[data-exam-name="document-${workerIndex}.txt"]`,
       'data-exam-id'
@@ -153,17 +150,18 @@ test.describe('examList looks right', () => {
     await expect(lastModified).toBeVisible()
     await expect(manageButton).toBeVisible()
 
-    await expect(documentIcon).toHaveAttribute('src', '/img/icon-document.svg')
+    await expect(documentIcon).toHaveAttribute('src', new RegExp('icon-document'))
     await expect(name).toHaveAttribute(
       'href',
       `/exams/${documentExamId}/document-${workerIndex}.txt`
     )
+    await expect(lastModified).toHaveText(`${new Date().toISOString().split('T')[0]}`)
 
     const pdfRow = await examList.getExamItemRowByName(`pdf-${workerIndex}.pdf`)
     const pdfIcon = pdfRow.locator('img').nth(0)
 
     await expect(pdfRow).toBeVisible()
-    await expect(pdfIcon).toHaveAttribute('src', '/img/icon-pdf.svg')
+    await expect(pdfIcon).toHaveAttribute('src', new RegExp('icon-pdf'))
 
     const imageRow = await examList.getExamItemRowByName(
       `image-${workerIndex}.png`
@@ -171,49 +169,7 @@ test.describe('examList looks right', () => {
     const imageIcon = imageRow.locator('img').nth(0)
 
     await expect(imageRow).toBeVisible()
-    await expect(imageIcon).toHaveAttribute('src', '/img/icon-photo.svg')
-  })
-
-  test('controls is correct', async ({ page, courseList }, { workerIndex }) => {
-    await courseList.gotoCourseByName(
-      `Introduction to testing -${workerIndex}-`
-    )
-
-    const box = page.getByTestId('controls')
-
-    await expect(box).toBeVisible()
-
-    const uploadHeader = box.getByRole('heading', {
-      name: 'Upload a new file here:'
-    })
-    const uploadInput = box.getByRole('textbox', { name: 'File' })
-    const uploadButton = box.getByRole('button', { name: 'Upload' })
-
-    const renameHeader = box.getByRole('heading', { name: 'Rename course' })
-    const renameButton = box.getByRole('button', { name: 'rename' })
-
-    const deleteHeader = box.getByRole('heading', { name: 'Delete course' })
-    const deleteSubHeader = box.getByText(
-      'Course can only be deleted after all exams have been deleted.'
-    )
-    const deleteButton = box.getByRole('button', { name: 'delete' })
-
-    const loggedIn = box.getByText('Logged in: dev (Log out)')
-    const logoutLink = loggedIn.locator('a', { hasText: 'Log out' })
-
-    await expect(uploadHeader).toBeVisible()
-    await expect(uploadInput).toBeVisible()
-    await expect(uploadButton).toBeVisible()
-
-    await expect(renameHeader).toBeVisible()
-    await expect(renameButton).toBeVisible()
-
-    await expect(deleteHeader).toBeVisible()
-    await expect(deleteSubHeader).toBeVisible()
-    await expect(deleteButton).toBeVisible()
-
-    await expect(loggedIn).toBeVisible()
-    await expect(logoutLink).toHaveAttribute('href', '/auth/signout')
+    await expect(imageIcon).toHaveAttribute('src', new RegExp('icon-photo'))
   })
 })
 

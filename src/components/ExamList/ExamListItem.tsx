@@ -66,6 +66,7 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
               className="block font-mono text-xs text-gray-600 sm:hidden"
               title={uploadDate.toISOString()}
               dateTime={uploadDate.toISOString()}
+              data-test-id="upload-date-time-mobile"
             >
               {formatDate(uploadDate, 'yyyy-MM-dd', { locale: fiLocale })}
             </time>
@@ -78,6 +79,7 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
             className="font-mono text-xs text-gray-600"
             title={uploadDate.toISOString()}
             dateTime={uploadDate.toISOString()}
+            data-test-id="upload-date-time"
           >
             {formatDate(uploadDate, 'yyyy-MM-dd', { locale: fiLocale })}
           </time>

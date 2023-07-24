@@ -22,7 +22,8 @@ const CourseListItem = ({ id, name, url, lastModified }: CourseListItem) => {
       <div role="cell" className="mx-1 my-2 grow overflow-hidden text-ellipsis">
         <Link
           href={url}
-          title={name}
+          title={`Open course "${name}"`}
+          arial-label={`Open course "${name}"`}
           className="hover:underline hover:decoration-cyan-500"
         >
           {name}

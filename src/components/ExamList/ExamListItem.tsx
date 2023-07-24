@@ -41,6 +41,8 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
     <div
       role="row"
       className="flex flex-row items-center px-1 hover:bg-slate-100"
+      data-exam-id={id}
+      data-exam-name={fileName}
     >
       <div role="cell" className="m-2 shrink-0">
         <Icon role="cell" ariaHidden={true} alt="" className="h-6 w-6" />
@@ -48,7 +50,8 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
       <div role="cell" className="mx-1 my-2 grow overflow-hidden text-ellipsis">
         <Link
           href={downloadUrl}
-          title={fileName}
+          title={`Open exam "${fileName}"`}
+          arial-label={`Open exam "${fileName}"`}
           target="_blank"
           className="hover:underline hover:decoration-cyan-500"
         >

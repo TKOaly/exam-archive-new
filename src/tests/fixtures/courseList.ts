@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test'
-import { urlForCourseListing, slugifyCourseName } from '../../lib/courses'
+import { urlForCourseListing, slugifyCourseName, urlForCourseCreation, urlForCourseManagement } from '../../lib/courses'
 
 export class CourseList {
   private readonly createInput: Locator
@@ -7,10 +7,8 @@ export class CourseList {
 
   constructor(public readonly page: Page) {
     this.createInput = this.page
-      .getByTestId('controls')
       .getByPlaceholder('Course name')
     this.createSubmit = this.page
-      .getByTestId('controls')
       .getByText('Create course')
   }
 
@@ -26,25 +24,72 @@ export class CourseList {
     await this.page.goto(urlForCourseListing())
   }
 
+  async gotoCourseCreation() {
+    await this.page.goto(urlForCourseCreation())
+  }
+
+  async gotoCourseCreationModal() {
+    await this.goto()
+    const link = await this.page.getByRole('link', { name: `create` })
+    await link.click()
+    await this.page.waitForURL(new RegExp('create'))
+  }
+
   async gotoCourseById(courseId: number) {
-    await this.page.goto(urlForCourseListing())
+    await this.goto()
     const row = await this.getCourseItemRowById(courseId)
-    const link = await row.locator('a')
+    const courseName = await row.getAttribute('data-course-name') as string
+    const link = await row.getByRole('link', { name: courseName, exact: true })
     await link.click()
     await this.page.waitForURL(new RegExp(`${courseId}`))
   }
 
   async gotoCourseByName(courseName: string) {
-    await this.page.goto(urlForCourseListing())
+    await this.goto()
     const row = await this.getCourseItemRowByName(courseName)
-    const link = await row.locator('a')
+    const link = await row.getByRole('link', { name: courseName, exact: true })
     await link.click()
     const slug = slugifyCourseName(courseName)
     await this.page.waitForURL(new RegExp(slug))
   }
 
+  async gotoCourseManagementById(courseId: number) {
+    await this.goto()
+    const row = await this.getCourseItemRowById(courseId)
+    const courseName = await row.getAttribute('data-course-name') as string
+    await this.page.goto(urlForCourseManagement(courseId, courseName))
+    await this.page.waitForURL(new RegExp(`${courseId}`))
+  }
+
+  async gotoCourseManagementByName(courseName: string) {
+    await this.goto()
+    const row = await this.getCourseItemRowByName(courseName)
+    const courseId = await row.getAttribute('data-course-id') as string
+    await this.page.goto(urlForCourseManagement(parseInt(courseId), courseName))
+    const slug = slugifyCourseName(courseName)
+    await this.page.waitForURL(new RegExp(slug))
+  }
+
+  async gotoCourseManagementModalById(courseId: number) {
+    await this.goto()
+    const row = await this.getCourseItemRowById(courseId)
+    const link = await row.getByRole('link', { name: `Manage course` })
+    await link.click()
+    await this.page.waitForURL(new RegExp(`${courseId}`))
+  }
+
+  async gotoCourseManagementModalByName(courseName: string) {
+    await this.goto()
+    const row = await this.getCourseItemRowByName(courseName)
+    const link = await row.getByRole('link', { name: `Manage course` })
+    await link.click()
+    const slug = slugifyCourseName(courseName)
+    await this.page.waitForURL(new RegExp(slug))
+  }
+
+
   async createCourse(name: string) {
-    await this.page.goto(urlForCourseListing())
+    await this.gotoCourseCreation()
     await this.createInput.fill(name)
     await this.createSubmit.click()
     const slug = slugifyCourseName(name)

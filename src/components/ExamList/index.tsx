@@ -18,6 +18,7 @@ const ExamList = async ({ courseId }: { courseId: number }) => {
   if (course.exams.length === 0) {
     return (
       <div
+        role="table"
         aria-label="Exams"
         className="divide-y pb-5"
         data-course-id={course.id}

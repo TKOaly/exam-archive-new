@@ -1,35 +1,47 @@
 import { Page, Locator } from '@playwright/test'
-import { urlForCourse } from '../../lib/courses'
+import { urlForCourse, urlForExamManagement, urlForExamUpload } from '../../lib/courses'
 
 export class ExamList {
   private readonly fileInput: Locator
   private readonly uploadButton: Locator
 
-  private readonly renameCourseInput: Locator
-  private readonly renameCourseSubmit: Locator
-
-  private readonly deleteCourseButton: Locator
-
   constructor(public readonly page: Page) {
     this.fileInput = this.page
-      .getByTestId('controls')
       .locator('input[type=file]')
     this.uploadButton = this.page
-      .getByTestId('controls')
       .getByRole('button', { name: 'Upload' })
-
-    this.renameCourseInput = this.page.locator('input[name="courseName"]')
-    this.renameCourseSubmit = this.page.getByRole('button', {
-      name: 'renameCourse'
-    })
-
-    this.deleteCourseButton = this.page.getByRole('button', {
-      name: 'deleteCourse'
-    })
   }
 
   async goto(courseId: number, courseName: string) {
     await this.page.goto(urlForCourse(courseId, courseName))
+  }
+
+  async gotoUpload(courseId: number, courseName: string) {
+    await this.page.goto(urlForExamUpload(courseId, courseName))
+  }
+
+  async openUploadModal() {
+    const link = await this.page.getByRole('link', { name: 'upload' })
+    await link.click()
+    await this.page.waitForURL(new RegExp('upload'))
+  }
+
+  async gotoExamManagement(examId: number, fileName: string) {
+    await this.page.goto(urlForExamManagement(examId, fileName))
+  }
+
+  async openExamManagementModalById(examId: number) {
+    const row = await this.getExamItemRowById(examId)
+    const link = await row.getByRole('link', { name: 'manage' })
+    await link.click()
+    await this.page.waitForURL(new RegExp('manage'))
+  }
+
+  async openExamManagementModalByName(fileName: string) {
+    const row = await this.getExamItemRowByName(fileName)
+    const link = await row.getByRole('link', { name: 'manage' })
+    await link.click()
+    await this.page.waitForURL(new RegExp('manage'))
   }
 
   async uploadFile(fileName: string) {
@@ -100,14 +112,5 @@ export class ExamList {
   }
   async deleteExamByName(examName: string) {
     await (await this.getExamDeleteSubmitByName(examName)).click()
-  }
-
-  async renameCourse(newName: string) {
-    await this.renameCourseInput.fill(newName)
-    await this.renameCourseSubmit.click()
-  }
-
-  async deleteCourse() {
-    await this.deleteCourseButton.click()
   }
 }

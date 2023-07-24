@@ -46,6 +46,21 @@ test.describe('frontpage of Tärpistö works', () => {
 
   })
 
+  test('modal can be closed', async ({ page }) => {
+    await page.goto('/')
+    const createButton = page.getByRole('link', { name: 'create' })
+    await createButton.click()
+
+    const modal = page.getByTestId('modal')
+    await expect(modal).toBeVisible()
+
+    const closeButton = modal.getByRole('button', { name: 'Close' })
+    await expect(closeButton).toBeVisible()
+    await closeButton.click()
+
+    await expect(modal).not.toBeVisible()
+  })
+
   test('footer is right', async ({ page }) => {
     await page.goto('/')
 

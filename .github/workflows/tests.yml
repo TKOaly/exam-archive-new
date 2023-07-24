@@ -6,20 +6,22 @@ on:
     branches: [master]
 jobs:
   test:
+    strategy:
+      fail-fast: false
+      matrix:
+        shards: [1,2,3,4,5]
+        total_shards: [5]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Run tests
         run: ./run-tests.sh
-      - name: Upload screenshots and videos
+        env:
+          PLAYWRIGHT_SHARD: ${{ matrix.shards }}
+          PLAYWRIGHT_TOTAL_SHARDS: ${{ matrix.total_shards }}
+      - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: playwright-results
-          path: test-results/playwright
-      - name: Upload accessibility reports
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: axe-reports
-          path: test-results/axe-reports
+          name: test-results-${{ matrix.shards }}
+          path: test-results

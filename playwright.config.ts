@@ -14,6 +14,10 @@ const config: PlaywrightTestConfig = {
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? 'github' : [['html', { outputFolder: 'test-results/test-report' }]],
+  shard: {
+    current: process.env.PLAYWRIGHT_SHARD ? parseInt(process.env.PLAYWRIGHT_SHARD as string) : 1,
+    total: process.env.PLAYWRIGHT_TOTAL_SHARDS ? parseInt(process.env.PLAYWRIGHT_TOTAL_SHARDS as string) : 1
+  },
   use: {
     actionTimeout: 0,
     baseURL: `http://127.0.0.1:${PORT}`,

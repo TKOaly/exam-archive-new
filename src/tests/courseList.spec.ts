@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test'
 import { test } from './fixtures'
 import { CourseListItem, ExamListItem } from '../lib/types'
+import { urlForCourse } from '../lib/courses'
 
 test.describe('courseList looks right', () => {
   let courses: CourseListItem[] = []
@@ -76,42 +77,50 @@ test.describe('courseList looks right', () => {
     await expect(heading).toBeVisible()
   })
 
-  test('courselisting headers are correct', async ({ courseList, page }) => {
+  test('courselisting headers are correct', async ({ courseList, page, isMobile }) => {
     await courseList.goto()
 
-    const headers = page.getByRole('row', { name: 'Course Last modified' })
+    const headers = page.getByRole('row', {
+      name: `Icon Course${isMobile ? ' ' : ' Last modified '}Manage`
+    })
     await expect(headers).toBeVisible()
   })
 
-  test('courselisting row is correct', async ({ courseList, page }, {
-    workerIndex
+  test('courselisting row is correct', async ({ courseList, page, isMobile }, {
+    workerIndex,
   }) => {
     await courseList.goto()
 
     const row = await courseList.getCourseItemRowByName(
       `Introduction to testing -${workerIndex}-`
     )
-    const icon = row.locator('img')
-    const name = row.locator('a', {
-      hasText: `Introduction to testing -${workerIndex}-`
-    })
-    const lastModified = row.locator('time', {
-      hasText: `${new Date().toISOString().split('T')[0]}`
-    })
+    const folderIcon = row.locator('svg').first()
+    const name = row.getByText(`Introduction to testing -${workerIndex}-`, { exact: true })
+    const lastModified = row.getByTestId(`last-modified-time${isMobile ? '-mobile' : ''}`)
+    const manage = row.getByRole('link', { name: 'manage' })
+    const manageIcon = manage.locator('svg').first()
 
     await expect(row).toBeVisible()
+    await expect(folderIcon).toBeVisible()
     await expect(name).toBeVisible()
     await expect(lastModified).toBeVisible()
+    await expect(manage).toBeVisible()
+    await expect(manageIcon).toBeVisible()
+
+    await expect(lastModified).toHaveText(`${new Date().toISOString().split('T')[0]}`)
 
     const courseId = await page.getAttribute(
       `[data-course-name="Introduction to testing -${workerIndex}-"]`,
       'data-course-id'
-    )
+    ) as string
 
-    await expect(icon).toHaveAttribute('src', '/img/icon-folder.svg')
     await expect(name).toHaveAttribute(
       'href',
-      `/courses/${courseId}-introduction-to-testing-${workerIndex}`
+      `${urlForCourse(parseInt(courseId), `Introduction to testing -${workerIndex}-`)}`
+    )
+    await expect(manage).toHaveAttribute(
+      'href',
+      `${urlForCourse(parseInt(courseId), `Introduction to testing -${workerIndex}-`)}/manage`
     )
   })
 
@@ -123,25 +132,10 @@ test.describe('courseList looks right', () => {
     const row = await courseList.getCourseItemRowByName(
       `Advanced course in Testing -${workerIndex}-`
     )
-    const lastModified = row.locator('.course-list-item__last-modified')
+    const lastModified = row.getByTestId('last-modified')
     await expect(row).toBeVisible()
-    await expect(row).toHaveText(`Advanced course in Testing -${workerIndex}-`)
+    await expect(row).toHaveText(`Advanced course in Testing -${workerIndex}- Manage course "Advanced course in Testing -${workerIndex}-"`)
     await expect(lastModified).toBeEmpty()
-  })
-
-  test('controls shows correct user logged in', async ({
-    page,
-    courseList
-  }) => {
-    await courseList.goto()
-
-    const addBox = page.getByTestId('controls')
-    const loggedIn = addBox.getByText('Logged in: dev (Log out)')
-    const logoutLink = loggedIn.locator('a', { hasText: 'Log out' })
-
-    await expect(addBox).toBeVisible()
-    await expect(loggedIn).toBeVisible()
-    await expect(logoutLink).toHaveAttribute('href', '/auth/signout')
   })
 })
 

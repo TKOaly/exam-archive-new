@@ -34,17 +34,19 @@ const CourseListItem = ({ id, name, url, lastModified }: CourseListItem) => {
             <time
               className="block font-mono text-xs text-gray-600 sm:hidden"
               dateTime={lastModified.toISOString()}
+              data-test-id="last-modified-time-mobile"
             >
               {formatDate(lastModified, 'yyyy-MM-dd', { locale: fiLocale })}
             </time>
           </>
         )}
       </div>
-      <div className="mx-2 hidden sm:block" role="cell">
+      <div className="mx-2 hidden sm:block" role="cell" data-test-id="last-modified">
         {lastModified && (
           <time
             className="font-mono text-xs text-gray-600"
             dateTime={lastModified.toISOString()}
+            data-test-id="last-modified-time"
           >
             {formatDate(lastModified, 'yyyy-MM-dd', { locale: fiLocale })}
           </time>

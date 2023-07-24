@@ -22,10 +22,12 @@ export class CourseList {
 
   async goto() {
     await this.page.goto(urlForCourseListing())
+    await this.page.waitForURL(urlForCourseListing())
   }
 
   async gotoCourseCreation() {
     await this.page.goto(urlForCourseCreation())
+    await this.page.waitForURL(new RegExp('create'))
   }
 
   async gotoCourseCreationModal() {

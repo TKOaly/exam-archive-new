@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test'
 import { test } from './fixtures'
 import { CourseListItem, ExamListItem } from '../lib/types'
-import { urlForCourse } from '../lib/courses'
+import { urlForCourse, urlForCourseListing } from '../lib/courses'
 
 test.describe('courseList looks right', () => {
   let courses: CourseListItem[] = []
@@ -146,8 +146,40 @@ test.describe('courseList looks right', () => {
 //   })
 // })
 
-test.describe('courseList functions right', () => {
+test.describe('courselisting functions works', () => {
+  test.beforeEach(async ({ request }, { testId }) => {
+    const introRes = await request.post('/api/courses/create', {
+      data: { courseName: `Introduction to testing ${testId}` }
+    })
+    const introCourse: CourseListItem = await introRes.json()
+
+    await request.post('/api/exams/upload', {
+      multipart: {
+        courseId: introCourse.id,
+        pdf: {
+          name: `existing-${testId}.pdf`,
+          mimeType: 'application/pdf',
+          buffer: Buffer.from('This is a test.')
+        }
+      }
+    })
+  })
+
   test.afterEach(async ({ request }, { testId }) => {
+    const exams: ExamListItem[] = await (await request.get('/api/exams')).json()
+    await Promise.all(
+      exams
+        .filter(exam => exam.fileName.includes(testId))
+        .map(
+          async exam =>
+            await request.post(`/api/exams/delete`, {
+              data: {
+                examId: exam.id
+              }
+            })
+        )
+    )
+
     const courses: CourseListItem[] = await (
       await request.get('/api/courses')
     ).json()
@@ -163,19 +195,56 @@ test.describe('courseList functions right', () => {
     )
   })
 
-  test('add a new course works', async ({ page, courseList, request }, {
+  test('add a new course via modal works', async ({ page, courseList }, {
     testId
   }) => {
-    await courseList.goto()
+    await courseList.gotoCourseCreationModal()
 
-    const addBox = page.getByTestId('controls')
-    const heading = addBox.getByRole('heading', {
-      name: 'Add a new course:'
+    const title = page.getByRole('heading', {
+      name: 'Create new course'
     })
-    const courseName = addBox.getByPlaceholder('Course name')
-    const createCourse = addBox.getByText('Create course')
+    const heading = page.getByText('Add a new course')
+    const courseName = page.getByPlaceholder('Course name')
+    const createCourse = page.getByText('Create course')
 
-    await expect(addBox).toBeVisible()
+    await expect(title).toBeVisible()
+    await expect(heading).toBeVisible()
+    await expect(courseName).toBeVisible()
+    await expect(createCourse).toBeVisible()
+
+    const name = `Introduction to course creation ${testId}`
+
+    await courseName.fill(name)
+    await createCourse.click()
+
+    await page.waitForURL(/introduction-to-course-creation/)
+
+    const modal = page.getByTestId('modal')
+    await expect(modal).not.toBeVisible()
+
+    // Disabled as https://github.com/vercel/next.js/issues/42784#issuecomment-1311778290 needs investigation
+    // await expect(page).toHaveTitle(`${name} - Tärpistö - TKO-äly ry`)
+
+    // Disabled as flash messages are not shown yet
+    // const success = page.getByText(
+    //   `Course "Introduction to testing ${testIdentifier}" created!`
+    // )
+    // await expect(success).toBeVisible()
+  })
+
+  test('add a new course works', async ({ page, courseList }, {
+    testId
+  }) => {
+    await courseList.gotoCourseCreation()
+
+    const title = page.getByRole('heading', {
+      name: 'Create new course'
+    })
+    const heading = page.getByText('Add a new course')
+    const courseName = page.getByPlaceholder('Course name')
+    const createCourse = page.getByText('Create course')
+
+    await expect(title).toBeVisible()
     await expect(heading).toBeVisible()
     await expect(courseName).toBeVisible()
     await expect(createCourse).toBeVisible()
@@ -195,5 +264,133 @@ test.describe('courseList functions right', () => {
     //   `Course "Introduction to testing ${testIdentifier}" created!`
     // )
     // await expect(success).toBeVisible()
+  })
+
+  test('rename course via modal works', async ({ page, courseList, examList }, {
+    testId
+  }) => {
+    await courseList.gotoCourseManagementModalByName(`Introduction to testing ${testId}`)
+
+    const courseRenameInput = page.locator('input[name="courseName"]')
+    const courseRenameButton = page.getByRole('button', {
+      name: `Rename course "Introduction to testing ${testId}"`
+    })
+
+    await courseRenameInput.fill(`Advanced course in naming ${testId}`)
+    await courseRenameButton.click()
+
+    await page.waitForURL(urlForCourseListing())
+
+    const row = await courseList.getCourseItemRowByName(`Advanced course in naming ${testId}`)
+    await expect(row).toBeVisible()
+
+    const modal = page.getByTestId('modal')
+    await expect(modal).not.toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Course has been renamed from X to Y.`)
+    // await expect(success).toBeVisible()
+  })
+
+  test('rename course works', async ({ page, courseList, examList }, {
+    testId
+  }) => {
+    await courseList.gotoCourseManagementByName(`Introduction to testing ${testId}`)
+
+    const courseRenameInput = page.locator('input[name="courseName"]')
+    const courseRenameButton = page.getByRole('button', {
+      name: `Rename course "Introduction to testing ${testId}"`
+    })
+
+    await courseRenameInput.fill(`Advanced course in naming ${testId}`)
+    await courseRenameButton.click()
+
+    await page.waitForURL(urlForCourseListing())
+
+    const row = await courseList.getCourseItemRowByName(`Advanced course in naming ${testId}`)
+    await expect(row).toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Course has been renamed from X to Y.`)
+    // await expect(success).toBeVisible()
+  })
+
+  test('delete course via modal works if no exams currently', async ({
+    page,
+    courseList
+  }, { testId }) => {
+    await courseList.goto()
+    await courseList.createCourse(`Introduction to naming ${testId}`)
+
+    await page.waitForURL(/introduction-to-naming/)
+
+    await courseList.gotoCourseManagementModalByName(`Introduction to naming ${testId}`)
+
+    const courseDeleteButton = page.getByRole('button', {
+      name: `Delete course "Introduction to naming ${testId}"`
+    })
+    await courseDeleteButton.click()
+
+    await page.waitForURL(urlForCourseListing())
+
+    const heading = page.getByRole('heading', { name: 'Courses' })
+    await expect(heading).toBeVisible()
+
+    const modal = page.getByTestId('modal')
+    await expect(modal).not.toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(
+    //   `The course "Introduction to naming ${testId}" has been deleted.`
+    // )
+    // await expect(success).toBeVisible()
+  })
+
+  test('delete course works if no exams currently', async ({
+    page,
+    courseList
+  }, { testId }) => {
+    await courseList.goto()
+    await courseList.createCourse(`Introduction to naming ${testId}`)
+    await page.waitForURL(/introduction-to-naming/)
+
+    await courseList.gotoCourseManagementByName(`Introduction to naming ${testId}`)
+
+    const courseDeleteButton = page.getByRole('button', {
+      name: `Delete course "Introduction to naming ${testId}"`
+    })
+    await courseDeleteButton.click()
+
+    await page.waitForURL(urlForCourseListing())
+
+    const heading = page.getByRole('heading', { name: 'Courses' })
+    await expect(heading).toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(
+    //   `The course "Introduction to naming ${testId}" has been deleted.`
+    // )
+    // await expect(success).toBeVisible()
+  })
+
+  test('delete course throws error if exams currently', async ({
+    page,
+    courseList
+  }, { testId }) => {
+    await courseList.gotoCourseManagementByName(`Introduction to testing ${testId}`)
+
+    const courseDeleteButton = page.getByRole('button', {
+      name: `Delete course`
+    })
+    await courseDeleteButton.click()
+
+    const heading = page.getByRole('heading', {
+      name: `Introduction to testing ${testId}`
+    })
+    await expect(heading).toBeVisible()
+
+    // Flash messages not implemented yet
+    // const error = page.getByText(`Cannot delete a course with exam documents.`)
+    // await expect(error).toBeVisible()
   })
 })

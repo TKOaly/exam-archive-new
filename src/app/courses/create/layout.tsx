@@ -19,6 +19,7 @@ const Layout = async ({
       <ListingNavigation
         title="Create new course"
         backButtonHref="/"
+        label="Back to course listing"
       ></ListingNavigation>
       <div className="page-container">
         <main>{children}</main>

@@ -60,7 +60,8 @@ const Layout = async ({
   return (
     <>
       <ListingNavigation
-        title={course.name}
+        title={`Upload exam to ${course.name}`}
+        label={`Back to course "${course.name}"`}
         backButtonHref={urlForCourse(course.id, course.name)}
       ></ListingNavigation>
       <div className="page-container">

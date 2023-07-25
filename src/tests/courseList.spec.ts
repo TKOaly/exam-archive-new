@@ -137,7 +137,30 @@ test.describe('courseList looks right', () => {
     await expect(row).toHaveText(`Advanced course in Testing -${workerIndex}- Manage course "Advanced course in Testing -${workerIndex}-"`)
     await expect(lastModified).toBeEmpty()
   })
+
+  test('manage course navigation is right', async({ courseList, page }, {
+    workerIndex
+  }) => {
+    await courseList.gotoCourseManagementByName(`Introduction to testing -${workerIndex}-`)
+
+    const heading = page.getByRole('heading', {
+      name: `Introduction to testing -${workerIndex}-`
+    })
+    const backButton = page.getByLabel(`Back to course "Introduction to testing -${workerIndex}-"`)
+    const uplaodButton = page.getByRole('link', { name: 'upload' })
+
+    await expect(heading).toBeVisible()
+    await expect(backButton).toBeVisible()
+    await expect(uplaodButton).toBeVisible()
+
+    await backButton.click()
+
+    const redirectHeading = page.getByRole('heading', { name: 'Courses' })
+    await expect(redirectHeading).toBeVisible()
+  })
 })
+
+
 
 // test('examList screenshot testing', async ({ page }) => {
 //   await page.goto('/')
@@ -200,12 +223,13 @@ test.describe('courselisting functions works', () => {
   }) => {
     await courseList.gotoCourseCreationModal()
 
-    const title = page.getByRole('heading', {
+    const modal = page.getByTestId('modal')
+    const title = modal.getByRole('heading', {
       name: 'Create new course'
     })
-    const heading = page.getByText('Add a new course')
-    const courseName = page.getByPlaceholder('Course name')
-    const createCourse = page.getByText('Create course')
+    const heading = modal.getByText('Add a new course')
+    const courseName = modal.getByPlaceholder('Course name')
+    const createCourse = modal.getByText('Create course')
 
     await expect(title).toBeVisible()
     await expect(heading).toBeVisible()
@@ -218,8 +242,8 @@ test.describe('courselisting functions works', () => {
     await createCourse.click()
 
     await page.waitForURL(/introduction-to-course-creation/)
+    await page.reload()
 
-    const modal = page.getByTestId('modal')
     await expect(modal).not.toBeVisible()
 
     // Disabled as https://github.com/vercel/next.js/issues/42784#issuecomment-1311778290 needs investigation
@@ -271,20 +295,30 @@ test.describe('courselisting functions works', () => {
   }) => {
     await courseList.gotoCourseManagementModalByName(`Introduction to testing ${testId}`)
 
-    const courseRenameInput = page.locator('input[name="courseName"]')
-    const courseRenameButton = page.getByRole('button', {
+    const modal = page.getByTestId('modal')
+    const title = modal.getByRole('heading', {
+      name: `Manage course "Introduction to testing ${testId}"`
+    })
+    const heading = modal.locator('p').getByText('Rename course', { exact: true })
+    const courseRenameInput = modal.locator('input[name="courseName"]')
+    const courseRenameButton = modal.getByRole('button', {
       name: `Rename course "Introduction to testing ${testId}"`
     })
+
+    await expect(title).toBeVisible()
+    await expect(heading).toBeVisible()
+    await expect(courseRenameInput).toBeVisible()
+    await expect(courseRenameButton).toBeVisible()
 
     await courseRenameInput.fill(`Advanced course in naming ${testId}`)
     await courseRenameButton.click()
 
     await page.waitForURL(urlForCourseListing())
+    await page.reload()
 
     const row = await courseList.getCourseItemRowByName(`Advanced course in naming ${testId}`)
     await expect(row).toBeVisible()
 
-    const modal = page.getByTestId('modal')
     await expect(modal).not.toBeVisible()
 
     // Flash messages not implemented yet
@@ -326,17 +360,27 @@ test.describe('courselisting functions works', () => {
 
     await courseList.gotoCourseManagementModalByName(`Introduction to naming ${testId}`)
 
-    const courseDeleteButton = page.getByRole('button', {
+    const modal = page.getByTestId('modal')
+    const title = modal.getByRole('heading', {
+      name: `Manage course "Introduction to naming ${testId}"`
+    })
+    const heading = modal.locator('p').getByText('Delete course', { exact: true })
+    const courseDeleteButton = modal.getByRole('button', {
       name: `Delete course "Introduction to naming ${testId}"`
     })
+
+    await expect(title).toBeVisible()
+    await expect(heading).toBeVisible()
+    await expect(courseDeleteButton).toBeVisible()
+
     await courseDeleteButton.click()
 
     await page.waitForURL(urlForCourseListing())
+    await page.reload()
 
-    const heading = page.getByRole('heading', { name: 'Courses' })
-    await expect(heading).toBeVisible()
+    const redirectHeading = page.getByRole('heading', { name: 'Courses' })
+    await expect(redirectHeading).toBeVisible()
 
-    const modal = page.getByTestId('modal')
     await expect(modal).not.toBeVisible()
 
     // Flash messages not implemented yet

@@ -58,7 +58,7 @@ function db_health_check() {
 
     echo "::debug::Database health check in $COMPOSE_PROJECT_NAME"
     COUNTER=0
-    until docker-compose exec -t db pg_isready -U tarpisto; do #&>/dev/null; do
+    until docker-compose exec -t db pg_isready -U tarpisto &>/dev/null; do
         echo "Waiting for database to be healthy. Trying again in 5 seconds."
 
         COUNTER=$((COUNTER+1))

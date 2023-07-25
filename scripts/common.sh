@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd)"
+COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-"exam-archive-new"}
 
 function check_node_version() {
     pushd "$repository"
@@ -55,7 +56,7 @@ function db_health_check() {
     required_command docker
     required_command docker-compose
 
-    echo "::debug::Database health check"
+    echo "::debug::Database health check in $COMPOSE_PROJECT_NAME"
     COUNTER=0
     until docker-compose exec db pg_isready -U tarpisto &>/dev/null; do
         echo "Waiting for database to be healthy. Trying again in 5 seconds."
@@ -81,7 +82,7 @@ function s3_health_check() {
     required_command docker
     required_command docker-compose
 
-    echo "::debug::S3 health check"
+    echo "::debug::S3 health check in $COMPOSE_PROJECT_NAME"
     COUNTER=0
     until curl -I "http://$(docker-compose port s3 9000)/minio/health/live" &>/dev/null; do
         echo "Waiting for s3 to be healthy. Trying again in 5 seconds."

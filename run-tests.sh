@@ -2,13 +2,14 @@
 set -o errexit -o nounset -o pipefail
 
 readonly repository="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
+export COMPOSE_PROJECT_NAME="exam-archive-new-test"
 source "$repository/scripts/common.sh"
 
 function stop() {
   pushd "$repository"
   required_command docker
   required_command docker-compose
-  COMPOSE_PROJECT_NAME="exam-archive-new-test" docker-compose down -v || true
+  docker-compose down -v || true
   popd
 }
 trap stop EXIT
@@ -27,11 +28,10 @@ function main() {
     echo "::endgroup::"
 
     echo "::group::Starting database and S3"
-    export COMPOSE_PROJECT_NAME="exam-archive-new-test"
     docker-compose up -d db s3
 
-    COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME db_health_check
-    COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME s3_health_check
+    db_health_check
+    s3_health_check
     echo "::endgroup::"
 
     echo "::group::Building application"

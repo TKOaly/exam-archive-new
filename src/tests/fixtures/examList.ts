@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test'
-import { urlForCourse, urlForExamManagement, urlForExamUpload } from '../../lib/courses'
+import { urlForCourse, urlForCourseListing, urlForExamManagement, urlForExamUpload } from '../../lib/courses'
 
 export class ExamList {
   private readonly fileInput: Locator
@@ -18,6 +18,18 @@ export class ExamList {
 
   async gotoUpload(courseId: number, courseName: string) {
     await this.page.goto(urlForExamUpload(courseId, courseName))
+  }
+
+  async gotoUploadById(courseId: number) {
+    await this.page.goto(urlForCourseListing())
+    const courseName = await this.page.locator(`[data-course-id="${courseId}"]`).getAttribute('data-course-name') as string
+    await this.page.goto(urlForExamUpload(courseId, courseName))
+  }
+
+  async gotoUploadByName(courseName: string) {
+    await this.page.goto(urlForCourseListing())
+    const courseId = await this.page.locator(`[data-course-name="${courseName}"]`).getAttribute('data-course-id') as string
+    await this.page.goto(urlForExamUpload(parseInt(courseId), courseName))
   }
 
   async openUploadModal() {

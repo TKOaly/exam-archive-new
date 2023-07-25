@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test'
 import { test } from './fixtures'
 import { CourseListItem, ExamListItem } from '../lib/types'
+import { slugifyCourseName } from '../lib/courses'
 
 test.describe('examList looks right', () => {
   let courses: CourseListItem[] = []
@@ -89,12 +90,19 @@ test.describe('examList looks right', () => {
     )
 
     const backButton = page.locator('[aria-label="Back to course listing"]')
+    const heading = page.getByRole('heading', {
+      name: `Introduction to testing -${workerIndex}-`
+    })
+    const uplaodButton = page.getByRole('link', { name: 'upload' })
+
+    await expect(heading).toBeVisible()
     await expect(backButton).toBeVisible()
+    await expect(uplaodButton).toBeVisible()
 
     await backButton.click()
 
-    const heading = page.getByRole('heading', { name: 'Courses' })
-    await expect(heading).toBeVisible()
+    const redirectHeading = page.getByRole('heading', { name: 'Courses' })
+    await expect(redirectHeading).toBeVisible()
   })
 
   test('examlisting headers are correct', async ({ page, courseList, isMobile }, {
@@ -171,6 +179,56 @@ test.describe('examList looks right', () => {
     await expect(imageRow).toBeVisible()
     await expect(imageIcon).toHaveAttribute('src', new RegExp('icon-photo'))
   })
+
+  test('upload exam navigation is correct', async ({ page, examList }, {
+    workerIndex
+  }) => {
+    await examList.gotoUploadByName(`Introduction to testing -${workerIndex}-`)
+
+    const backButton = page.getByLabel(`Back to course "Introduction to testing -${workerIndex}-"`)
+    const heading = page.getByRole('heading', {
+      name: `Upload exam to Introduction to testing -${workerIndex}-`
+    })
+
+    await expect(heading).toBeVisible()
+    await expect(backButton).toBeVisible()
+
+    await backButton.click()
+
+    await page.waitForURL(new RegExp('^(?!\b.*upload.*\b).*$'))
+
+    const redirectHeading = page.getByRole('heading', { name: `Introduction to testing -${workerIndex}-` })
+    await expect(redirectHeading).toBeVisible()
+  })
+
+  test('manage exam navigation is correct', async ({ page, courseList, examList }, {
+    workerIndex
+  }) => {
+    await courseList.gotoCourseByName(
+      `Introduction to testing -${workerIndex}-`
+    )
+
+    const row = await examList.getExamItemRowByName(`document-${workerIndex}.txt`)
+    const examId = await row.getAttribute('data-exam-id') as string
+    await examList.gotoExamManagement(
+      parseInt(examId), `document-${workerIndex}.txt`
+    )
+
+    const backButton = page.getByLabel(`Back to course "Introduction to testing -${workerIndex}-"`)
+    const heading = page.getByRole('heading', {
+      name: `Manage exam document-${workerIndex}.txt`
+    })
+
+    await expect(heading).toBeVisible()
+    await expect(backButton).toBeVisible()
+
+    await backButton.click()
+
+    await page.waitForURL(new RegExp('^(?!\b.*manage.*\b).*$'))
+
+    const redirectHeading = page.getByRole('heading', { name: `Introduction to testing -${workerIndex}-` })
+    await expect(redirectHeading).toBeVisible()
+  })
 })
 
 // test('examList screenshot testing', async ({ page }) => {
@@ -229,10 +287,48 @@ test.describe('examlisting functions right', () => {
     )
   })
 
-  test('upload new file works', async ({ page, courseList, examList }, {
+  test('upload new file via modal works', async ({ page, courseList, examList }, {
     testId
   }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+    await examList.openUploadModal()
+
+    const fileInput = page.locator("input[type='file']")
+    await expect(fileInput).toBeVisible()
+
+    const filename = `${testId}.pdf`
+
+    // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
+    await fileInput.setInputFiles({
+      name: filename,
+      mimeType: 'application/pdf',
+      buffer: Buffer.from('Test file.')
+    })
+
+    const uploadButton = page.getByRole('button', { name: 'Upload exam' })
+    await expect(uploadButton).toBeVisible()
+    await uploadButton.click()
+
+    await test.slow() // add timeout for making sure file is uploaded
+
+    await page.waitForURL(new RegExp('^(?!\b.*upload.*\b).*$'))
+    await page.reload()
+
+    const row = await examList.getExamItemRowByName(filename)
+    await expect(row).toBeVisible()
+
+    const modal = page.getByTestId('modal')
+    await expect(modal).not.toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Exam ${filename} created!`)
+    // await expect(success).toBeVisible()
+  })
+
+  test('upload new file works', async ({ page, courseList, examList }, {
+    testId
+  }) => {
+    await examList.gotoUploadByName(`Introduction to testing ${testId}`)
 
     const fileInput = page.locator("input[type='file']")
     await expect(fileInput).toBeVisible()
@@ -263,7 +359,7 @@ test.describe('examlisting functions right', () => {
   test('upload multiple file works', async ({ page, courseList, examList }, {
     testId
   }) => {
-    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+    await examList.gotoUploadByName(`Introduction to testing ${testId}`)
 
     const fileInput = page.locator("input[type='file']")
     await expect(fileInput).toBeVisible()
@@ -299,6 +395,44 @@ test.describe('examlisting functions right', () => {
     // await expect(success).toBeVisible()
   })
 
+  test('rename exam via modal works', async ({ page, courseList, examList }, {
+    testId
+  }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+
+    const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    await expect(row).toBeVisible()
+
+    const manageButton = row.getByRole('link', {
+      name: `Manage exam "existing-${testId}.pdf"`
+    })
+    await manageButton.click()
+
+    const modal = page.getByTestId('modal')
+
+    const renameInput = modal.locator('input[name="examName"]')
+    const renameButton = modal.getByRole('button', {
+      name: `Rename exam "existing-${testId}.pdf"`
+    })
+
+    const newFilename = `renamed-${testId}.pdf`
+    await renameInput.fill(newFilename)
+    await renameButton.click()
+
+    await page.waitForURL(new RegExp('^(?!\b.*manage.*\b).*$'))
+    await page.reload()
+
+    const newRow = await examList.getExamItemRowByName(newFilename)
+    const name = newRow.getByText(newFilename, { exact: true })
+    await expect(name).toBeVisible()
+
+    await expect(modal).not.toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Exam has been renamed from X to Y.`)
+    // await expect(success).toBeVisible()
+  })
+
   test('rename exam works', async ({ page, courseList, examList }, {
     testId
   }) => {
@@ -307,13 +441,11 @@ test.describe('examlisting functions right', () => {
     const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
     await expect(row).toBeVisible()
 
-    const manageButton = row.getByRole('button', {
-      name: `Manage exam "existing-${testId}.pdf"`
-    })
-    await manageButton.click()
+    const examId = await row.getAttribute('data-exam-id') as string
+    await examList.gotoExamManagement(parseInt(examId), `existing-${testId}.pdf`)
 
-    const renameInput = row.locator('input[name="examName"]')
-    const renameButton = row.getByRole('button', {
+    const renameInput = page.locator('input[name="examName"]')
+    const renameButton = page.getByRole('button', {
       name: `Rename exam "existing-${testId}.pdf"`
     })
 
@@ -322,13 +454,43 @@ test.describe('examlisting functions right', () => {
     await renameButton.click()
 
     const newRow = await examList.getExamItemRowByName(newFilename)
-    const name = newRow.locator('a', {
-      hasText: newFilename
-    })
+    const name = newRow.getByText(newFilename, { exact: true })
     await expect(name).toBeVisible()
 
     // Flash messages not implemented yet
     // const success = page.getByText(`Exam has been renamed from X to Y.`)
+    // await expect(success).toBeVisible()
+  })
+
+  test('delete exam via modal works', async ({ page, courseList, examList }, {
+    testId
+  }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+
+    const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    await expect(row).toBeVisible()
+
+    const manageButton = row.getByRole('link', {
+      name: `Manage exam "existing-${testId}.pdf"`
+    })
+    await manageButton.click()
+
+    const modal = page.getByTestId('modal')
+    const deleteButton = modal.getByRole('button', {
+      name: `Delete exam "existing-${testId}.pdf"`
+    })
+    await deleteButton.click()
+
+    await page.waitForURL(new RegExp('^(?!\b.*manage.*\b).*$'))
+    await page.reload()
+
+    const newRow = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    await expect(newRow).not.toBeVisible()
+
+    await expect(modal).not.toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Exam has been deleted.`)
     // await expect(success).toBeVisible()
   })
 
@@ -340,12 +502,10 @@ test.describe('examlisting functions right', () => {
     const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
     await expect(row).toBeVisible()
 
-    const manageButton = row.getByRole('button', {
-      name: `Manage exam "existing-${testId}.pdf"`
-    })
-    await manageButton.click()
+    const examId = await row.getAttribute('data-exam-id') as string
+    await examList.gotoExamManagement(parseInt(examId), `existing-${testId}.pdf`)
 
-    const deleteButton = row.getByRole('button', {
+    const deleteButton = page.getByRole('button', {
       name: `Delete exam "existing-${testId}.pdf"`
     })
     await deleteButton.click()
@@ -366,9 +526,7 @@ test.describe('examlisting functions right', () => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
 
     const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
-    const name = row.locator('a', {
-      hasText: `existing-${testId}.pdf`
-    })
+    const name = row.getByText(`existing-${testId}.pdf`, { exact: true })
 
     const [page1] = await Promise.all([
       page.waitForEvent('popup'),

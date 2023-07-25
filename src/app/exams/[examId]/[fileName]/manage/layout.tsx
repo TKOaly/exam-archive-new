@@ -45,6 +45,7 @@ const Layout = async ({
     <>
       <ListingNavigation
         title={`Manage exam ${exam.fileName}`}
+        label={`Back to course "${exam.courseName}"`}
         backButtonHref={urlForCourse(exam.courseId, exam.courseName)}
       ></ListingNavigation>
       <div className="page-container">

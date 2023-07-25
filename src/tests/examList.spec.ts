@@ -312,7 +312,6 @@ test.describe('examlisting functions right', () => {
     await test.slow() // add timeout for making sure file is uploaded
 
     await page.waitForURL(new RegExp('^(?!\b.*upload.*\b).*$'))
-    await page.reload()
 
     const row = await examList.getExamItemRowByName(filename)
     await expect(row).toBeVisible()
@@ -420,7 +419,6 @@ test.describe('examlisting functions right', () => {
     await renameButton.click()
 
     await page.waitForURL(new RegExp('^(?!\b.*manage.*\b).*$'))
-    await page.reload()
 
     const newRow = await examList.getExamItemRowByName(newFilename)
     const name = newRow.getByText(newFilename, { exact: true })
@@ -482,7 +480,6 @@ test.describe('examlisting functions right', () => {
     await deleteButton.click()
 
     await page.waitForURL(new RegExp('^(?!\b.*manage.*\b).*$'))
-    await page.reload()
 
     const newRow = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
     await expect(newRow).not.toBeVisible()

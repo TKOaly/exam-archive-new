@@ -242,7 +242,6 @@ test.describe('courselisting functions works', () => {
     await createCourse.click()
 
     await page.waitForURL(/introduction-to-course-creation/)
-    await page.reload()
 
     await expect(modal).not.toBeVisible()
 
@@ -314,7 +313,6 @@ test.describe('courselisting functions works', () => {
     await courseRenameButton.click()
 
     await page.waitForURL(urlForCourseListing())
-    await page.reload()
 
     const row = await courseList.getCourseItemRowByName(`Advanced course in naming ${testId}`)
     await expect(row).toBeVisible()
@@ -376,7 +374,6 @@ test.describe('courselisting functions works', () => {
     await courseDeleteButton.click()
 
     await page.waitForURL(urlForCourseListing())
-    await page.reload()
 
     const redirectHeading = page.getByRole('heading', { name: 'Courses' })
     await expect(redirectHeading).toBeVisible()

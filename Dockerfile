@@ -24,6 +24,7 @@ COPY scripts/ ./scripts/
 RUN pwd
 RUN ls -la
 RUN ls -la scripts
+RUN cat /usr/src/tarpisto/scripts/common.sh
 
 EXPOSE ${PORT}
 

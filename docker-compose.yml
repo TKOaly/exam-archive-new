@@ -5,6 +5,11 @@ services:
     build:
       context: ./docker
       dockerfile: minio.Dockerfile
+    healthcheck:
+      test: curl -f http://localhost:9000/minio/health/live
+      interval: 5s
+      timeout: 5s
+      retries: 5
     environment:
       INITIAL_BUCKETS: 'local/exam-archive-local'
       MINIO_ROOT_USER: tarpisto
@@ -19,6 +24,11 @@ services:
     image: postgres:15.2-alpine
     ports:
       - '127.0.0.1::5432'
+    healthcheck:
+      test: pg_isready -U tarpisto
+      interval: 5s
+      timeout: 5s
+      retries: 5
     environment:
       - POSTGRES_PASSWORD=tarpisto
       - POSTGRES_USER=tarpisto

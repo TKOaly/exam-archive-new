@@ -141,7 +141,7 @@ function handle_docker_tags_and_labels() {
     echo "::debug::Handling docker tags and labels"
     if [[ -z ${DOCKER_INFO-} ]]
     then
-        export DOCKER_TAGS="tarpisto/tarpisto:latest"
+        export DOCKER_TAGS="-t tarpisto/tarpisto:latest"
         export DOCKER_LABELS=""
     else
         DOCKER_TAGS=$(jq -r '.tags[] | "-t " + . ' <<< "$DOCKER_INFO")

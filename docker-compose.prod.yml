@@ -13,6 +13,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/api/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+      s3:
+        condition: service_healthy
     ports:
       - 127.0.0.1:9020:9000
     networks:

@@ -9,28 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Run security scan
+        run: ./run-security-scan.sh
+      - name: Upload results
+        uses: actions/upload-artifact@v2
         with:
-          node-version: 16
-      - name: Install dependencies
-        run: npm ci
-      - name: copy example .env
-        run: cp .env-sample .env
-      - name: Start database and S3
-        run: docker-compose up -d
-      - name: Build server
-        run: npm run build
-      - name: Start server
-        run: npm start &
-        env:
-          # Need to run in development mode as currently only way to auto login
-          NODE_ENV: development
-        # TODO: Create OpenAPI definition and run also ZAP Api scan
-      - name: Run ZAP Full scan
-        uses: zaproxy/action-full-scan@v0.4.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          target: 'http://localhost:9000'
-          fail_action: true
-          allow_issue_writing: false
-          rules_file_name: .zap-rules.tsv
+          name: Security scan results
+          path: test-results/security-report.html

@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  db:
+    networks:
+      - security
+
+  s3:
+    networks:
+      - security
+
+  tarpisto:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/api/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+      s3:
+        condition: service_healthy
+    ports:
+      - 127.0.0.1::9000
+    networks:
+      - security
+
+  security:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    volumes:
+      - $PWD:/zap/wrk/:rw
+    depends_on:
+      tarpisto:
+        condition: service_healthy
+    command: zap-full-scan.py -t http://tarpisto:$PORT -r test-results/security-report.html -c .zap-rules.tsv
+
+networks:
+  security:
+    name: exam-archive-new-security

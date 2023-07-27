@@ -41,7 +41,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/development/types/**/*.ts",
-    ".next/production/types/**/*.ts"
+    "dist/development/types/**/*.ts",
+    "dist/production/types/**/*.ts"
   ]
 }

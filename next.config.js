@@ -7,7 +7,7 @@ const csp =
     : "default-src 'self'; img-src 'self'; media-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline';"
 
 const nextConfig = {
-  distDir: `.next/${process.env.NODE_ENV}`,
+  distDir: `dist/${process.env.NODE_ENV}`,
   reactStrictMode: true,
   experimental: {
     serverActions: true,

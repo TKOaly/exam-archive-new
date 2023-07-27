@@ -137,6 +137,20 @@ function build_app() {
     echo "::endgroup::"
 }
 
+function handle_docker_tags_and_labels() {
+    DOCKER_TAGS=${DOCKER_TAGS:-"tarpisto/tarpisto:latest"}
+    DOCKER_TAGS="-t $DOCKER_TAGS"
+    export DOCKER_TAGS="${DOCKER_TAGS//$'\n'/ -t }"
+
+    if [[ -z $DOCKER_LABELS ]]
+    then
+        export DOCKER_LABELS=""
+    else
+        DOCKER_LABELS="--label $DOCKER_LABELS"
+        export DOCKER_LABELS="${DOCKER_LABELS//$'\n'/ --label }"
+    fi
+}
+
 function build_docker_image() {
     echo "::group::Building docker image"
     required_command docker
@@ -144,8 +158,8 @@ function build_docker_image() {
     build_app
 
     export PROGRESS_NO_TRUNC=1
-    export DOCKER_TAGS="${DOCKER_TAGS//$'\n'/ -t }"
-    export DOCKER_LABELS="${DOCKER_LABELS//$'\n'/ --label }"
+
+    handle_docker_tags_and_labels
 
     echo "Docker tags: $DOCKER_TAGS"
     echo "Docker labels: $DOCKER_LABELS"

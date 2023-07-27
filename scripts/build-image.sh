@@ -24,9 +24,6 @@ function main() {
     s3_health_check
     echo "::endgroup::"
 
-    export DOCKER_TAGS=${"-t $DOCKER_TAGS":-"tarpisto/tarpisto:latest"}
-    export DOCKER_LABELS=${"--label $DOCKER_LABELS":-""}
-
     build_docker_image
 
     popd

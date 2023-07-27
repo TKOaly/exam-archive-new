@@ -147,6 +147,9 @@ function build_docker_image() {
     export DOCKER_TAGS="${DOCKER_TAGS//$'\n'/ -t }"
     export DOCKER_LABELS="${DOCKER_LABELS//$'\n'/ --label }"
 
-    docker build --progress=plain --no-cache -t ${DOCKER_TAGS} --label ${DOCKER_LABELS} $repository
+    echo "Docker tags: $DOCKER_TAGS"
+    echo "Docker labels: $DOCKER_LABELS"
+
+    docker build --progress=plain --no-cache ${DOCKER_TAGS} ${DOCKER_LABELS} $repository
     echo "::endgroup::"
 }

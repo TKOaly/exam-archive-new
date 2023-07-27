@@ -138,10 +138,15 @@ function build_app() {
 }
 
 function build_docker_image() {
+    echo "::group::Building docker image"
     required_command docker
 
     build_app
 
     export PROGRESS_NO_TRUNC=1
-    docker build --progress=plain --no-cache -t ${DOCKER_TAGS} -l ${DOCKER_LABELS} $repository
+    export DOCKER_TAGS="${DOCKER_TAGS//$'\n'/ -t }"
+    export DOCKER_LABELS="${DOCKER_LABELS//$'\n'/ --label }"
+
+    docker build --progress=plain --no-cache -t ${DOCKER_TAGS} --label ${DOCKER_LABELS} $repository
+    echo "::endgroup::"
 }

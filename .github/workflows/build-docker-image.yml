@@ -38,6 +38,5 @@ jobs:
       - name: Build Docker image
         run: ./scripts/build-image.sh
         env:
-          DOCKER_TAGS: ${{ steps.meta.outputs.tags }}
-          DOCKER_LABELS: ${{ steps.meta.outputs.labels }}
+          DOCKER_INFO: ${{ steps.meta.outputs.json }}
 

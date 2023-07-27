@@ -138,17 +138,23 @@ function build_app() {
 }
 
 function handle_docker_tags_and_labels() {
-    DOCKER_TAGS=${DOCKER_TAGS:-"tarpisto/tarpisto:latest"}
-    DOCKER_TAGS="-t $DOCKER_TAGS"
-    export DOCKER_TAGS="${DOCKER_TAGS//$'\n'/ -t }"
-
-    if [[ -z $DOCKER_LABELS ]]
+    echo "::debug::Handling docker tags and labels"
+    if [[ -z ${DOCKER_INFO-} ]]
     then
+        export DOCKER_TAGS="tarpisto/tarpisto:latest"
         export DOCKER_LABELS=""
     else
-        DOCKER_LABELS="--label $DOCKER_LABELS"
-        export DOCKER_LABELS="${DOCKER_LABELS//$'\n'/ --label }"
+        DOCKER_TAGS=$(jq -r '.tags[] | "-t " + . ' <<< "$DOCKER_INFO")
+        DOCKER_LABELS=$(jq -r '.labels | to_entries[] | "--label=" + .key + "=" + .value + ""' <<< "$DOCKER_INFO")
+        export DOCKER_TAGS="${DOCKER_TAGS//$'\n'/ }"
+        # export DOCKER_LABELS="${DOCKER_LABELS//$'\n'/ }"
+        # Do not export labels as space in value currently breaks docker build
+        export DOCKER_LABELS=""
     fi
+
+    echo "Docker tags: $DOCKER_TAGS"
+    echo "Docker labels: $DOCKER_LABELS"
+    echo "Repository: $repo"
 }
 
 function build_docker_image() {

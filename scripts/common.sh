@@ -163,7 +163,8 @@ function build_docker_image() {
 
     echo "Docker tags: $DOCKER_TAGS"
     echo "Docker labels: $DOCKER_LABELS"
+    echo "Repository: $repo"
 
-    docker build --progress=plain --no-cache ${DOCKER_TAGS} ${DOCKER_LABELS} $repository
+    docker build --progress=plain --no-cache ${DOCKER_TAGS} ${DOCKER_LABELS} $repo
     echo "::endgroup::"
 }

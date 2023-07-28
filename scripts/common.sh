@@ -138,6 +138,8 @@ function build_app() {
 }
 
 function handle_docker_tags_and_labels() {
+    required_command jq
+
     echo "::debug::Handling docker tags and labels"
     if [[ -z ${DOCKER_INFO-} ]]
     then
@@ -154,7 +156,6 @@ function handle_docker_tags_and_labels() {
 
     echo "Docker tags: $DOCKER_TAGS"
     echo "Docker labels: $DOCKER_LABELS"
-    echo "Repository: $repo"
 }
 
 function build_docker_image() {
@@ -167,10 +168,6 @@ function build_docker_image() {
 
     handle_docker_tags_and_labels
 
-    echo "Docker tags: $DOCKER_TAGS"
-    echo "Docker labels: $DOCKER_LABELS"
-    echo "Repository: $repo"
-
-    docker build --progress=plain --no-cache ${DOCKER_TAGS} ${DOCKER_LABELS} $repo
+    docker build --target=runner --progress=plain ${DOCKER_TAGS} ${DOCKER_LABELS} $repo
     echo "::endgroup::"
 }

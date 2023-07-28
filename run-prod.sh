@@ -9,7 +9,7 @@ function stop() {
   pushd "$repository"
   required_command docker
   required_command docker-compose
-  docker-compose down -v || true
+  docker-compose -f docker-compose.yml -f docker-compose.prod.yml down -v || true
   popd
 }
 trap stop EXIT
@@ -21,15 +21,7 @@ function main() {
 
     pushd "$repository"
 
-    docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d db s3
-
-    db_health_check
-    s3_health_check
-
-    build_docker_image
-
-    export PORT=${PORT:-"9010"}
-    export PG_CONNECTION_STRING=${PG_CONNECTION_STRING:-"postgresql://tarpisto:tarpisto@$(docker-compose port db 5432)/tarpisto"}
+    export PORT=${PORT:-"9000"} # Docker-compose exposes this port in 9020
 
     export COOKIE_NAME=${COOKIE_NAME:-"tarpisto"}
     export COOKIE_SECRET=${COOKIE_SECRET:-"catlike-meringue-tying-PASTERN-bed-simply"}
@@ -44,14 +36,25 @@ function main() {
     export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-"tarpisto"}
     export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-"tarpisto"}
 
-    export AWS_S3_ENDPOINT=${AWS_S3_ENDPOINT:-"http://$(docker-compose port s3 9000)"}
     export AWS_S3_FORCE_PATH_STYLE=${AWS_S3_FORCE_PATH_STYLE:-true}
     export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"exam-archive-local"}
 
     export NODE_ENV=${NODE_ENV:-"production"}
     export APP_ENV=${APP_ENV:-"production"}
 
-    npm run db:migrate
+    docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d db s3
+
+    db_health_check
+    s3_health_check
+
+    export PG_CONNECTION_STRING=${PG_CONNECTION_STRING:-"postgresql://tarpisto:tarpisto@$(docker-compose port db 5432)/tarpisto"}
+    export AWS_S3_ENDPOINT=${AWS_S3_ENDPOINT:-"http://$(docker-compose port s3 9000)"}
+
+    build_docker_image
+
+    export PG_CONNECTION_STRING=postgresql://tarpisto:tarpisto@db:5432/tarpisto
+    export AWS_S3_ENDPOINT=http://s3:9000
+
     docker-compose -f docker-compose.yml -f docker-compose.prod.yml up tarpisto
 
     popd

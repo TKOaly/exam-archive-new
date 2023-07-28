@@ -10,9 +10,7 @@ services:
       - security
 
   tarpisto:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: tarpisto/tarpisto:latest
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:9000/api/health']
       interval: 5s
@@ -23,6 +21,23 @@ services:
         condition: service_healthy
       s3:
         condition: service_healthy
+    environment:
+      - PORT=9000
+      - PG_CONNECTION_STRING=postgresql://tarpisto:tarpisto@db:5432/tarpisto
+      - COOKIE_NAME=${COOKIE_NAME}
+      - COOKIE_SECRET=${COOKIE_SECRET}
+      - COOKIE_ISSUER=${COOKIE_ISSUER}
+      - COOKIE_SUBJECT=${COOKIE_SUBJECT}
+      - COOKIE_JWTID=${COOKIE_JWTID}
+      - USER_SERVICE_SERVICE_ID=${USER_SERVICE_SERVICE_ID}
+      - USER_SERVICE_URL=${USER_SERVICE_URL}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_S3_ENDPOINT=http://s3:9000
+      - AWS_S3_FORCE_PATH_STYLE=${AWS_S3_FORCE_PATH_STYLE}
+      - AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID}
+      - APP_ENV=development
     ports:
       - 127.0.0.1::9000
     networks:
@@ -35,7 +50,7 @@ services:
     depends_on:
       tarpisto:
         condition: service_healthy
-    command: zap-full-scan.py -t http://tarpisto:$PORT -r test-results/security-report.html -c .zap-rules.tsv
+    command: zap-full-scan.py -t http://tarpisto:$PORT -t http://tarpisto:$PORT/courses/create -t http://tarpisto:$PORT/courses/3-advanced-course-in-machine-learning -t http://tarpisto:$PORT/courses/3-advanced-course-in-machine-learning/manage -t http://tarpisto:$PORT/courses/3-advanced-course-in-machine-learning/upload -t http://tarpisto:$PORT/exams/1842/170511_Advanced_Course_in_Machine_Learning_KK.pdf/manage -r test-results/security-report.html
 
 networks:
   security:

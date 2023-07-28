@@ -2,7 +2,7 @@ FROM node:20.5.0-alpine AS deps
 
 WORKDIR /usr/src/tarpisto
 
-RUN apk add --no-cache libc6-compat bash
+RUN apk add --no-cache libc6-compat
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
@@ -15,16 +15,10 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 WORKDIR /usr/src/tarpisto
 
-COPY --from=deps /usr/src/tarpisto/node_modules ./node_modules
-COPY ./dist/production ./dist/production
-COPY package.json package-lock.json next.config.js knexfile.js ./
-COPY scripts/start-prod-server.sh ./scripts/start-prod-server.sh
-COPY scripts/ ./scripts/
+RUN apk add --no-cache bash curl
 
-RUN pwd
-RUN ls -la
-RUN ls -la scripts
-RUN cat /usr/src/tarpisto/scripts/common.sh
+COPY --from=deps /usr/src/tarpisto/node_modules ./node_modules
+COPY . .
 
 EXPOSE ${PORT}
 

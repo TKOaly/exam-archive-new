@@ -1,4 +1,5 @@
 *
+!src/migrations
 !dist/production
 !package.json
 !package-lock.json

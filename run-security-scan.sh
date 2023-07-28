@@ -38,13 +38,15 @@ function main() {
     export AWS_S3_FORCE_PATH_STYLE=${AWS_S3_FORCE_PATH_STYLE:-true}
     export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"exam-archive-local"}
 
-    export NODE_ENV=${NODE_ENV:-"production"}
-    export APP_ENV=${APP_ENV:-"production"}
+    export NODE_ENV="development"
 
     echo "::group::Installing node and dependencies"
     check_node_version
     npm_ci
     echo "::endgroup::"
+
+    export NODE_ENV="production"
+    export APP_ENV=${APP_ENV:-"development"}
 
     echo "::group::Starting database and S3"
     docker-compose -f docker-compose.yml -f docker-compose.security.yml up -d db s3

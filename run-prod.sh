@@ -40,7 +40,7 @@ function main() {
     export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"exam-archive-local"}
 
     export NODE_ENV=${NODE_ENV:-"production"}
-    export APP_ENV=${APP_ENV:-"production"}
+    export APP_ENV=${APP_ENV:-"development"}
 
     docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d db s3
 

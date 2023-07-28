@@ -53,7 +53,10 @@ const Header = async () => {
         <div className="flex shrink basis-1/4 flex-row items-center justify-end md:shrink-0">
           <MainMenu>
             <div className="flex flex-col gap-2">
-              <div className="flex flex-row items-center gap-1" data-test-id="current-user">
+              <div
+                className="flex flex-row items-center gap-1"
+                data-test-id="current-user"
+              >
                 <UserCircleIcon className="me-2 h-10 w-10" />
                 <div className="flex flex-col gap-0">
                   <span className="font-serif text-xl font-extrabold text-gray-800">

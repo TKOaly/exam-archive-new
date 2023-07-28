@@ -39,11 +39,7 @@ test.describe('frontpage of Tärpistö works', () => {
 
     const signOutButton = menu.getByRole('link', { name: 'sign out' })
     await expect(signOutButton).toBeVisible()
-    await expect(signOutButton).toHaveAttribute(
-      'href',
-      '/auth/signout'
-    )
-
+    await expect(signOutButton).toHaveAttribute('href', '/auth/signout')
   })
 
   test('modal can be closed', async ({ page }) => {
@@ -69,10 +65,7 @@ test.describe('frontpage of Tärpistö works', () => {
 
     const contact = page.getByText('tarpisto@tko-aly.fi')
     await expect(contact).toBeVisible()
-    await expect(contact).toHaveAttribute(
-      'href',
-      'mailto:tarpisto@tko-aly.fi'
-    )
+    await expect(contact).toHaveAttribute('href', 'mailto:tarpisto@tko-aly.fi')
 
     const links = page.getByTestId('footer-links')
     await expect(links).toBeVisible()

@@ -61,7 +61,11 @@ const Layout = async ({
 
   return (
     <>
-      <ListingNavigation title={course.name} backButtonHref="/" label="Back to course listing">
+      <ListingNavigation
+        title={course.name}
+        backButtonHref="/"
+        label="Back to course listing"
+      >
         <Link
           href={`${urlForCourse(course.id, course.name)}/upload`}
           className="box-border bg-transparent p-3 font-serif lowercase text-gray-800 shadow-lg ring ring-inset ring-gray-800 hover:bg-gray-600 hover:text-white focus:ring-gray-400"

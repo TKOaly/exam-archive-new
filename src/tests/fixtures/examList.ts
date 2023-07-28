@@ -1,15 +1,18 @@
 import { Page, Locator } from '@playwright/test'
-import { urlForCourse, urlForCourseListing, urlForExamManagement, urlForExamUpload } from '../../lib/courses'
+import {
+  urlForCourse,
+  urlForCourseListing,
+  urlForExamManagement,
+  urlForExamUpload
+} from '../../lib/courses'
 
 export class ExamList {
   private readonly fileInput: Locator
   private readonly uploadButton: Locator
 
   constructor(public readonly page: Page) {
-    this.fileInput = this.page
-      .locator('input[type=file]')
-    this.uploadButton = this.page
-      .getByRole('button', { name: 'Upload' })
+    this.fileInput = this.page.locator('input[type=file]')
+    this.uploadButton = this.page.getByRole('button', { name: 'Upload' })
   }
 
   async goto(courseId: number, courseName: string) {
@@ -22,13 +25,17 @@ export class ExamList {
 
   async gotoUploadById(courseId: number) {
     await this.page.goto(urlForCourseListing())
-    const courseName = await this.page.locator(`[data-course-id="${courseId}"]`).getAttribute('data-course-name') as string
+    const courseName = (await this.page
+      .locator(`[data-course-id="${courseId}"]`)
+      .getAttribute('data-course-name')) as string
     await this.page.goto(urlForExamUpload(courseId, courseName))
   }
 
   async gotoUploadByName(courseName: string) {
     await this.page.goto(urlForCourseListing())
-    const courseId = await this.page.locator(`[data-course-name="${courseName}"]`).getAttribute('data-course-id') as string
+    const courseId = (await this.page
+      .locator(`[data-course-name="${courseName}"]`)
+      .getAttribute('data-course-id')) as string
     await this.page.goto(urlForExamUpload(parseInt(courseId), courseName))
   }
 

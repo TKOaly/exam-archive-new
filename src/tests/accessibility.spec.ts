@@ -57,16 +57,21 @@ test.describe('accessibility tests', () => {
     )
   })
 
-  test('courselist', async ({ page, browserName, isMobile, courseList, examList }, {
-    title,
-    testId
-  }) => {
+  test('courselist', async ({
+    page,
+    browserName,
+    isMobile,
+    courseList,
+    examList
+  }, { title, testId }) => {
     await courseList.goto()
     await page
       .locator(`[data-course-name="Introduction to testing ${testId}"]`)
       .waitFor()
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).exclude('next-route-announcer').analyze()
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('next-route-announcer')
+      .analyze()
     createHtmlReport({
       results: accessibilityScanResults,
       options: {
@@ -85,7 +90,9 @@ test.describe('accessibility tests', () => {
   }) => {
     await courseList.gotoCourseCreation()
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).exclude('next-route-announcer').analyze()
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('next-route-announcer')
+      .analyze()
     createHtmlReport({
       results: accessibilityScanResults,
       options: {
@@ -102,9 +109,13 @@ test.describe('accessibility tests', () => {
     title,
     testId
   }) => {
-    await courseList.gotoCourseManagementByName(`Introduction to testing ${testId}`)
+    await courseList.gotoCourseManagementByName(
+      `Introduction to testing ${testId}`
+    )
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).exclude('next-route-announcer').analyze()
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('next-route-announcer')
+      .analyze()
     createHtmlReport({
       results: accessibilityScanResults,
       options: {
@@ -117,12 +128,18 @@ test.describe('accessibility tests', () => {
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
-  test('create course modal', async ({ page, browserName, isMobile, courseList }, {
-    title
-  }) => {
+  test('create course modal', async ({
+    page,
+    browserName,
+    isMobile,
+    courseList
+  }, { title }) => {
     await courseList.gotoCourseCreationModal()
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).exclude('next-route-announcer').exclude('next-route-announcer').analyze()
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('next-route-announcer')
+      .exclude('next-route-announcer')
+      .analyze()
     createHtmlReport({
       results: accessibilityScanResults,
       options: {
@@ -135,13 +152,19 @@ test.describe('accessibility tests', () => {
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
-  test('manage course modal', async ({ page, browserName, isMobile, courseList }, {
-    title,
-    testId
-  }) => {
-    await courseList.gotoCourseManagementModalByName(`Introduction to testing ${testId}`)
+  test('manage course modal', async ({
+    page,
+    browserName,
+    isMobile,
+    courseList
+  }, { title, testId }) => {
+    await courseList.gotoCourseManagementModalByName(
+      `Introduction to testing ${testId}`
+    )
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).exclude('next-route-announcer').analyze()
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('next-route-announcer')
+      .analyze()
     createHtmlReport({
       results: accessibilityScanResults,
       options: {
@@ -165,7 +188,8 @@ test.describe('accessibility tests', () => {
       .locator(`[data-course-name="Introduction to testing ${testId}"]`)
       .waitFor()
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).exclude('next-route-announcer')
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('next-route-announcer')
       .analyze()
     createHtmlReport({
       results: accessibilityScanResults,
@@ -188,7 +212,8 @@ test.describe('accessibility tests', () => {
       .locator(`[data-course-name="Advanced course in Testing ${testId}"]`)
       .waitFor()
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).exclude('next-route-announcer')
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('next-route-announcer')
       .analyze()
     createHtmlReport({
       results: accessibilityScanResults,
@@ -210,11 +235,17 @@ test.describe('accessibility tests', () => {
     examList
   }, { testId, title }) => {
     await courseList.goto()
-    const row = await courseList.getCourseItemRowByName(`Introduction to testing ${testId}`)
-    const courseId = await row.getAttribute('data-course-id') as string
-    await examList.gotoUpload(parseInt(courseId), `Introduction to testing ${testId}`)
+    const row = await courseList.getCourseItemRowByName(
+      `Introduction to testing ${testId}`
+    )
+    const courseId = (await row.getAttribute('data-course-id')) as string
+    await examList.gotoUpload(
+      parseInt(courseId),
+      `Introduction to testing ${testId}`
+    )
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).exclude('next-route-announcer')
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('next-route-announcer')
       .analyze()
     createHtmlReport({
       results: accessibilityScanResults,
@@ -237,10 +268,14 @@ test.describe('accessibility tests', () => {
   }, { testId, title }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
     const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
-    const examId = await row.getAttribute('data-exam-id') as string
-    await examList.gotoExamManagement(parseInt(examId), `existing-${testId}.pdf`)
+    const examId = (await row.getAttribute('data-exam-id')) as string
+    await examList.gotoExamManagement(
+      parseInt(examId),
+      `existing-${testId}.pdf`
+    )
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).exclude('next-route-announcer')
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('next-route-announcer')
       .analyze()
     createHtmlReport({
       results: accessibilityScanResults,
@@ -264,7 +299,8 @@ test.describe('accessibility tests', () => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
     await examList.openUploadModal()
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).exclude('next-route-announcer')
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('next-route-announcer')
       .analyze()
     createHtmlReport({
       results: accessibilityScanResults,
@@ -288,7 +324,8 @@ test.describe('accessibility tests', () => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
     await examList.openExamManagementModalByName(`existing-${testId}.pdf`)
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).exclude('next-route-announcer')
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('next-route-announcer')
       .analyze()
     createHtmlReport({
       results: accessibilityScanResults,
@@ -305,7 +342,8 @@ test.describe('accessibility tests', () => {
   test('not found', async ({ page, browserName, isMobile }, { title }) => {
     await page.goto('/exams/999-no-existing-course')
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).exclude('next-route-announcer')
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .exclude('next-route-announcer')
       .disableRules(['document-title']) // Next.js does not inject currently any metadata into not-found.ts
       .analyze()
     createHtmlReport({

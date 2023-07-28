@@ -37,8 +37,14 @@ const Page = async () => {
       <ListingNavigation title="Admin tools" backButtonHref="/" />
       <div className="page-container">
         <main>
-          <h3 className="font-serif text-xl font-bold leading-tight">Objects in database</h3>
-          <div role="table" aria-label="Courses" className="divide-y pb-5 table-auto">
+          <h3 className="font-serif text-xl font-bold leading-tight">
+            Objects in database
+          </h3>
+          <div
+            role="table"
+            aria-label="Courses"
+            className="table-auto divide-y pb-5"
+          >
             <div role="row" className="flex flex-row items-center px-1">
               <div role="columnheader" className="m-2 box-border">
                 <div className="h-6 w-6" />
@@ -51,7 +57,7 @@ const Page = async () => {
               </div>
               <div
                 role="columnheader"
-                className="px-2 font-serif me-auto font-bold lowercase"
+                className="me-auto px-2 font-serif font-bold lowercase"
               >
                 Filename
               </div>
@@ -72,13 +78,13 @@ const Page = async () => {
                 <div role="cell" className="m-2 shrink-0">
                   <DocumentIcon className="h-6 w-6 fill-cyan-500" />
                 </div>
-                <div
-                  role="cell"
-                  className="mx-1 my-2 w-10"
-                >
+                <div role="cell" className="mx-1 my-2 w-10">
                   {id}
                 </div>
-                <div className="mx-2 me-auto overflow-hidden text-ellipsis" role="cell">
+                <div
+                  className="mx-2 me-auto overflow-hidden text-ellipsis"
+                  role="cell"
+                >
                   {fileName}
                 </div>
                 <div role="cell" className="m-2 shrink-0">

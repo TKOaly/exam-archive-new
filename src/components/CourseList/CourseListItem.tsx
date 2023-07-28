@@ -41,7 +41,11 @@ const CourseListItem = ({ id, name, url, lastModified }: CourseListItem) => {
           </>
         )}
       </div>
-      <div className="mx-2 hidden sm:block" role="cell" data-test-id="last-modified">
+      <div
+        className="mx-2 hidden sm:block"
+        role="cell"
+        data-test-id="last-modified"
+      >
         {lastModified && (
           <time
             className="font-mono text-xs text-gray-600"

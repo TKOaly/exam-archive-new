@@ -7,7 +7,7 @@ const checkExists = (...values: (string | undefined)[]) => {
 }
 
 // APP_ENV is different from NODE_ENV as Next.js defines just
-// development for `next dev` and productiong`next build  && next start`.
+// development for `next dev` and production `next build  && next start`.
 // This does not allow usage of production build with development stuff
 // like auto - login. There is Next RFP
 // https://github.com/vercel/next.js/discussions/25764 but it is not yet

@@ -77,7 +77,11 @@ test.describe('courseList looks right', () => {
     await expect(heading).toBeVisible()
   })
 
-  test('courselisting headers are correct', async ({ courseList, page, isMobile }) => {
+  test('courselisting headers are correct', async ({
+    courseList,
+    page,
+    isMobile
+  }) => {
     await courseList.goto()
 
     const headers = page.getByRole('row', {
@@ -87,7 +91,7 @@ test.describe('courseList looks right', () => {
   })
 
   test('courselisting row is correct', async ({ courseList, page, isMobile }, {
-    workerIndex,
+    workerIndex
   }) => {
     await courseList.goto()
 
@@ -95,8 +99,12 @@ test.describe('courseList looks right', () => {
       `Introduction to testing -${workerIndex}-`
     )
     const folderIcon = row.locator('svg').first()
-    const name = row.getByText(`Introduction to testing -${workerIndex}-`, { exact: true })
-    const lastModified = row.getByTestId(`last-modified-time${isMobile ? '-mobile' : ''}`)
+    const name = row.getByText(`Introduction to testing -${workerIndex}-`, {
+      exact: true
+    })
+    const lastModified = row.getByTestId(
+      `last-modified-time${isMobile ? '-mobile' : ''}`
+    )
     const manage = row.getByRole('link', { name: 'manage' })
     const manageIcon = manage.locator('svg').first()
 
@@ -107,20 +115,28 @@ test.describe('courseList looks right', () => {
     await expect(manage).toBeVisible()
     await expect(manageIcon).toBeVisible()
 
-    await expect(lastModified).toHaveText(`${new Date().toISOString().split('T')[0]}`)
+    await expect(lastModified).toHaveText(
+      `${new Date().toISOString().split('T')[0]}`
+    )
 
-    const courseId = await page.getAttribute(
+    const courseId = (await page.getAttribute(
       `[data-course-name="Introduction to testing -${workerIndex}-"]`,
       'data-course-id'
-    ) as string
+    )) as string
 
     await expect(name).toHaveAttribute(
       'href',
-      `${urlForCourse(parseInt(courseId), `Introduction to testing -${workerIndex}-`)}`
+      `${urlForCourse(
+        parseInt(courseId),
+        `Introduction to testing -${workerIndex}-`
+      )}`
     )
     await expect(manage).toHaveAttribute(
       'href',
-      `${urlForCourse(parseInt(courseId), `Introduction to testing -${workerIndex}-`)}/manage`
+      `${urlForCourse(
+        parseInt(courseId),
+        `Introduction to testing -${workerIndex}-`
+      )}/manage`
     )
   })
 
@@ -134,19 +150,25 @@ test.describe('courseList looks right', () => {
     )
     const lastModified = row.getByTestId('last-modified')
     await expect(row).toBeVisible()
-    await expect(row).toHaveText(`Advanced course in Testing -${workerIndex}- Manage course "Advanced course in Testing -${workerIndex}-"`)
+    await expect(row).toHaveText(
+      `Advanced course in Testing -${workerIndex}- Manage course "Advanced course in Testing -${workerIndex}-"`
+    )
     await expect(lastModified).toBeEmpty()
   })
 
-  test('manage course navigation is right', async({ courseList, page }, {
+  test('manage course navigation is right', async ({ courseList, page }, {
     workerIndex
   }) => {
-    await courseList.gotoCourseManagementByName(`Introduction to testing -${workerIndex}-`)
+    await courseList.gotoCourseManagementByName(
+      `Introduction to testing -${workerIndex}-`
+    )
 
     const heading = page.getByRole('heading', {
       name: `Introduction to testing -${workerIndex}-`
     })
-    const backButton = page.getByLabel(`Back to course "Introduction to testing -${workerIndex}-"`)
+    const backButton = page.getByLabel(
+      `Back to course "Introduction to testing -${workerIndex}-"`
+    )
     const uplaodButton = page.getByRole('link', { name: 'upload' })
 
     await expect(heading).toBeVisible()
@@ -159,8 +181,6 @@ test.describe('courseList looks right', () => {
     await expect(redirectHeading).toBeVisible()
   })
 })
-
-
 
 // test('examList screenshot testing', async ({ page }) => {
 //   await page.goto('/')
@@ -255,9 +275,7 @@ test.describe('courselisting functions works', () => {
     // await expect(success).toBeVisible()
   })
 
-  test('add a new course works', async ({ page, courseList }, {
-    testId
-  }) => {
+  test('add a new course works', async ({ page, courseList }, { testId }) => {
     await courseList.gotoCourseCreation()
 
     const title = page.getByRole('heading', {
@@ -292,13 +310,17 @@ test.describe('courselisting functions works', () => {
   test('rename course via modal works', async ({ page, courseList, examList }, {
     testId
   }) => {
-    await courseList.gotoCourseManagementModalByName(`Introduction to testing ${testId}`)
+    await courseList.gotoCourseManagementModalByName(
+      `Introduction to testing ${testId}`
+    )
 
     const modal = page.getByTestId('modal')
     const title = modal.getByRole('heading', {
       name: `Manage course "Introduction to testing ${testId}"`
     })
-    const heading = modal.locator('p').getByText('Rename course', { exact: true })
+    const heading = modal
+      .locator('p')
+      .getByText('Rename course', { exact: true })
     const courseRenameInput = modal.locator('input[name="courseName"]')
     const courseRenameButton = modal.getByRole('button', {
       name: `Rename course "Introduction to testing ${testId}"`
@@ -314,7 +336,9 @@ test.describe('courselisting functions works', () => {
 
     await page.waitForURL(urlForCourseListing())
 
-    const row = await courseList.getCourseItemRowByName(`Advanced course in naming ${testId}`)
+    const row = await courseList.getCourseItemRowByName(
+      `Advanced course in naming ${testId}`
+    )
     await expect(row).toBeVisible()
 
     await expect(modal).not.toBeVisible()
@@ -327,7 +351,9 @@ test.describe('courselisting functions works', () => {
   test('rename course works', async ({ page, courseList, examList }, {
     testId
   }) => {
-    await courseList.gotoCourseManagementByName(`Introduction to testing ${testId}`)
+    await courseList.gotoCourseManagementByName(
+      `Introduction to testing ${testId}`
+    )
 
     const courseRenameInput = page.locator('input[name="courseName"]')
     const courseRenameButton = page.getByRole('button', {
@@ -339,7 +365,9 @@ test.describe('courselisting functions works', () => {
 
     await page.waitForURL(urlForCourseListing())
 
-    const row = await courseList.getCourseItemRowByName(`Advanced course in naming ${testId}`)
+    const row = await courseList.getCourseItemRowByName(
+      `Advanced course in naming ${testId}`
+    )
     await expect(row).toBeVisible()
 
     // Flash messages not implemented yet
@@ -356,13 +384,17 @@ test.describe('courselisting functions works', () => {
 
     await page.waitForURL(/introduction-to-naming/)
 
-    await courseList.gotoCourseManagementModalByName(`Introduction to naming ${testId}`)
+    await courseList.gotoCourseManagementModalByName(
+      `Introduction to naming ${testId}`
+    )
 
     const modal = page.getByTestId('modal')
     const title = modal.getByRole('heading', {
       name: `Manage course "Introduction to naming ${testId}"`
     })
-    const heading = modal.locator('p').getByText('Delete course', { exact: true })
+    const heading = modal
+      .locator('p')
+      .getByText('Delete course', { exact: true })
     const courseDeleteButton = modal.getByRole('button', {
       name: `Delete course "Introduction to naming ${testId}"`
     })
@@ -395,7 +427,9 @@ test.describe('courselisting functions works', () => {
     await courseList.createCourse(`Introduction to naming ${testId}`)
     await page.waitForURL(/introduction-to-naming/)
 
-    await courseList.gotoCourseManagementByName(`Introduction to naming ${testId}`)
+    await courseList.gotoCourseManagementByName(
+      `Introduction to naming ${testId}`
+    )
 
     const courseDeleteButton = page.getByRole('button', {
       name: `Delete course "Introduction to naming ${testId}"`
@@ -418,7 +452,9 @@ test.describe('courselisting functions works', () => {
     page,
     courseList
   }, { testId }) => {
-    await courseList.gotoCourseManagementByName(`Introduction to testing ${testId}`)
+    await courseList.gotoCourseManagementByName(
+      `Introduction to testing ${testId}`
+    )
 
     const courseDeleteButton = page.getByRole('button', {
       name: `Delete course`

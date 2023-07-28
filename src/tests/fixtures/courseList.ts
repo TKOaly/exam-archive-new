@@ -1,15 +1,18 @@
 import { Page, Locator } from '@playwright/test'
-import { urlForCourseListing, slugifyCourseName, urlForCourseCreation, urlForCourseManagement } from '../../lib/courses'
+import {
+  urlForCourseListing,
+  slugifyCourseName,
+  urlForCourseCreation,
+  urlForCourseManagement
+} from '../../lib/courses'
 
 export class CourseList {
   private readonly createInput: Locator
   private readonly createSubmit: Locator
 
   constructor(public readonly page: Page) {
-    this.createInput = this.page
-      .getByPlaceholder('Course name')
-    this.createSubmit = this.page
-      .getByText('Create course')
+    this.createInput = this.page.getByPlaceholder('Course name')
+    this.createSubmit = this.page.getByText('Create course')
   }
 
   async getCourseItemRowById(courseId: number) {
@@ -40,7 +43,7 @@ export class CourseList {
   async gotoCourseById(courseId: number) {
     await this.goto()
     const row = await this.getCourseItemRowById(courseId)
-    const courseName = await row.getAttribute('data-course-name') as string
+    const courseName = (await row.getAttribute('data-course-name')) as string
     const link = await row.getByRole('link', { name: courseName, exact: true })
     await link.click()
     await this.page.waitForURL(new RegExp(`${courseId}`))
@@ -58,7 +61,7 @@ export class CourseList {
   async gotoCourseManagementById(courseId: number) {
     await this.goto()
     const row = await this.getCourseItemRowById(courseId)
-    const courseName = await row.getAttribute('data-course-name') as string
+    const courseName = (await row.getAttribute('data-course-name')) as string
     await this.page.goto(urlForCourseManagement(courseId, courseName))
     await this.page.waitForURL(new RegExp(`${courseId}`))
   }
@@ -66,7 +69,7 @@ export class CourseList {
   async gotoCourseManagementByName(courseName: string) {
     await this.goto()
     const row = await this.getCourseItemRowByName(courseName)
-    const courseId = await row.getAttribute('data-course-id') as string
+    const courseId = (await row.getAttribute('data-course-id')) as string
     await this.page.goto(urlForCourseManagement(parseInt(courseId), courseName))
     const slug = slugifyCourseName(courseName)
     await this.page.waitForURL(new RegExp(slug))
@@ -88,7 +91,6 @@ export class CourseList {
     const slug = slugifyCourseName(courseName)
     await this.page.waitForURL(new RegExp(slug))
   }
-
 
   async createCourse(name: string) {
     await this.gotoCourseCreation()

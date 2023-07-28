@@ -105,9 +105,11 @@ test.describe('examList looks right', () => {
     await expect(redirectHeading).toBeVisible()
   })
 
-  test('examlisting headers are correct', async ({ page, courseList, isMobile }, {
-    workerIndex
-  }) => {
+  test('examlisting headers are correct', async ({
+    page,
+    courseList,
+    isMobile
+  }, { workerIndex }) => {
     await courseList.gotoCourseByName(
       `Introduction to testing -${workerIndex}-`
     )
@@ -143,8 +145,12 @@ test.describe('examList looks right', () => {
       `document-${workerIndex}.txt`
     )
     const documentIcon = documentRow.locator('img').nth(0)
-    const name = documentRow.getByText(`document-${workerIndex}.txt`, { exact: true })
-    const lastModified = documentRow.getByTestId(`upload-date-time${isMobile ? '-mobile' : ''}`)
+    const name = documentRow.getByText(`document-${workerIndex}.txt`, {
+      exact: true
+    })
+    const lastModified = documentRow.getByTestId(
+      `upload-date-time${isMobile ? '-mobile' : ''}`
+    )
     const documentExamId = await page.getAttribute(
       `[data-exam-name="document-${workerIndex}.txt"]`,
       'data-exam-id'
@@ -158,12 +164,17 @@ test.describe('examList looks right', () => {
     await expect(lastModified).toBeVisible()
     await expect(manageButton).toBeVisible()
 
-    await expect(documentIcon).toHaveAttribute('src', new RegExp('icon-document'))
+    await expect(documentIcon).toHaveAttribute(
+      'src',
+      new RegExp('icon-document')
+    )
     await expect(name).toHaveAttribute(
       'href',
       `/exams/${documentExamId}/document-${workerIndex}.txt`
     )
-    await expect(lastModified).toHaveText(`${new Date().toISOString().split('T')[0]}`)
+    await expect(lastModified).toHaveText(
+      `${new Date().toISOString().split('T')[0]}`
+    )
 
     const pdfRow = await examList.getExamItemRowByName(`pdf-${workerIndex}.pdf`)
     const pdfIcon = pdfRow.locator('img').nth(0)
@@ -185,7 +196,9 @@ test.describe('examList looks right', () => {
   }) => {
     await examList.gotoUploadByName(`Introduction to testing -${workerIndex}-`)
 
-    const backButton = page.getByLabel(`Back to course "Introduction to testing -${workerIndex}-"`)
+    const backButton = page.getByLabel(
+      `Back to course "Introduction to testing -${workerIndex}-"`
+    )
     const heading = page.getByRole('heading', {
       name: `Upload exam to Introduction to testing -${workerIndex}-`
     })
@@ -197,24 +210,33 @@ test.describe('examList looks right', () => {
 
     await page.waitForURL(new RegExp('^(?!\b.*upload.*\b).*$'))
 
-    const redirectHeading = page.getByRole('heading', { name: `Introduction to testing -${workerIndex}-` })
+    const redirectHeading = page.getByRole('heading', {
+      name: `Introduction to testing -${workerIndex}-`
+    })
     await expect(redirectHeading).toBeVisible()
   })
 
-  test('manage exam navigation is correct', async ({ page, courseList, examList }, {
-    workerIndex
-  }) => {
+  test('manage exam navigation is correct', async ({
+    page,
+    courseList,
+    examList
+  }, { workerIndex }) => {
     await courseList.gotoCourseByName(
       `Introduction to testing -${workerIndex}-`
     )
 
-    const row = await examList.getExamItemRowByName(`document-${workerIndex}.txt`)
-    const examId = await row.getAttribute('data-exam-id') as string
+    const row = await examList.getExamItemRowByName(
+      `document-${workerIndex}.txt`
+    )
+    const examId = (await row.getAttribute('data-exam-id')) as string
     await examList.gotoExamManagement(
-      parseInt(examId), `document-${workerIndex}.txt`
+      parseInt(examId),
+      `document-${workerIndex}.txt`
     )
 
-    const backButton = page.getByLabel(`Back to course "Introduction to testing -${workerIndex}-"`)
+    const backButton = page.getByLabel(
+      `Back to course "Introduction to testing -${workerIndex}-"`
+    )
     const heading = page.getByRole('heading', {
       name: `Manage exam document-${workerIndex}.txt`
     })
@@ -226,7 +248,9 @@ test.describe('examList looks right', () => {
 
     await page.waitForURL(new RegExp('^(?!\b.*manage.*\b).*$'))
 
-    const redirectHeading = page.getByRole('heading', { name: `Introduction to testing -${workerIndex}-` })
+    const redirectHeading = page.getByRole('heading', {
+      name: `Introduction to testing -${workerIndex}-`
+    })
     await expect(redirectHeading).toBeVisible()
   })
 })
@@ -287,9 +311,11 @@ test.describe('examlisting functions right', () => {
     )
   })
 
-  test('upload new file via modal works', async ({ page, courseList, examList }, {
-    testId
-  }) => {
+  test('upload new file via modal works', async ({
+    page,
+    courseList,
+    examList
+  }, { testId }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
     await examList.openUploadModal()
 
@@ -439,8 +465,11 @@ test.describe('examlisting functions right', () => {
     const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
     await expect(row).toBeVisible()
 
-    const examId = await row.getAttribute('data-exam-id') as string
-    await examList.gotoExamManagement(parseInt(examId), `existing-${testId}.pdf`)
+    const examId = (await row.getAttribute('data-exam-id')) as string
+    await examList.gotoExamManagement(
+      parseInt(examId),
+      `existing-${testId}.pdf`
+    )
 
     const renameInput = page.locator('input[name="examName"]')
     const renameButton = page.getByRole('button', {
@@ -499,8 +528,11 @@ test.describe('examlisting functions right', () => {
     const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
     await expect(row).toBeVisible()
 
-    const examId = await row.getAttribute('data-exam-id') as string
-    await examList.gotoExamManagement(parseInt(examId), `existing-${testId}.pdf`)
+    const examId = (await row.getAttribute('data-exam-id')) as string
+    await examList.gotoExamManagement(
+      parseInt(examId),
+      `existing-${testId}.pdf`
+    )
 
     const deleteButton = page.getByRole('button', {
       name: `Delete exam "existing-${testId}.pdf"`
@@ -533,5 +565,3 @@ test.describe('examlisting functions right', () => {
     await expect(page1).toBeDefined()
   })
 })
-
-

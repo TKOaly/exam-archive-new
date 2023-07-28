@@ -39,4 +39,3 @@ jobs:
         run: ./scripts/build-image.sh
         env:
           DOCKER_INFO: ${{ steps.meta.outputs.json }}
-

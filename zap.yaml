@@ -23,11 +23,11 @@ jobs:
 - type: passiveScan-wait
   parameters:
     maxDuration: 0
-- type: outputSummary
-  parameters:
-    format: Long
-    summaryFile: /zap/wrk/test-results/output-summary.json
-  rules: []
+# - type: outputSummary
+#   parameters:
+#     format: Long
+#     summaryFile: /zap/wrk/test-results/output-summary.json
+#   rules: []
 - type: report
   parameters:
     reportDescription: ''

@@ -1,0 +1,37 @@
+env:
+  contexts:
+  - name: Tarpisto
+    excludePaths: []
+    urls:
+    - http://tarpisto:9000
+  parameters:
+    failOnError: true
+    progressToStdout: true
+jobs:
+- type: passiveScan-config
+  parameters:
+    enableTags: false
+    maxAlertsPerRule: 10
+- type: spider
+  parameters:
+    maxDuration: 0
+    url: http://tarpisto:9000
+- type: spiderAjax
+  parameters:
+    maxDuration: 0
+    url: http://tarpisto:9000
+- type: passiveScan-wait
+  parameters:
+    maxDuration: 0
+- type: outputSummary
+  parameters:
+    format: Long
+    summaryFile: /zap/wrk/test-results/output-summary.json
+  rules: []
+- type: report
+  parameters:
+    reportDescription: ''
+    reportDir: /zap/wrk/
+    reportFile: test-results/security-report.html
+    reportTitle: Tärpistö ZAP Scanning Report
+    template: traditional-html

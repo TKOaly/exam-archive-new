@@ -50,7 +50,9 @@ services:
     depends_on:
       tarpisto:
         condition: service_healthy
-    command: zap-full-scan.py -t http://tarpisto:$PORT -t http://tarpisto:$PORT/courses/create -t http://tarpisto:$PORT/courses/3-advanced-course-in-machine-learning -t http://tarpisto:$PORT/courses/3-advanced-course-in-machine-learning/manage -t http://tarpisto:$PORT/courses/3-advanced-course-in-machine-learning/upload -t http://tarpisto:$PORT/exams/1842/170511_Advanced_Course_in_Machine_Learning_KK.pdf/manage -r test-results/security-report.html
+    command: zap.sh -cmd -autorun /zap/wrk/zap.yaml
+    networks:
+      - security
 
 networks:
   security:

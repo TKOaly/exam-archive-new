@@ -20,7 +20,7 @@ function main() {
     required_command docker-compose
 
     pushd "$repository"
-    export PORT=${PORT:-"9030"}
+    export PORT=${PORT:-"9000"}
 
     export COOKIE_NAME=${COOKIE_NAME:-"tarpisto"}
     export COOKIE_SECRET=${COOKIE_SECRET:-"catlike-meringue-tying-PASTERN-bed-simply"}

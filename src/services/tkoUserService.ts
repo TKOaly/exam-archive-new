@@ -1,4 +1,3 @@
-import querystring from 'querystring'
 import { notFound } from 'next/navigation'
 import config from '@lib/config'
 
@@ -51,17 +50,16 @@ export const roleRights: {
 }
 
 export const getUserServiceLoginUrl = () => {
-  const query = querystring.stringify({
-    serviceIdentifier: config.USER_SERVICE_SERVICE_ID
-  })
-  return `${config.USER_SERVICE_URL}?${query}`
+  const url = new URL(config.USER_SERVICE_URL)
+  url.searchParams.set('serviceIdentifier', config.USER_SERVICE_SERVICE_ID)
+  return url.toString()
 }
 
 export const getUserServiceLogoutUrl = () => {
-  const query = querystring.stringify({
-    serviceIdentifier: config.USER_SERVICE_SERVICE_ID
-  })
-  return `${config.USER_SERVICE_URL}/logout?${query}`
+  const url = new URL(config.USER_SERVICE_URL)
+  url.pathname = '/logout'
+  url.searchParams.set('serviceIdentifier', config.USER_SERVICE_SERVICE_ID)
+  return url.toString()
 }
 
 interface UserServicePayload<T> {

@@ -11,8 +11,3 @@ jobs:
       - uses: actions/checkout@v3
       - name: Run security scan
         run: ./run-security-scan.sh
-      - name: Upload results
-        uses: actions/upload-artifact@v2
-        with:
-          name: Security scan results
-          path: test-results/security-report.html

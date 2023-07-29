@@ -1,9 +1,9 @@
 env:
   contexts:
-  - name: Tarpisto
+  - name: tarpisto
     excludePaths: []
     urls:
-    - http://tarpisto:9000
+    - http://tarpisto:9000/
   parameters:
     failOnError: true
     progressToStdout: true
@@ -12,26 +12,41 @@ jobs:
   parameters:
     enableTags: false
     maxAlertsPerRule: 10
+    scanOnlyInScope: true
 - type: spider
   parameters:
-    maxDuration: 0
-    url: http://tarpisto:9000
+    context: tarpisto
+    maxDuration: 10
+    requestWaitTime: 500
+  tests:
+    - name: '> 10 URLs found'
+      type: 'stats'
+      statistic: 'automation.spider.urls.added'
+      operator: '>='
+      value: 10
+      onFail: 'info'
 - type: spiderAjax
   parameters:
-    maxDuration: 0
-    url: http://tarpisto:9000
+    context: tarpisto
+    maxDuration: 10
+    requestWaitTime: 500
+  tests:
+    - name: '> 10 URLs found'
+      type: 'stats'
+      statistic: 'automation.spider.urls.added'
+      operator: '>='
+      value: 10
+      onFail: 'info'
 - type: passiveScan-wait
   parameters:
     maxDuration: 0
-# - type: outputSummary
-#   parameters:
-#     format: Long
-#     summaryFile: /zap/wrk/test-results/output-summary.json
-#   rules: []
+- type: activeScan
+  parameters:
+    context: tarpisto
 - type: report
   parameters:
     reportDescription: ''
     reportDir: /zap/wrk/
-    reportFile: test-results/security-report.html
+    reportFile: test-results/security-report.md
     reportTitle: Tärpistö ZAP Scanning Report
-    template: traditional-html
+    template: traditional-md

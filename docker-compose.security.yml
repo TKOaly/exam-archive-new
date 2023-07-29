@@ -44,13 +44,13 @@ services:
       - security
 
   security:
-    image: ghcr.io/zaproxy/zaproxy:stable
+    image: ghcr.io/zaproxy/zaproxy:nightly
     volumes:
       - $PWD:/zap/wrk/:rw
     depends_on:
       tarpisto:
         condition: service_healthy
-    command: zap.sh -cmd -autorun /zap/wrk/zap.yaml
+    command: zap.sh -addonupdate -addoninstall spiderAjax -addoninstall packscanrules -addoninstall ascanrules -addoninstall pscanrulesBeta -addoninstall ascanrulesBeta -cmd -autorun /zap/wrk/zap.yaml
     networks:
       - security
 

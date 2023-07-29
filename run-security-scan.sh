@@ -78,6 +78,12 @@ function main() {
     docker-compose -f docker-compose.yml -f docker-compose.security.yml up --exit-code-from security security
     echo "::endgroup::"
 
+    if [[ -f "$GITHUB_STEP_SUMMARY" ]]; then
+      echo "::group::Report results"
+      echo "$(cat ./test-results/security-report.md)" >> $GITHUB_STEP_SUMMARY
+      echo "::endgroup::"
+    fi
+
     popd
 }
 

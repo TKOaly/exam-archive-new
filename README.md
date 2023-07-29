@@ -5,15 +5,16 @@ Actually new exam archive
 ## Table of contents
 
 - [Development](#development)
-  - [1. Install tools and dependencies](#1-install-tools-and-dependencies)
-  - [2. Setup environment variables](#2-setup-environment-variables)
-  - [3. Run it](#3-run-it)
+  - [Quick guide](#quick-guide)
+  - [Other good to know commands](#other-good-to-know-commands)
+  - [Needed tools and dependencies](#needed-tools-and-dependencies)
+  - [Adding more test files](#adding-more-test-files)
   - [Seeding database with real data](#seeding-database-with-real-data)
 - [Docker warning](#docker-warning)
 - [Deployment](#deployment)
   - [Manual infra setup with Terraform](#manual-infra-setup-with-terraform)
   - [CI to production](#ci-to-production)
-- [some env vars](#some-env-vars)
+- [Environment variables](#environment-variables)
 - [License](#license)
 
 ## Development
@@ -24,7 +25,7 @@ Actually new exam archive
 2. _(OPTIONAL)_ If you want to test with realish users, set up `user-service` and make sure that there's a service for exam-archive, might need to change the permission bits to `770`. By default, the service will just skip authentication and log you in. If local user service cookie is detected, exam-archive tries to authenticate against it.
 3. Then go to <http://127.0.0.1:9000>
 
-#### Other good to know commands
+### Other good to know commands
 
 - `run-prod.sh` will start prod-like environment locally for testing Docker image. There is `APP_ENV=development` enabled for bypassing user service authentication.
 - `run-security-scan.sh` runs ZAProxy's zap-full-scan.py against app. Mainly used in CI, but also working locally.
@@ -59,7 +60,7 @@ By default, the local minio s3 is seeded with one PDF and one JPG. You can just 
    | Password | `tarpisto` |
    | Database | `tarpisto` |
 4. Click on Import on the left sidebar and upload `db.sql`
-5. Run any further possible migrations with `npm run db:migrate-dev`
+5. Further possible migrations are runned while starting app.
 
 ## Docker warning
 
@@ -72,7 +73,7 @@ The `.dockerignore` is configured to work as a whitelist so if you add new files
 1. `cd tf`
 2. Set correct AWS CLI profile
 
-   ```
+   ```shell
    export AWS_PROFILE=default
    export TF_VAR_aws_profile=default
    ```
@@ -91,7 +92,7 @@ To deploy a new release to production, author a new Github Release. Use semver. 
 
 | Key                       | Value                                                                                                                                                                                               | Needed for                   | Example                                                                     |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | --------------------------------------------------------------------------- |
-| `PORT`                    | Port where Next.js app process will be running                                                                                                                                                      | App                          | `9000` for dev, `9010` for tests, `9020` for prod, `9030` for security scan |
+| `PORT`                    | Port where Next.js app process will be running                                                                                                                                                      | App                          | `9000` for dev, `9010` for tests, `9020` for prod                           |
 | `NODE_ENV`                | NODE_ENV tells Next.js in which kind of environment app is runned. `development` is enforced in dev and `production` is enforced in prod.                                                           | App                          | `development` for dev, `production` for prod                                |
 | `APP_ENV`                 | APP_ENV defines if selected app functions allowed in current environment. For example this is used to limit `/admin` to dev only. Created because Next.js enforces NODE_ENV values in dev and prod. | App                          | `development` for dev, `production` for prod                                |
 | `PG_CONNECTION_STRING`    | Database connection string                                                                                                                                                                          | Storing course and exam info | `postgresql://tarpisto:tarpisto@tarpisto:5432/tarpisto`                     |

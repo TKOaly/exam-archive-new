@@ -38,4 +38,4 @@ jobs:
       - name: Build Docker image
         run: ./scripts/build-image.sh
         env:
-          DOCKER_INFO: ${{ steps.meta.outputs.json }}
+          DOCKER_INFO: ${{ steps.meta.outputs.bake-file }}

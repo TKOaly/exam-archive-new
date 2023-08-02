@@ -75,6 +75,7 @@ function main() {
     echo "::endgroup::"
 
     echo "::group::Running security scan"
+    mkdir -p test-results
     docker-compose -f docker-compose.yml -f docker-compose.security.yml up --exit-code-from security security
     echo "::endgroup::"
 

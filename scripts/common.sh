@@ -138,7 +138,7 @@ function build_app() {
 }
 
 function build_docker_image() {
-    echo "::group::Building docker image"
+
     required_command docker
 
     build_app
@@ -151,8 +151,11 @@ function build_docker_image() {
     fi
 
     echo "::group::Print combined bake file"
+    echo "DOCKER_INFO: ${DOCKER_INFO}"
     docker buildx bake -f docker-bake.hcl -f - <<< ${DOCKER_INFO} --print
     echo "::endgroup::"
+
+    echo "::group::Building docker image"
 
     docker buildx bake -f docker-bake.hcl -f - <<< ${DOCKER_INFO}
 

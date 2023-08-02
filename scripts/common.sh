@@ -148,16 +148,20 @@ function build_docker_image() {
     if [[ -z ${DOCKER_INFO-} ]]
     then
         DOCKER_INFO='{ "target": { "docker-metadata-action": { "tags": [ "tarpisto/tarpisto:latest" ] } } } '
+        echo "::group::Print combined bake file"
+        docker buildx bake -f docker-bake.hcl -f - <<< ${DOCKER_INFO} --print
+        echo "::endgroup::"
+
+        echo "::group::Building docker image"
+        docker buildx bake -f docker-bake.hcl -f - <<< ${DOCKER_INFO}
+        echo "::endgroup::"
+    else
+        echo "::group::Print combined bake file"
+        docker buildx bake -f docker-bake.hcl -f ${DOCKER_INFO} --print
+        echo "::endgroup::"
+
+        echo "::group::Building docker image"
+        docker buildx bake -f docker-bake.hcl -f ${DOCKER_INFO}
+        echo "::endgroup::"
     fi
-
-    echo "::group::Print combined bake file"
-    echo "DOCKER_INFO: ${DOCKER_INFO}"
-    docker buildx bake -f docker-bake.hcl -f - <<< ${DOCKER_INFO} --print
-    echo "::endgroup::"
-
-    echo "::group::Building docker image"
-
-    docker buildx bake -f docker-bake.hcl -f - <<< ${DOCKER_INFO}
-
-    echo "::endgroup::"
 }

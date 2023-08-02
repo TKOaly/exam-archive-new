@@ -150,6 +150,10 @@ function build_docker_image() {
         DOCKER_INFO='{ "target": { "docker-metadata-action": { "tags": [ "tarpisto/tarpisto:latest" ] } } } '
     fi
 
+    echo "::group::Print combined bake file"
+    docker buildx bake -f docker-bake.hcl -f - <<< ${DOCKER_INFO} --print
+    echo "::endgroup::"
+
     docker buildx bake -f docker-bake.hcl -f - <<< ${DOCKER_INFO}
 
     echo "::endgroup::"

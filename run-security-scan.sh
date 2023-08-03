@@ -76,7 +76,15 @@ function main() {
 
     echo "::group::Running security scan"
     mkdir -p test-results
+
+    if [[ -f "${GITHUB_ACTIONS:-}" ]]; then
+      echo "::debug::Running in GitHub Actions, so doing some file permission magic" # Maybe in future: check if Linux instead of GHA
+      chown -R zap:zap test-results
+      chmod -R 777 test-results
+    fi
+
     docker-compose -f docker-compose.yml -f docker-compose.security.yml up --exit-code-from security security
+    # docker-compose -f docker-compose.yml -f docker-compose.security.yml cp security:/tmp/zap/reports/security-report.md ./test-results/security-report.md
     echo "::endgroup::"
 
     if [[ -f "$GITHUB_STEP_SUMMARY" ]]; then

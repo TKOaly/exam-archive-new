@@ -1,3 +1,5 @@
+import { getSessionUser } from '@services/tkoUserService'
+
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -6,13 +8,12 @@ import {
   UserCircleIcon
 } from '@heroicons/react/24/outline'
 
-import { getSession } from '@lib/sessions'
 
 import MainMenu from '@components/MainMenu'
 import TkoAlyLogo from '@media/tkoaly-logo-outline-black.svg'
 
 const Header = async () => {
-  const { user } = await getSession()
+  const { name } = await getSessionUser()
 
   return (
     <header className="box-border bg-yellow-500 p-2 shadow-lg ">
@@ -62,7 +63,7 @@ const Header = async () => {
                   <span className="font-serif text-xl font-extrabold text-gray-800">
                     Logged in:
                   </span>
-                  <span>{user.username}</span>
+                  <span>{name}</span>
                 </div>
               </div>
               <Link

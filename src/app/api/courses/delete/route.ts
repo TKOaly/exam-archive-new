@@ -4,7 +4,6 @@ import {
   CourseNotFoundError,
   CannotDeleteError
 } from '@services/archive'
-import { getSession } from '@lib/sessions'
 import { validateRights } from '@services/tkoUserService'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -16,8 +15,7 @@ const DeleteCourseBody = z
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { rights } = await getSession()
-    const isRights = validateRights(rights, 'remove')
+    const isRights = await validateRights('remove')
     if (!isRights) {
       return NextResponse.json(
         { error: '401 Unauthorized' },

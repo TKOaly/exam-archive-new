@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { urlForCourse } from './courses'
 import { examDownloadUrl } from './exams'
+import { DefaultUser } from 'next-auth'
 
 export type CourseId = number
 
@@ -61,21 +62,30 @@ export enum UserMembership {
   Kunniajasen = 'kunniajasen'
 }
 
-export interface UserServiceUser {
-  username: string
-  role: UserRole
-  membership: UserMembership
-}
-
-export interface AuthData {
-  user: UserServiceUser
+export interface TarpistoUser extends DefaultUser {
+  role: UserRole,
+  membership: UserMembership,
   rights: { [right in AccessRight]: boolean }
 }
 
-export interface Session {
-  user: UserServiceUser
-  rights: { [right in AccessRight]: boolean }
-  token: string
+declare module 'next-auth' {
+  interface Session {
+    user?: User
+  }
+
+  interface User {
+    role: UserRole,
+    membership: UserMembership,
+    rights: { [right in AccessRight]: boolean }
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    role: UserRole,
+    membership: UserMembership,
+    rights: { [right in AccessRight]: boolean }
+  }
 }
 
 export const ExamLI = z

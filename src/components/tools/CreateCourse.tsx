@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 
 import { urlForCourse } from '@lib/courses'
-import { getSession } from '@lib/sessions'
 import { CourseName } from '@lib/types'
 import { validateRights } from '@services/tkoUserService'
 import { findCourseByName, createCourse } from '@services/archive'
@@ -12,9 +11,7 @@ import Button from '@components/Button'
 const CreateCourse = async () => {
   const handleCourseCreation = async (formData: FormData) => {
     'use server'
-    const { rights } = await getSession()
-
-    const isRights = validateRights(rights, 'upload')
+    const isRights = await validateRights('upload')
     if (!isRights) {
       return `Unauthorized`
     }
@@ -34,9 +31,9 @@ const CreateCourse = async () => {
     redirect(urlForCourse(createdCourse.id, createdCourse.name))
   }
 
-  const { rights } = await getSession()
+  const isRights = await validateRights('upload')
 
-  if (!rights.upload) {
+  if (!isRights) {
     return null
   }
 

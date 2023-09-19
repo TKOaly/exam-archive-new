@@ -1,14 +1,14 @@
 import { notFound } from 'next/navigation'
 
-import { getSession } from '@lib/sessions'
 import { getCourseInfo } from '@services/archive'
 
 import ExamListHeader from '@components/ExamList/ExamListHeader'
 import ExamListItem from '@components/ExamList/ExamListItem'
 import NoExamsFound from '@components/ExamList/NoExamsFound'
+import { getSessionUser } from '@services/tkoUserService'
 
 const ExamList = async ({ courseId }: { courseId: number }) => {
-  const { rights } = await getSession()
+  const { rights } = await getSessionUser()
 
   const course = await getCourseInfo(courseId)
   if (!course) {

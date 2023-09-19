@@ -4,7 +4,6 @@ import {
   renameCourse,
   findCourseByName
 } from '@services/archive'
-import { getSession } from '@lib/sessions'
 import { validateRights } from '@services/tkoUserService'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -15,8 +14,7 @@ const RenameCourseBody = z.object({
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { rights } = await getSession()
-    const isRights = validateRights(rights, 'rename')
+    const isRights = await validateRights('rename')
     if (!isRights) {
       return NextResponse.json(
         { error: '401 Unauthorized' },

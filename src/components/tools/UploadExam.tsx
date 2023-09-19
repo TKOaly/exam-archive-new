@@ -7,7 +7,6 @@ import { redirect } from 'next/navigation'
 
 import configs from '@lib/config'
 import { urlForCourse } from '@lib/courses'
-import { getSession } from '@lib/sessions'
 import { getCourseInfo, createExam } from '@services/archive'
 import s3 from '@services/s3'
 import { validateRights } from '@services/tkoUserService'
@@ -21,9 +20,7 @@ interface UploadExamProps {
 const UploadExam = async ({ courseId }: UploadExamProps) => {
   const uploadExam = async (formData: FormData) => {
     'use server'
-    const { rights } = await getSession()
-
-    const isRights = validateRights(rights, 'upload')
+    const isRights = await validateRights('upload')
     if (!isRights) {
       return 'Unauthorized'
     }
@@ -71,8 +68,8 @@ const UploadExam = async ({ courseId }: UploadExamProps) => {
     redirect(urlForCourse(course.id, course.name))
   }
 
-  const { rights } = await getSession()
-  if (!rights.upload) {
+  const isRights = await validateRights('upload')
+  if (!isRights) {
     return null
   }
 

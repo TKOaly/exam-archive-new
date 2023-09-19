@@ -7,8 +7,14 @@ import { FolderIcon, PencilSquareIcon } from '@heroicons/react/24/solid'
 import { urlForCourse } from '@lib/courses'
 import { CourseListItem } from '@lib/types'
 
-const CourseListItem = ({ id, name, url, lastModified }: CourseListItem) => {
-  const showManage = true
+interface CourseListItemProps {
+  course: CourseListItem
+  showManage: boolean
+}
+
+const CourseListItem = ({ course, showManage }: CourseListItemProps) => {
+  const { id, name, url, lastModified } = course
+
   return (
     <div
       role="row"

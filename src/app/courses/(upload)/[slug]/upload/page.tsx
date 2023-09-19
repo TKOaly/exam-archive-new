@@ -1,10 +1,10 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 // import { slugifyCourseName, urlForCourse } from '@lib/courses'
-import { getSession } from '@lib/sessions'
 import { getCourseInfo } from '@services/archive'
 
 import UploadExam from '@components/tools/UploadExam'
+import { validateRights } from '@services/tkoUserService'
 
 const parseSlug = (slug: string) => {
   const parsedSlug = slug.match(/(?<id>\d+)-(?<courseSlug>.*)/)
@@ -25,13 +25,17 @@ const parseSlug = (slug: string) => {
 }
 
 const Page = async ({ params }: any) => {
-  const { rights } = await getSession()
+  const isRights = await validateRights('upload')
 
   const { id, courseSlug } = parseSlug(params.slug)
 
   const course = await getCourseInfo(id)
   if (!course) {
     notFound()
+  }
+
+  if (!isRights) {
+    redirect('/')
   }
 
   // if (courseSlug !== slugifyCourseName(course.name)) {

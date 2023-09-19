@@ -6,7 +6,6 @@ import { transliterate } from 'transliteration'
 import { getExamFileNameById, renameExamFile } from '@services/archive'
 import configs from '@lib/config'
 import s3 from '@services/s3'
-import { getSession } from '@lib/sessions'
 import { validateRights } from '@services/tkoUserService'
 
 const RenameExamBody = z.object({
@@ -16,8 +15,7 @@ const RenameExamBody = z.object({
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { rights } = await getSession()
-    const isRights = validateRights(rights, 'rename')
+    const isRights = await validateRights('rename')
     if (!isRights) {
       return NextResponse.json(
         { error: '401 Unauthorized' },

@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 
 import { urlForCourseListing } from '@lib/courses'
-import { getSession } from '@lib/sessions'
 import { CourseName } from '@lib/types'
 import {
   findCourseByName,
@@ -21,9 +20,7 @@ interface RenameCourseProps {
 const RenameCourse = async ({ currentName, courseId }: RenameCourseProps) => {
   const handleRenameCourse = async (formData: FormData) => {
     'use server'
-    const { rights } = await getSession()
-
-    const isRights = validateRights(rights, 'rename')
+    const isRights = await validateRights('rename')
     if (!isRights) {
       return `Unauthorized`
     }
@@ -53,9 +50,9 @@ const RenameCourse = async ({ currentName, courseId }: RenameCourseProps) => {
     redirect(urlForCourseListing())
   }
 
-  const { rights } = await getSession()
+  const isRights = await validateRights('rename')
 
-  if (!rights.rename) {
+  if (!isRights) {
     return null
   }
 

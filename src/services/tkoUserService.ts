@@ -1,14 +1,61 @@
-import { notFound } from 'next/navigation'
-import config from '@lib/config'
-
 import {
   UserRole,
   UserMembership,
-  UserServiceUser,
-  AccessRight
+  AccessRight,
 } from '@lib/types'
+import { getServerSession } from 'next-auth'
+import { redirect } from 'next/navigation'
+import { AuthOptions } from "next-auth"
+import config from "@lib/config"
 
-export const isActiveMember = ({ membership }: UserServiceUser) =>
+
+export const authConfig: AuthOptions = {
+  session: {
+    strategy: 'jwt',
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role
+        token.membership = user.membership
+        token.rights = user.rights
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.role = token.role
+        session.user.membership = token.membership
+        session.user.rights = token.rights
+      }
+      return session
+    }
+  },
+  providers: [
+    {
+      id: 'tkoaly',
+      name: 'TKO-äly Member Account',
+      type: 'oauth',
+      profile: async (profile) => {
+        return {
+          id: profile.sub,
+          name: profile.nickname,
+          role: profile.role,
+          membership: profile.membership,
+          rights: roleRights[profile.role as UserRole]
+        }
+      },
+      wellKnown: `${config.USER_SERVICE_URL}/.well-known/openid-configuration`,
+      clientId: config.USER_SERVICE_SERVICE_ID,
+      clientSecret: config.USER_SERVICE_SECRET,
+      authorization: {
+        params: { scope: 'openid role profile membership' },
+      },
+    },
+  ],
+}
+
+export const isActiveMember = (membership: UserMembership) =>
   membership === UserMembership.Jasen ||
   membership === UserMembership.Kannatusjasen ||
   membership === UserMembership.Kunniajasen ||
@@ -49,68 +96,21 @@ export const roleRights: {
   }
 }
 
-export const getUserServiceLoginUrl = () => {
-  const url = new URL(config.USER_SERVICE_URL)
-  url.searchParams.set('serviceIdentifier', config.USER_SERVICE_SERVICE_ID)
-  return url.toString()
+export const getSessionUser = async () => {
+  const session = await getServerSession(authConfig)
+
+  if (!session || !session.user) redirect('/auth/signin')
+
+  return session.user
 }
 
-export const getUserServiceLogoutUrl = () => {
-  const url = new URL(config.USER_SERVICE_URL)
-  url.pathname = '/logout'
-  url.searchParams.set('serviceIdentifier', config.USER_SERVICE_SERVICE_ID)
-  return url.toString()
-}
+export const validateRights = async (...neededRights: AccessRight[]) => {
+  const session = await getServerSession(authConfig)
 
-interface UserServicePayload<T> {
-  ok: boolean
-  message: string
-  payload: T
-}
+  if (!session || !session.user) return false
+  if (!session.user?.rights) return false
+  if (!session.user?.membership) return false
+  if (!isActiveMember(session.user.membership)) return false
 
-const withHeaders = (token: string) => ({
-  headers: {
-    Authorization: `Bearer ${token}`,
-    'content-type': 'application/json',
-    service: config.USER_SERVICE_SERVICE_ID
-  }
-})
-
-export const getMe = async (
-  token: string
-): Promise<UserServicePayload<UserServiceUser>> => {
-  const data = await fetch(
-    `${config.USER_SERVICE_URL}/api/users/me`,
-    withHeaders(token)
-  )
-
-  return await data.json()
-}
-
-export const authenticateUserServiceToken = async (token: string) => {
-  const me = await getMe(token)
-  if (!me.ok) {
-    // means token not valid, redirect to error page
-    notFound()
-  }
-
-  const user = me.payload
-
-  if (!isActiveMember(user)) {
-    // not allowed to see, redirect to error page
-    notFound()
-  }
-
-  return {
-    user,
-    rights: roleRights[user.role],
-    token
-  }
-}
-
-export const validateRights = (
-  userRights: { [right in AccessRight]: boolean },
-  ...neededRights: AccessRight[]
-) => {
-  return neededRights.every(right => userRights[right])
+  return neededRights.every(right => session.user?.rights[right])
 }

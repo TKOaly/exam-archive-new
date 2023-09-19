@@ -1,14 +1,14 @@
 import { redirect } from 'next/navigation'
 
-import { getSession } from '@lib/sessions'
+import { validateRights } from '@services/tkoUserService'
 
 import Modal from '@components/Modal'
 import CreateCourse from '@components/tools/CreateCourse'
 
 const Page = async () => {
-  const { rights } = await getSession()
+  const isRights = await validateRights('upload')
 
-  if (!rights.upload) {
+  if (!isRights) {
     redirect('/')
   }
 

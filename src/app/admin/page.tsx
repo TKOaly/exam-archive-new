@@ -1,14 +1,12 @@
-import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 
 import { DocumentIcon } from '@heroicons/react/24/solid'
 
 import config from '@lib/config'
-import { getSession } from '@lib/sessions'
 import { adminGetS3Objects, sortByPrefixThenObjNameAsc } from '@services/admin'
 
-import Footer from '@components/Footer'
 import ListingNavigation from '@components/Navigation'
+import { validateRights } from '@services/tkoUserService'
 
 export const metadata = {
   title: 'Admin - Tärpistö - TKO-äly ry',
@@ -23,9 +21,9 @@ const Page = async () => {
     redirect('/')
   }
 
-  const { rights } = await getSession()
+  const isRights = await validateRights('rename', 'remove')
 
-  if (!rights.rename && !rights.remove) {
+  if (!isRights) {
     redirect('/')
   }
 

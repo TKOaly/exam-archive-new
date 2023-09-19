@@ -1,12 +1,10 @@
-import { getSession } from '@lib/sessions'
 import { getAllExams } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
 import { NextRequest, NextResponse } from 'next/server'
 
 export const GET = async (req: NextRequest) => {
   try {
-    const { rights } = await getSession()
-    const isRights = validateRights(rights, 'access')
+    const isRights = await validateRights('access')
     if (!isRights) {
       return NextResponse.json(
         { error: '401 Unauthorized' },

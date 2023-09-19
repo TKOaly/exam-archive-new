@@ -17,14 +17,12 @@ const NODE_ENV: string | undefined = process.env.NODE_ENV!
 const APP_ENV: string | undefined = process.env.APP_ENV!
 const PG_CONNECTION_STRING: string | undefined =
   process.env.PG_CONNECTION_STRING!
-const COOKIE_NAME: string | undefined = process.env.COOKIE_NAME!
-const COOKIE_SECRET: string | undefined = process.env.COOKIE_SECRET!
-const COOKIE_ISSUER: string | undefined = process.env.COOKIE_ISSUER!
-const COOKIE_SUBJECT: string | undefined = process.env.COOKIE_SUBJECT!
-const COOKIE_JWTID: string | undefined = process.env.COOKIE_JWTID!
 const USER_SERVICE_SERVICE_ID: string | undefined =
   process.env.USER_SERVICE_SERVICE_ID!
 const USER_SERVICE_URL: string | undefined = process.env.USER_SERVICE_URL!
+const USER_SERVICE_SECRET: string | undefined = process.env.USER_SERVICE_SECRET!
+const NEXTAUTH_URL: string | undefined = process.env.NEXTAUTH_URL!
+const NEXTAUTH_SECRET: string | undefined = process.env.NEXTAUTH_SECRET!
 const AWS_REGION: string | undefined = process.env.AWS_REGION!
 const AWS_ACCESS_KEY_ID: string | undefined = process.env.AWS_ACCESS_KEY_ID!
 const AWS_SECRET_ACCESS_KEY: string | undefined =
@@ -33,17 +31,10 @@ const AWS_S3_ENDPOINT: string | undefined = process.env.AWS_S3_ENDPOINT!
 const AWS_S3_FORCE_PATH_STYLE: string | undefined =
   process.env.AWS_S3_FORCE_PATH_STYLE!
 const AWS_S3_BUCKET_ID: string | undefined = process.env.AWS_S3_BUCKET_ID!
-const SERVER_START_TIMESTAMP: number = Date.now()
 
 checkExists(NODE_ENV, APP_ENV, PG_CONNECTION_STRING)
-checkExists(
-  COOKIE_NAME,
-  COOKIE_SECRET,
-  COOKIE_ISSUER,
-  COOKIE_SUBJECT,
-  COOKIE_JWTID
-)
-checkExists(USER_SERVICE_SERVICE_ID, USER_SERVICE_URL)
+checkExists(USER_SERVICE_SERVICE_ID, USER_SERVICE_URL, USER_SERVICE_SECRET)
+checkExists(NEXTAUTH_URL, NEXTAUTH_SECRET)
 checkExists(AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
 checkExists(AWS_S3_ENDPOINT, AWS_S3_FORCE_PATH_STYLE, AWS_S3_BUCKET_ID)
 
@@ -51,18 +42,13 @@ export default {
   NODE_ENV,
   APP_ENV,
   PG_CONNECTION_STRING,
-  COOKIE_NAME,
-  COOKIE_SECRET: new TextEncoder().encode(COOKIE_SECRET),
-  COOKIE_ISSUER,
-  COOKIE_SUBJECT,
-  COOKIE_JWTID,
   USER_SERVICE_SERVICE_ID,
   USER_SERVICE_URL,
+  USER_SERVICE_SECRET,
   AWS_REGION,
   AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY,
   AWS_S3_ENDPOINT,
   AWS_S3_FORCE_PATH_STYLE,
   AWS_S3_BUCKET_ID,
-  SERVER_START_TIMESTAMP
 }

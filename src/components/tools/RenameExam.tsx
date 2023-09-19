@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 
 import { urlForCourse } from '@lib/courses'
-import { getSession } from '@lib/sessions'
 import { ExamName } from '@lib/types'
 import { getExamFileNameById, renameExamFile } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
@@ -17,9 +16,7 @@ interface RenameExamProps {
 const RenameExam = async ({ currentName, examId }: RenameExamProps) => {
   const handleRenameExam = async (formData: FormData) => {
     'use server'
-    const { rights } = await getSession()
-
-    const isRights = validateRights(rights, 'rename')
+    const isRights = await validateRights('rename')
     if (!isRights) {
       return `Unauthorized`
     }
@@ -47,9 +44,9 @@ const RenameExam = async ({ currentName, examId }: RenameExamProps) => {
     redirect(urlForCourse(info.courseId, info.courseName))
   }
 
-  const { rights } = await getSession()
+  const isRights = await validateRights('rename')
 
-  if (!rights.rename) {
+  if (!isRights) {
     return null
   }
 

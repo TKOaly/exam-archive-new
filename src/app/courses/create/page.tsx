@@ -1,12 +1,13 @@
-import { getSession } from '@lib/sessions'
 
 import CreateCourse from '@components/tools/CreateCourse'
+import { validateRights } from '@services/tkoUserService'
+import { redirect } from 'next/navigation'
 
-const Page = async ({ params }: any) => {
-  const { rights } = await getSession()
+const Page = async () => {
+  const isRights = await validateRights('upload')
 
-  if (!rights.upload) {
-    return null
+  if (!isRights) {
+    redirect('/')
   }
 
   return (

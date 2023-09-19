@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server'
 
 import config from '@lib/config'
-import { getSession } from '@lib/sessions'
 import { findExamById } from '@services/archive'
 import s3 from '@services/s3'
+import { validateRights } from '@services/tkoUserService'
 
 export const GET = async (
   req: Request,
   { params }: { params: { examId: string; fileName: string } }
 ) => {
-  const { user, rights } = await getSession()
+  const isRights = await validateRights('access')
 
-  if (!user || !rights.access) {
+  if (!isRights) {
     return new NextResponse('401 Unauthorized', { status: 401 })
   }
 

@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 
 import { urlForCourseListing } from '@lib/courses'
-import { getSession } from '@lib/sessions'
 import { deleteCourse } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
 
@@ -16,9 +15,7 @@ const DeleteCourse = async ({ courseId, courseName }: DeleteCourseProps) => {
   const handleDeleteCourse = async (formData: FormData) => {
     'use server'
     try {
-      const { rights } = await getSession()
-
-      const isRights = validateRights(rights, 'upload')
+      const isRights = await validateRights('upload')
       if (!isRights) {
         return `Unauthorized`
       }
@@ -33,9 +30,9 @@ const DeleteCourse = async ({ courseId, courseName }: DeleteCourseProps) => {
     redirect(urlForCourseListing())
   }
 
-  const { rights } = await getSession()
+  const isRights = await validateRights('remove')
 
-  if (!rights.remove) {
+  if (!isRights) {
     return null
   }
 

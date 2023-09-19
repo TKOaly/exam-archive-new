@@ -8,12 +8,10 @@ import { getCourseInfo, createExam } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
 import s3 from '@services/s3'
 import configs from '@lib/config'
-import { getSession } from '@lib/sessions'
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { rights } = await getSession()
-    const isRights = validateRights(rights, 'upload')
+    const isRights = await validateRights('upload')
     if (!isRights) {
       return NextResponse.json(
         { error: '401 Unauthorized' },

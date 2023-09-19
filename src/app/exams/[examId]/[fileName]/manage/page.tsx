@@ -1,19 +1,19 @@
 import { notFound, redirect } from 'next/navigation'
 
-import { getSession } from '@lib/sessions'
 import { getExamFileNameById } from '@services/archive'
 
 import RenameExam from '@components/tools/RenameExam'
 import DeleteExam from '@components/tools/DeleteExam'
+import { validateRights } from '@services/tkoUserService'
 
 const Page = async ({
   params
 }: {
   params: { examId: string; fileName: string }
 }) => {
-  const { rights } = await getSession()
+  const isRights = await validateRights('rename', 'remove')
 
-  if (!rights.rename || !rights.remove) {
+  if (!isRights) {
     redirect('/')
   }
 

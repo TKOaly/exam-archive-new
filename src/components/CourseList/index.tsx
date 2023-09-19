@@ -1,10 +1,13 @@
 import { getCourseListing } from '@services/archive'
+import { getSessionUser } from '@services/tkoUserService'
 
 import CourseListItem from '@components/CourseList/CourseListItem'
 import CourseListHeader from '@components/CourseList/CourseListHeader'
 
 const CourseList = async () => {
+  const { rights } = await getSessionUser()
   const courses = await getCourseListing()
+
   return (
     <div role="table" aria-label="Courses" className="divide-y pb-5">
       <CourseListHeader />
@@ -12,10 +15,8 @@ const CourseList = async () => {
         return (
           <CourseListItem
             key={course.id}
-            id={course.id}
-            name={course.name}
-            url={course.url}
-            lastModified={course.lastModified}
+            course={course}
+            showManage={rights.remove || rights.rename}
           />
         )
       })}

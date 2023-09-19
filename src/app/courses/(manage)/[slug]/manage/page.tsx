@@ -1,11 +1,11 @@
 import { notFound, redirect } from 'next/navigation'
 
 // import { slugifyCourseName, urlForCourse } from '@lib/courses'
-import { getSession } from '@lib/sessions'
 import { getCourseInfo } from '@services/archive'
 
 import DeleteCourse from '@components/tools/DeleteCourse'
 import RenameCourse from '@components/tools/RenameCourse'
+import { validateRights } from '@services/tkoUserService'
 
 const parseSlug = (slug: string) => {
   const parsedSlug = slug.match(/(?<id>\d+)-(?<courseSlug>.*)/)
@@ -26,9 +26,9 @@ const parseSlug = (slug: string) => {
 }
 
 const Page = async ({ params }: any) => {
-  const { rights } = await getSession()
+  const isRights = await validateRights('rename', 'remove')
 
-  if (!rights.rename || !rights.remove) {
+  if (!isRights) {
     redirect('/')
   }
 

@@ -1,6 +1,5 @@
-import { NextResponse } from 'next/server'
-import { getUserServiceLoginUrl } from '@services/tkoUserService'
+import { redirect } from 'next/navigation'
 
 export const GET = async (req: Request) => {
-  return NextResponse.redirect(getUserServiceLoginUrl())
+  redirect('/api/auth/signin')
 }

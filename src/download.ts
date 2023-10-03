@@ -29,12 +29,20 @@ const createSignedCloudFrontUrl = (exam: DbExam) => {
   })
 }
 
-const createSignedS3Url = (exam: DbExam) => {
+const createSignedS3Url = async (exam: DbExam) => {
   const command = new GetObjectCommand({
     Bucket: config.AWS_S3_BUCKET_ID,
     Key: exam.file_path
   })
-  return getSignedS3Url(s3, command, { expiresIn: oneDayToSeconds })
+
+  const url = new URL(await getSignedS3Url(s3, command, { expiresIn: oneDayToSeconds }))
+  const publicUrl = new URL(config.AWS_S3_ENDPOINT_PUBLIC)
+
+  url.host = publicUrl.host
+  url.port = publicUrl.port
+  url.protocol = publicUrl.protocol
+
+  return url.toString()
 }
 
 const createSignedUrl = (exam: DbExam) => {

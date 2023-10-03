@@ -1,7 +1,6 @@
 import express from 'express'
 import { GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl as getSignedS3Url } from '@aws-sdk/s3-request-presigner'
-import { getSignedUrl as getSignedCFUrl } from '@aws-sdk/cloudfront-signer'
 
 import config from './config'
 import s3 from './service/s3'
@@ -15,18 +14,6 @@ const oneDayToSeconds = oneHourToSeconds * 24
 const addDays = (date: Date, days: number) => {
   const ts = date.getTime()
   return new Date(ts + oneDayToSeconds * days * 1000)
-}
-
-const getCloudFrontUrl = (exam: DbExam) =>
-  `https://${config.AWS_CF_DISTRIBUTION_DOMAIN}/${exam.file_path}`
-
-const createSignedCloudFrontUrl = (exam: DbExam) => {
-  return getSignedCFUrl({
-    url: getCloudFrontUrl(exam),
-    keyPairId: config.AWS_CF_KEY_ID,
-    dateLessThan: addDays(new Date(), 1).toISOString(),
-    privateKey: config.AWS_CF_KEY
-  })
 }
 
 const createSignedS3Url = async (exam: DbExam) => {
@@ -45,12 +32,7 @@ const createSignedS3Url = async (exam: DbExam) => {
   return url.toString()
 }
 
-const createSignedUrl = (exam: DbExam) => {
-  const signer = config.AWS_CF_KEY
-    ? createSignedCloudFrontUrl
-    : createSignedS3Url
-  return signer(exam)
-}
+const createSignedUrl = (exam: DbExam) => createSignedS3Url(exam)
 
 const router = express()
 

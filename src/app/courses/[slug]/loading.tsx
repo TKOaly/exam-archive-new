@@ -1,7 +1,11 @@
+import { getSessionUser } from '@services/tkoUserService'
+
 import ExamListHeader from '@components/ExamList/ExamListHeader'
 import LoadingItem from '@components/ExamList/Loading'
 
-const Loading = () => {
+const Loading = async () => {
+  const { rights } = await getSessionUser()
+
   return (
     <div
       role="alert"
@@ -9,14 +13,15 @@ const Loading = () => {
       className="exam-list-container"
     >
       <div role="table" aria-label="Exams" className="exam-list">
-        <ExamListHeader showManage={true} />
-        <LoadingItem />
-        <LoadingItem />
-        <LoadingItem />
-        <LoadingItem />
-        <LoadingItem />
-        <LoadingItem />
-        <LoadingItem />
+        <ExamListHeader showManage={rights.remove || rights.rename} />
+        <LoadingItem showManage={rights.remove || rights.rename} />
+        <LoadingItem showManage={rights.remove || rights.rename} />
+        <LoadingItem showManage={rights.remove || rights.rename} />
+        <LoadingItem showManage={rights.remove || rights.rename} />
+        <LoadingItem showManage={rights.remove || rights.rename} />
+        <LoadingItem showManage={rights.remove || rights.rename} />
+        <LoadingItem showManage={rights.remove || rights.rename} />
+        <LoadingItem showManage={rights.remove || rights.rename} />
       </div>
     </div>
   )

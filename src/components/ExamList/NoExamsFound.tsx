@@ -1,14 +1,11 @@
 import { FaceFrownIcon } from '@heroicons/react/24/outline'
 
 const NoExamsFound = () => (
-  <div role="row" className="flex max-w-full flex-row px-1 hover:bg-slate-100">
-    <div role="cell" className="m-2 box-border shrink-0 self-center">
-      <FaceFrownIcon className="h-6 w-6 self-center" />
-    </div>
-    <div role="cell" className="mx-2 my-2 self-center">
+  <div role="row" className="py-2 hover:bg-slate-100 list-row">
+    <FaceFrownIcon role="cell" className="h-6 w-6 mx-2 list-row-icon" />
+    <div role="cell" className="list-row-empty">
       No exams found.
     </div>
-    <div role="cell" className=""></div>
   </div>
 )
 

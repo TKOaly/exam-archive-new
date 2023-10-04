@@ -5,7 +5,7 @@ import fiLocale from 'date-fns/locale/fi'
 import Link from 'next/link'
 import { PencilSquareIcon } from '@heroicons/react/24/solid'
 
-import { ExamListItem } from '@lib/types'
+import { type ExamListItem } from '@lib/types'
 
 import { DocumentIcon, PdfIcon, PhotoIcon } from '@components/icons/File'
 
@@ -40,63 +40,44 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
   return (
     <div
       role="row"
-      className="flex flex-row items-center px-1 hover:bg-slate-100"
+      className="py-2 hover:bg-slate-100 list-row"
       data-exam-id={id}
       data-exam-name={fileName}
     >
-      <div role="cell" className="m-2 shrink-0">
-        <Icon role="cell" ariaHidden={true} alt="" className="h-6 w-6" />
-      </div>
-      <div role="cell" className="mx-1 my-2 grow overflow-hidden text-ellipsis">
-        <Link
-          href={downloadUrl}
-          title={`Open exam "${fileName}"`}
-          arial-label={`Open exam "${fileName}"`}
-          target="_blank"
-          className="hover:underline hover:decoration-cyan-500"
+      <Icon role="cell" ariaHidden={true} alt="" className="h-6 w-6 mx-2 list-row-icon" />
+      <Link
+        role="cell"
+        href={downloadUrl}
+        title={`Open exam "${fileName}"`}
+        arial-label={`Open exam "${fileName}"`}
+        target="_blank"
+        className="hover:underline hover:decoration-cyan-500 list-row-name"
+      >
+        {basename}
+        {extname}
+      </Link>
+      {uploadDate && (
+        <time
+          role="cell"
+          className="font-mono text-xs text-gray-600 list-row-date"
+          title={`Uploaded on ${formatDate(uploadDate, 'yyyy-MM-dd', { locale: fiLocale })}`}
+          dateTime={uploadDate.toISOString()}
+          data-test-id="upload-date-time"
         >
-          {basename}
-          {extname}
-        </Link>
-
-        {uploadDate && (
-          <>
-            <br />
-            <time
-              className="block font-mono text-xs text-gray-600 sm:hidden"
-              title={uploadDate.toISOString()}
-              dateTime={uploadDate.toISOString()}
-              data-test-id="upload-date-time-mobile"
-            >
-              {formatDate(uploadDate, 'yyyy-MM-dd', { locale: fiLocale })}
-            </time>
-          </>
-        )}
-      </div>
-      <div role="cell" className="mx-2 hidden sm:block">
-        {uploadDate && (
-          <time
-            className="font-mono text-xs text-gray-600"
-            title={uploadDate.toISOString()}
-            dateTime={uploadDate.toISOString()}
-            data-test-id="upload-date-time"
-          >
-            {formatDate(uploadDate, 'yyyy-MM-dd', { locale: fiLocale })}
-          </time>
-        )}
-      </div>
+          {formatDate(uploadDate, 'yyyy-MM-dd', { locale: fiLocale })}
+        </time>
+      )}
       {showManage && (
-        <div role="cell" className="m-2 shrink-0">
-          <Link
-            aria-label={`Manage exam "${fileName}"`}
-            title={`Manage exam "${fileName}"`}
-            href={`${downloadUrl}/manage`}
-            className="flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"
-          >
-            <PencilSquareIcon className="h-4 w-4 self-center" />{' '}
-            <span className="sr-only">{`Manage exam "${fileName}"`}</span>
-          </Link>
-        </div>
+        <Link
+          role="cell"
+          aria-label={`Manage exam "${fileName}"`}
+          title={`Manage exam "${fileName}"`}
+          href={`${downloadUrl}/manage`}
+          className="mx-2 list-row-manage flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"
+        >
+          <PencilSquareIcon className="h-4 w-4 self-center" />{' '}
+          <span className="sr-only">{`Manage exam "${fileName}"`}</span>
+        </Link>
       )}
     </div>
   )

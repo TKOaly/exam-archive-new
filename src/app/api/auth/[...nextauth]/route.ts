@@ -1,5 +1,5 @@
-import NextAuth from "next-auth"
-import { authConfig } from "@services/tkoUserService"
+import NextAuth from 'next-auth'
+import { authConfig } from '@services/tkoUserService'
 
 const handler = NextAuth(authConfig)
 

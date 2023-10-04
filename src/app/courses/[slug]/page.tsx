@@ -44,7 +44,7 @@ const Page = async ({ params }: any) => {
     <div
       role="table"
       aria-label="Exams"
-      className="pb-5 divide-y list-container"
+      className="list-container divide-y pb-5"
       data-course-id={course.id}
       data-course-name={course.name}
     >

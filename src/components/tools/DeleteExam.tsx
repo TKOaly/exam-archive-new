@@ -14,7 +14,7 @@ interface DeleteExamProps {
 const DeleteExam = async ({ examId, fileName }: DeleteExamProps) => {
   const handleDeleteExam = async (formData: FormData) => {
     'use server'
-    const isRights = await  validateRights('remove')
+    const isRights = await validateRights('remove')
     if (!isRights) {
       return `Unauthorized`
     }

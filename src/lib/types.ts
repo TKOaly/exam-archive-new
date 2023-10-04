@@ -63,8 +63,8 @@ export enum UserMembership {
 }
 
 export interface TarpistoUser extends DefaultUser {
-  role: UserRole,
-  membership: UserMembership,
+  role: UserRole
+  membership: UserMembership
   rights: { [right in AccessRight]: boolean }
 }
 
@@ -74,16 +74,16 @@ declare module 'next-auth' {
   }
 
   interface User {
-    role: UserRole,
-    membership: UserMembership,
+    role: UserRole
+    membership: UserMembership
     rights: { [right in AccessRight]: boolean }
   }
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    role: UserRole,
-    membership: UserMembership,
+    role: UserRole
+    membership: UserMembership
     rights: { [right in AccessRight]: boolean }
   }
 }

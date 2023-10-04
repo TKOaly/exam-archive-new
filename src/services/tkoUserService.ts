@@ -1,17 +1,12 @@
-import {
-  UserRole,
-  UserMembership,
-  AccessRight,
-} from '@lib/types'
+import { UserRole, UserMembership, AccessRight } from '@lib/types'
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
-import { AuthOptions } from "next-auth"
-import config from "@lib/config"
-
+import { AuthOptions } from 'next-auth'
+import config from '@lib/config'
 
 export const authConfig: AuthOptions = {
   session: {
-    strategy: 'jwt',
+    strategy: 'jwt'
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -20,7 +15,7 @@ export const authConfig: AuthOptions = {
         token.membership = user.membership
         token.rights = user.rights
       }
-      return token;
+      return token
     },
     async session({ session, token }) {
       if (session.user) {
@@ -36,7 +31,7 @@ export const authConfig: AuthOptions = {
       id: 'tkoaly',
       name: 'TKO-äly Member Account',
       type: 'oauth',
-      profile: async (profile) => {
+      profile: async profile => {
         return {
           id: profile.sub,
           name: profile.nickname,
@@ -49,10 +44,10 @@ export const authConfig: AuthOptions = {
       clientId: config.USER_SERVICE_SERVICE_ID,
       clientSecret: config.USER_SERVICE_SECRET,
       authorization: {
-        params: { scope: 'openid role profile membership' },
-      },
-    },
-  ],
+        params: { scope: 'openid role profile membership' }
+      }
+    }
+  ]
 }
 
 export const isActiveMember = (membership: UserMembership) =>

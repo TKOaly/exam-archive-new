@@ -1,4 +1,3 @@
-
 import CreateCourse from '@components/tools/CreateCourse'
 import { validateRights } from '@services/tkoUserService'
 import { redirect } from 'next/navigation'

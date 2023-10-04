@@ -18,25 +18,30 @@ const CourseListItem = ({ course, showManage }: CourseListItemProps) => {
   return (
     <div
       role="row"
-      className="py-2 hover:bg-slate-100 list-row"
+      className="list-row py-2 hover:bg-slate-100"
       data-course-id={id}
       data-course-name={name}
     >
-      <FolderIcon role="cell" className="h-6 w-6 mx-2 fill-cyan-500 list-row-icon" />
+      <FolderIcon
+        role="cell"
+        className="list-row-icon mx-2 h-6 w-6 fill-cyan-500"
+      />
       <Link
         role="cell"
         href={url}
         title={`Open course "${name}"`}
         arial-label={`Open course "${name}"`}
-        className="hover:underline hover:decoration-cyan-500 list-row-name"
+        className="list-row-name hover:underline hover:decoration-cyan-500"
       >
         {name}
       </Link>
       {lastModified && (
         <time
           role="cell"
-          className="font-mono text-xs text-gray-600 list-row-date"
-          title={`Last modified on ${formatDate(lastModified, 'yyyy-MM-dd', { locale: fiLocale })}`}
+          className="list-row-date font-mono text-xs text-gray-600"
+          title={`Last modified on ${formatDate(lastModified, 'yyyy-MM-dd', {
+            locale: fiLocale
+          })}`}
           dateTime={lastModified.toISOString()}
           data-test-id="last-modified-time"
         >
@@ -49,7 +54,7 @@ const CourseListItem = ({ course, showManage }: CourseListItemProps) => {
           aria-label={`Manage course "${name}"`}
           title={`Manage course "${name}"`}
           href={`${urlForCourse(id, name)}/manage`}
-          className="mx-2 list-row-manage flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"
+          className="list-row-manage mx-2 flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"
         >
           <PencilSquareIcon className="h-4 w-4 self-center" />{' '}
           <span className="sr-only">{`Manage course "${name}"`}</span>

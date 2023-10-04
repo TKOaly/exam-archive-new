@@ -8,7 +8,6 @@ import {
   UserCircleIcon
 } from '@heroicons/react/24/outline'
 
-
 import MainMenu from '@components/MainMenu'
 import TkoAlyLogo from '@media/tkoaly-logo-outline-black.svg'
 

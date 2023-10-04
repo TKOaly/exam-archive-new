@@ -4,77 +4,77 @@
 @tailwind variants;
 
 @media screen and (min-width: 640px) {
-    .list-container {
-        display: grid;
-        grid-template-columns: [begin icon-start] auto [icon-end name-start empty-start] 6fr [name-end date-start] 1fr [date-end manage-start] auto [manage-end empty-end end];
-        grid-auto-rows: auto;
-        column-gap: 1rem;
-        align-items: center;
-    }
+  .list-container {
+    display: grid;
+    grid-template-columns: [begin icon-start] auto [icon-end name-start empty-start] 6fr [name-end date-start] 1fr [date-end manage-start] auto [manage-end empty-end end];
+    grid-auto-rows: auto;
+    column-gap: 1rem;
+    align-items: center;
+  }
 
-    .list-row {
-        display: grid;
-        grid-column: begin / end;
-        grid-template-columns: subgrid;
-        grid-template-rows: [icon-start name-start date-start manage-start empty-start] auto [icon-end name-end date-end manage-end empty-end end];
-        align-items: center;
-    }
+  .list-row {
+    display: grid;
+    grid-column: begin / end;
+    grid-template-columns: subgrid;
+    grid-template-rows: [icon-start name-start date-start manage-start empty-start] auto [icon-end name-end date-end manage-end empty-end end];
+    align-items: center;
+  }
 
-    .list-row-date {
-        text-align: right;
-        justify-self: right;
-    }
+  .list-row-date {
+    text-align: right;
+    justify-self: right;
+  }
 }
 
 @media screen and (max-width: 640px) {
-    .list-container {
-        display: grid;
-        grid-template-columns: [begin icon-start] auto [icon-end name-start date-start empty-start] 6fr [name-end date-end manage-start] auto [manage-end empty-end end];
-        grid-auto-rows: auto;
-        column-gap: 1rem;
-        align-items: center;
-    }
+  .list-container {
+    display: grid;
+    grid-template-columns: [begin icon-start] auto [icon-end name-start date-start empty-start] 6fr [name-end date-end manage-start] auto [manage-end empty-end end];
+    grid-auto-rows: auto;
+    column-gap: 1rem;
+    align-items: center;
+  }
 
-    .list-row {
-        display: grid;
-        grid-column: begin / end;
-        grid-template-columns: subgrid;
-        grid-template-rows: [icon-start name-start manage-start empty-start] auto [name-end date-start] auto [icon-end date-end manage-end empty-end end];
-        align-items: center;
-    }
+  .list-row {
+    display: grid;
+    grid-column: begin / end;
+    grid-template-columns: subgrid;
+    grid-template-rows: [icon-start name-start manage-start empty-start] auto [name-end date-start] auto [icon-end date-end manage-end empty-end end];
+    align-items: center;
+  }
 
-    .list-row-date {
-        text-align: left;
-        justify-self: left;
-    }
+  .list-row-date {
+    text-align: left;
+    justify-self: left;
+  }
 }
 
 .list-row-icon {
-    grid-column: icon-start / icon-end;
-    grid-row: icon-start / icon-end;
-    justify-self: center;
+  grid-column: icon-start / icon-end;
+  grid-row: icon-start / icon-end;
+  justify-self: center;
 }
 
 .list-row-name {
-    grid-column: name-start / name-end;
-    grid-row: name-start / name-end;
-    justify-self: left;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  grid-column: name-start / name-end;
+  grid-row: name-start / name-end;
+  justify-self: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .list-row-date {
-    grid-column: date-start / date-end;
-    grid-row: date-start / date-end;
+  grid-column: date-start / date-end;
+  grid-row: date-start / date-end;
 }
 
 .list-row-manage {
-    grid-column: manage-start / manage-end;
-    grid-row: manage-start / manage-end;
-    justify-self: center;
+  grid-column: manage-start / manage-end;
+  grid-row: manage-start / manage-end;
+  justify-self: center;
 }
 
 .list-row-empty {
-    grid-column: empty-start / empty-end;
-    grid-row: empty-start / empty-end;
+  grid-column: empty-start / empty-end;
+  grid-row: empty-start / empty-end;
 }

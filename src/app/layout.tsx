@@ -1,4 +1,5 @@
 import React from 'react'
+import { redirect } from 'next/navigation'
 import { Anybody, Josefin_Sans } from 'next/font/google'
 
 import { validateRights } from '@services/tkoUserService'
@@ -8,7 +9,6 @@ import Footer from '@components/Footer'
 import Providers from './Providers'
 
 import '@styles/main.scss'
-import { redirect } from 'next/navigation'
 
 export const metadata = {
   title: 'Tärpistö - TKO-äly ry',
@@ -33,7 +33,7 @@ const RootLayout = async ({
 }: {
   children: React.ReactNode
   modal: React.ReactNode
-  }) => {
+}) => {
   const isAccess = await validateRights('access')
 
   if (!isAccess) {

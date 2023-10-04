@@ -1,18 +1,18 @@
 const ExamListHeader = ({ showManage }: { showManage: boolean }) => {
   return (
-    <div role="row" className="py-2 list-row" >
+    <div role="row" className="list-row py-2">
       <div role="columnheader" className="list-row-icon">
         <span className="sr-only">Icon</span>
       </div>
       <div
         role="columnheader"
-        className="font-serif font-bold lowercase list-row-name self-end"
+        className="list-row-name self-end font-serif font-bold lowercase"
       >
         Exam
       </div>
       <div
         role="columnheader"
-        className="font-serif font-bold lowercase list-row-date"
+        className="list-row-date font-serif font-bold lowercase"
       >
         Upload date
       </div>

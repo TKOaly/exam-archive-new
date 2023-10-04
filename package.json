@@ -10,7 +10,7 @@
     "build": "next build",
     "db:migrate": "knex migrate:latest",
     "db:seed": "knex seed:run",
-    "prettier": "prettier --write .",
+    "prettier": "prettier --write ./**/*.{ts,tsx,json,scss}",
     "test": "playwright test",
     "test:install": "playwright install --with-deps",
     "test:update-screenshots": "playwright test --update-snapshots"

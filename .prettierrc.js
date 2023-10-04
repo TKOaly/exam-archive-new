@@ -5,5 +5,5 @@ module.exports = {
   printWidth: 80,
   arrowParens: 'avoid',
   trailingComma: 'none',
-  plugins: [require('prettier-plugin-tailwindcss')]
+  plugins: [import('prettier-plugin-tailwindcss')]
 }

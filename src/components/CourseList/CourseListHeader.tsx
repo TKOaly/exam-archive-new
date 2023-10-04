@@ -1,28 +1,25 @@
-const CourseListHeader = () => {
-  const showManage = true
+const CourseListHeader = ({ showManage }: { showManage: boolean }) => {
   return (
-    <div role="row" className="flex flex-row items-center px-1">
-      <div role="columnheader" className="m-2 box-border">
-        <div className="h-6 w-6">
+    <div role="row" className="py-2 list-row">
+      <div role="columnheader" className="list-row-icon">
           <span className="sr-only">Icon</span>
-        </div>
       </div>
       <div
         role="columnheader"
-        className="mx-1 my-2 grow font-serif font-bold lowercase"
+        className="font-serif font-bold lowercase list-row-name self-end"
       >
         Course
       </div>
       <div
         role="columnheader"
-        className="hidden px-2 text-right font-serif font-bold lowercase sm:block"
+        className="font-serif font-bold lowercase list-row-date"
       >
         Last modified
       </div>
       {showManage && (
         <div
           role="columnheader"
-          className="m-2 w-10 shrink-0"
+          className="list-row-manage"
           aria-label="Manage"
         >
           <span className="sr-only">Manage</span>

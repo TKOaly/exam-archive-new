@@ -1,21 +1,15 @@
-const Loading = () => {
+const Loading = ({ showManage }: { showManage: boolean }) => {
   return (
     <div
       role="row"
-      className="flex animate-pulse flex-row items-center px-1 hover:bg-slate-100"
+      className="list-row animate-pulse py-2 hover:bg-slate-100"
     >
-      <div role="cell" className="m-2 box-border">
-        <div className="h-6 w-6 rounded-lg bg-cyan-500" />
-      </div>
-      <div role="cell" className="mx-1 my-2 w-96 grow">
-        <div className="h-6 rounded-lg bg-gray-300" />
-      </div>
-      <div className="hidden px-2 text-right sm:block" role="cell">
-        <div className="h-6 w-20 rounded-lg bg-gray-300" />
-      </div>
-      <div className="m-2 w-10 shrink-0" role="cell">
-        <div className="h-6 rounded-lg bg-gray-300" />
-      </div>
+      <div role="cell" className="h-6 w-6 mx-2 rounded-lg bg-cyan-500 list-row-icon" />
+      <div role="cell" className="h-6 w-96 rounded-lg bg-gray-300 list-row-name" />
+      <div role="cell" className="h-6 w-24 rounded-lg bg-gray-300 list-row-date" />
+      {showManage &&
+        <div role="cell" className="h-6 w-10 rounded-lg bg-gray-800 mx-2 list-row-manage" />
+      }
     </div>
   )
 }

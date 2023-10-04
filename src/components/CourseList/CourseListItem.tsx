@@ -18,62 +18,42 @@ const CourseListItem = ({ course, showManage }: CourseListItemProps) => {
   return (
     <div
       role="row"
-      className="flex flex-row items-center px-1 hover:bg-slate-100"
+      className="py-2 hover:bg-slate-100 list-row"
       data-course-id={id}
       data-course-name={name}
     >
-      <div role="cell" className="m-2 shrink-0">
-        <FolderIcon className="h-6 w-6 fill-cyan-500" />
-      </div>
-      <div role="cell" className="mx-1 my-2 grow overflow-hidden text-ellipsis">
-        <Link
-          href={url}
-          title={`Open course "${name}"`}
-          arial-label={`Open course "${name}"`}
-          className="hover:underline hover:decoration-cyan-500"
-        >
-          {name}
-        </Link>
-        {lastModified && (
-          <>
-            <br />
-            <time
-              className="block font-mono text-xs text-gray-600 sm:hidden"
-              dateTime={lastModified.toISOString()}
-              data-test-id="last-modified-time-mobile"
-            >
-              {formatDate(lastModified, 'yyyy-MM-dd', { locale: fiLocale })}
-            </time>
-          </>
-        )}
-      </div>
-      <div
-        className="mx-2 hidden sm:block"
+      <FolderIcon role="cell" className="h-6 w-6 mx-2 fill-cyan-500 list-row-icon" />
+      <Link
         role="cell"
-        data-test-id="last-modified"
+        href={url}
+        title={`Open course "${name}"`}
+        arial-label={`Open course "${name}"`}
+        className="hover:underline hover:decoration-cyan-500 list-row-name"
       >
-        {lastModified && (
-          <time
-            className="font-mono text-xs text-gray-600"
-            dateTime={lastModified.toISOString()}
-            data-test-id="last-modified-time"
-          >
-            {formatDate(lastModified, 'yyyy-MM-dd', { locale: fiLocale })}
-          </time>
-        )}
-      </div>
+        {name}
+      </Link>
+      {lastModified && (
+        <time
+          role="cell"
+          className="font-mono text-xs text-gray-600 list-row-date"
+          title={`Last modified on ${formatDate(lastModified, 'yyyy-MM-dd', { locale: fiLocale })}`}
+          dateTime={lastModified.toISOString()}
+          data-test-id="last-modified-time"
+        >
+          {formatDate(lastModified, 'yyyy-MM-dd', { locale: fiLocale })}
+        </time>
+      )}
       {showManage && (
-        <div role="cell" className="m-2 shrink-0">
-          <Link
-            aria-label={`Manage course "${name}"`}
-            title={`Manage course "${name}"`}
-            href={`${urlForCourse(id, name)}/manage`}
-            className="flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white  ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"
-          >
-            <PencilSquareIcon className="h-4 w-4 self-center" />{' '}
-            <span className="sr-only">{`Manage course "${name}"`}</span>
-          </Link>
-        </div>
+        <Link
+          role="cell"
+          aria-label={`Manage course "${name}"`}
+          title={`Manage course "${name}"`}
+          href={`${urlForCourse(id, name)}/manage`}
+          className="mx-2 list-row-manage flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"
+        >
+          <PencilSquareIcon className="h-4 w-4 self-center" />{' '}
+          <span className="sr-only">{`Manage course "${name}"`}</span>
+        </Link>
       )}
     </div>
   )

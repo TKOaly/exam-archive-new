@@ -14,12 +14,6 @@ export const requireRights =
 
     if (!requiredRights.every(right => auth.rights[right])) {
       // TODO: 400 page
-      console.warning(
-        'User has insufficient rights, rights needed',
-        JSON.stringify(requiredRights),
-        'rights gotten',
-        JSON.stringify(auth.rights)
-      )
       return res.status(401).render('401', {
         flash: req.flash(),
         username: auth && auth.user && auth.user.username

@@ -4,6 +4,15 @@
 @tailwind variants;
 
 @media screen and (min-width: 640px) {
+  .header-container {
+    display: grid;
+    grid-template-columns: [begin name-start] auto [name-end search-start] 1fr [search-end menu-start] auto [menu-end end];
+    grid-template-rows: [begin name-start search-start menu-start] auto [name-end search-end menu-end end];
+    justify-content: space-between;
+    align-items: center;
+    column-gap: theme('spacing.16');
+  }
+
   .list-container {
     display: grid;
     grid-template-columns: [begin icon-start] auto [icon-end name-start empty-start] 6fr [name-end date-start] 1fr [date-end manage-start] auto [manage-end empty-end end];
@@ -36,6 +45,18 @@
 }
 
 @media screen and (max-width: 640px) {
+  .header-container {
+    display: grid;
+    grid-template-columns: [begin name-start search-start] auto [name-end menu-start] auto [menu-end search-end end];
+    // Rows below commented out and replaced with no search as not implmented yet and commented out in header
+    // grid-template-rows: [begin name-start menu-start] auto [name-end menu-end search-start] min-content [search-end end];
+    grid-template-rows: [begin name-start menu-start] auto [name-end menu-end end];
+    justify-content: space-between;
+    align-items: center;
+    row-gap: theme('spacing.4');
+    column-gap: theme('spacing.16');
+  }
+
   .list-container {
     display: grid;
     grid-template-columns: [begin icon-start] auto [icon-end name-start date-start empty-start] 6fr [name-end date-end manage-start] auto [manage-end empty-end end];
@@ -72,6 +93,26 @@
     padding-top: theme('spacing.2');
     padding-bottom: theme('spacing.2');
   }
+}
+
+.header-name {
+  grid-column: name-start / name-end;
+  grid-row: name-start / name-end;
+  align-self: start;
+  display: inline-flex;
+  align-items: center;
+}
+
+.header-search {
+  grid-column: search-start / search-end;
+  grid-row: search-start / search-end;
+  align-self: center;
+}
+
+.header-menu {
+  grid-column: menu-start / menu-end;
+  grid-row: menu-start / menu-end;
+  align-self: end;
 }
 
 .list-row-icon {

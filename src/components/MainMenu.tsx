@@ -4,9 +4,9 @@ import React from 'react'
 import { Popover } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
-const MainMenu = ({ children }: { children: React.ReactNode }) => {
+const MainMenu = ({ children, className }: { children: React.ReactNode, className: string }) => {
   return (
-    <Popover className="relative" data-test-id="menu">
+    <Popover className={`relative ${className}`} data-test-id="menu">
       {({ open }) => (
         <>
           <Popover.Button

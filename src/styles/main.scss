@@ -8,7 +8,7 @@
     display: grid;
     grid-template-columns: [begin icon-start] auto [icon-end name-start empty-start] 6fr [name-end date-start] 1fr [date-end manage-start] auto [manage-end empty-end end];
     grid-auto-rows: auto;
-    column-gap: 1rem;
+    column-gap: theme('spacing.4');
     align-items: center;
   }
 
@@ -24,6 +24,15 @@
     text-align: right;
     justify-self: right;
   }
+
+  .footer-container {
+    display: grid;
+    grid-template-columns: [begin name-start email-start tkoaly-start] auto [tkoaly-end privacy-start] auto [privacy-end sourcecode-start] auto [sourcecode-end fuksiwiki-start] auto [name-end email-end fuksiwiki-end end];
+    grid-template-rows: [begin name-start] auto [name-end email-start] auto [email-end tkoaly-start privacy-start sourcecode-start fuksiwiki-start] auto [tkoaly-end privacy-end sourcecode-end fuksiwiki-end end];
+    column-gap: theme('spacing.4');
+    row-gap: theme('spacing.2');
+    justify-content: space-around;
+  }
 }
 
 @media screen and (max-width: 640px) {
@@ -31,7 +40,7 @@
     display: grid;
     grid-template-columns: [begin icon-start] auto [icon-end name-start date-start empty-start] 6fr [name-end date-end manage-start] auto [manage-end empty-end end];
     grid-auto-rows: auto;
-    column-gap: 1rem;
+    column-gap: theme('spacing.4');
     align-items: center;
   }
 
@@ -39,13 +48,29 @@
     display: grid;
     grid-column: begin / end;
     grid-template-columns: subgrid;
-    grid-template-rows: [icon-start name-start manage-start empty-start] auto [name-end date-start] auto [icon-end date-end manage-end empty-end end];
+    grid-template-rows: [icon-start name-start manage-start empty-start] min-content [name-end date-start] min-content [icon-end date-end manage-end empty-end end];
     align-items: center;
   }
 
   .list-row-date {
     text-align: left;
     justify-self: left;
+  }
+
+  .footer-container {
+    display: grid;
+    grid-template-columns: [begin name-start email-start tkoaly-start privacy-start sourcecode-start fuksiwiki-start] auto [name-end email-end tkoaly-end privacy-end sourcecode-end fuksiwiki-end end];
+    grid-template-rows: [begin name-start] auto [name-end email-start] auto [email-end tkoaly-start] auto [tkoaly-end privacy-start] auto [privacy-end sourcecode-start] auto [sourcecode-end fuksiwiki-start] auto [fuksiwiki-end end];
+    column-gap: theme('spacing.2');
+    row-gap: theme('spacing.1');
+    justify-content: space-around;
+  }
+
+  .footer-email {
+    border-top: 1px solid theme('colors.white');
+    border-bottom: 1px solid theme('colors.white');
+    padding-top: theme('spacing.2');
+    padding-bottom: theme('spacing.2');
   }
 }
 
@@ -77,4 +102,53 @@
 .list-row-empty {
   grid-column: empty-start / empty-end;
   grid-row: empty-start / empty-end;
+}
+
+.footer-name {
+  grid-column: name-start / name-end;
+  grid-row: name-start / name-end;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  padding-top: theme('spacing.2');
+  padding-bottom: theme('spacing.2');
+}
+
+.footer-email {
+  grid-column: email-start / email-end;
+  grid-row: email-start / email-end;
+  justify-self: center;
+  display: inline-flex;
+}
+
+.footer-tkoaly {
+  grid-column: tkoaly-start / tkoaly-end;
+  grid-row: tkoaly-start / tkoaly-end;
+  text-align: center;
+  padding-top: theme('spacing.2');
+  padding-bottom: theme('spacing.2');
+}
+
+.footer-privacy {
+  grid-column: privacy-start / privacy-end;
+  grid-row: privacy-start / privacy-end;
+  text-align: center;
+  padding-top: theme('spacing.2');
+  padding-bottom: theme('spacing.2');
+}
+
+.footer-sourcecode {
+  grid-column: sourcecode-start / sourcecode-end;
+  grid-row: sourcecode-start / sourcecode-end;
+  text-align: center;
+  padding-top: theme('spacing.2');
+  padding-bottom: theme('spacing.2');
+}
+
+.footer-fuksiwiki {
+  grid-column: fuksiwiki-start / fuksiwiki-end;
+  grid-row: fuksiwiki-start / fuksiwiki-end;
+  text-align: center;
+  padding-top: theme('spacing.2');
+  padding-bottom: theme('spacing.2');
 }

@@ -14,7 +14,7 @@ export const requireRights =
 
     if (!requiredRights.every(right => auth.rights[right])) {
       // TODO: 400 page
-      console.warning(
+      console.warn(
         'User has insufficient rights, rights needed',
         JSON.stringify(requiredRights),
         'rights gotten',

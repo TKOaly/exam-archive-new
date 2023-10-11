@@ -41,19 +41,15 @@ const RootLayout = async ({
   }
 
   return (
-    <html lang="en" className={`${anybody.variable} ${josefinSans.variable}`}>
-      <body className="bg-gray-800">
-        <Providers>
+    <html lang="en" className={`${anybody.variable} ${josefinSans.variable} bg-gray-800`}>
+      <Providers>
+        <body className="layout-container bg-yellow-500">
           <Header />
-          <div className="bg-yellow-500 pb-5">
-            <div className="container mx-auto box-border max-w-screen-lg bg-gray-50 px-5 shadow-xl">
-              {modal}
-              {children}
-            </div>
-          </div>
+          {modal}
+          {children}
           <Footer />
-        </Providers>
-      </body>
+        </body>
+      </Providers>
     </html>
   )
 }

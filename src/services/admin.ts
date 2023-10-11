@@ -4,7 +4,7 @@ import { AdminS3Object } from '@lib/types'
 export const adminGetS3Objects = async (): Promise<AdminS3Object[]> => {
   const result = await dbPool.query(`
     SELECT
-      e.id, e.file_name, e.file_path
+      e.id, e.mime_type, e.file_name, e.file_path
     FROM exams e
     ORDER BY e.file_path ASC
   `)

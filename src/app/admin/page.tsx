@@ -1,20 +1,12 @@
 import { redirect } from 'next/navigation'
 
-import { DocumentIcon } from '@heroicons/react/24/solid'
-
 import config from '@lib/config'
 import { adminGetS3Objects, sortByPrefixThenObjNameAsc } from '@services/admin'
 
-import ListingNavigation from '@components/Navigation'
 import { validateRights } from '@services/tkoUserService'
 
-export const metadata = {
-  title: 'Admin - Tärpistö - TKO-äly ry',
-  viewport: 'width=device-width',
-  robots: {
-    index: false
-  }
-}
+import FileListItem from '@components/FileList/FileListItem'
+import FileListHeader from '@components/FileList/FileListHeader'
 
 const Page = async () => {
   if (config.NODE_ENV !== 'development') {
@@ -31,69 +23,16 @@ const Page = async () => {
   const objects = s3Objects.sort(sortByPrefixThenObjNameAsc)
 
   return (
-    <>
-      <ListingNavigation title="Admin tools" backButtonHref="/" />
-      <div className="page-container">
-        <main>
-          <h3 className="font-serif text-xl font-bold leading-tight">
-            Objects in database
-          </h3>
-          <div
+          <main
             role="table"
-            aria-label="Courses"
-            className="table-auto divide-y pb-5"
+            aria-label="Files"
+            className="admin-list-container divide-y"
           >
-            <div role="row" className="flex flex-row items-center px-1">
-              <div role="columnheader" className="m-2 box-border">
-                <div className="h-6 w-6" />
-              </div>
-              <div
-                role="columnheader"
-                className="mx-1 my-2 w-10 font-serif font-bold lowercase"
-              >
-                Id
-              </div>
-              <div
-                role="columnheader"
-                className="me-auto px-2 font-serif font-bold lowercase"
-              >
-                Filename
-              </div>
-              <div
-                role="columnheader"
-                className="px-2 font-serif font-bold lowercase"
-              >
-                File path / Object key
-              </div>
-            </div>
-
-            {objects.map(({ id, fileName, filePath }) => (
-              <div
-                role="row"
-                className="flex flex-row items-center px-1 hover:bg-slate-100"
-                key={[id, fileName, filePath].join('-')}
-              >
-                <div role="cell" className="m-2 shrink-0">
-                  <DocumentIcon className="h-6 w-6 fill-cyan-500" />
-                </div>
-                <div role="cell" className="mx-1 my-2 w-10">
-                  {id}
-                </div>
-                <div
-                  className="mx-2 me-auto overflow-hidden text-ellipsis"
-                  role="cell"
-                >
-                  {fileName}
-                </div>
-                <div role="cell" className="m-2 shrink-0">
-                  {filePath}
-                </div>
-              </div>
+            <FileListHeader />
+            {objects.map((file) => (
+              <FileListItem file={file} />
             ))}
-          </div>
-        </main>
-      </div>
-    </>
+          </main>
   )
 }
 

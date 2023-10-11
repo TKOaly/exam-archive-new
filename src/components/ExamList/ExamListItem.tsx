@@ -7,20 +7,11 @@ import { PencilSquareIcon } from '@heroicons/react/24/solid'
 
 import { type ExamListItem } from '@lib/types'
 
-import { DocumentIcon, PdfIcon, PhotoIcon } from '@components/icons/File'
-
-const iconForFile = (mimeType: string) => {
-  if (mimeType.startsWith('image/')) {
-    return PhotoIcon
-  }
-  if (mimeType === 'application/pdf') {
-    return PdfIcon
-  }
-  return DocumentIcon
-}
+import { iconForFile } from '@components/icons/File'
 
 const splitExtension = (fileName: string) => {
   const extname = path.extname(fileName)
+  // In order to have invisible row change possibility adding zero width space
   const basename = path.basename(fileName, extname).replace(/_/g, '_\u200b')
 
   return { extname, basename }
@@ -48,7 +39,7 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
         role="cell"
         ariaHidden={true}
         alt=""
-        className="list-row-icon mx-2 h-6 w-6"
+        className="list-row-icon mx-2 flex-shrink-0 h-6 w-6"
       />
       <Link
         role="cell"

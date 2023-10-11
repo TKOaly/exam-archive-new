@@ -15,21 +15,23 @@ const ListingNavigation = ({
   label,
   backButtonHref
 }: NavigationProps) => (
-  <nav className="flex flex-row flex-wrap items-center px-1 py-5 ">
+  <nav className="navigation-container">
     {backButtonHref && (
       <Link
         href={backButtonHref}
         title={label}
         aria-label={label}
-        className="my-2 me-4 ms-2 box-border shrink-0"
+        className="navigation-back"
       >
-        <ArrowUturnLeftIcon className="h-6 w-6 stroke-gray-800 stroke-2 " />
+        <ArrowUturnLeftIcon className="h-6 w-6 m-2 stroke-gray-800 stroke-2" />
       </Link>
     )}
-    <h2 className="mx-1 my-2 shrink font-serif text-3xl font-extrabold leading-tight">
+    <h2 className="navigation-title font-serif text-3xl font-extrabold leading-tight">
       {title}
     </h2>
-    {children && <div className="me-2 ms-auto ">{children}</div>}
+    <div className="navigation-actions">
+      {children}
+    </div>
   </nav>
 )
 

@@ -15,7 +15,7 @@ const Header = async () => {
   const { name } = await getSessionUser()
 
   return (
-    <header className="header-container box-border bg-yellow-500 p-2 shadow-lg transition-all">
+    <header className="header-container box-border bg-yellow-500 transition-all">
       <Link href="/" className="header-name">
         <Image
           src={TkoAlyLogo}

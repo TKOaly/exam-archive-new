@@ -15,16 +15,14 @@ const Layout = async ({
   params: { slug: string }
 }) => {
   return (
-    <>
+    <div className="page-container bg-gray-50 shadow-lg">
       <ListingNavigation
         title="Create new course"
         backButtonHref="/"
         label="Back to course listing"
       ></ListingNavigation>
-      <div className="page-container">
-        <main>{children}</main>
-      </div>
-    </>
+      {children}
+    </div>
   )
 }
 

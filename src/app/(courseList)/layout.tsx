@@ -11,7 +11,7 @@ export const metadata = {
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
-    <>
+    <div className="page-container bg-gray-50 shadow-lg">
       <ListingNavigation title="Courses">
         <Link
           href={'/courses/create'}
@@ -20,8 +20,8 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
           create
         </Link>
       </ListingNavigation>
-      <main>{children}</main>
-    </>
+      {children}
+    </div>
   )
 }
 

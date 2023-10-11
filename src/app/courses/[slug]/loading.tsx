@@ -7,12 +7,11 @@ const Loading = async () => {
   const { rights } = await getSessionUser()
 
   return (
-    <div
+    <main
       role="alert"
       aria-label="Loading exams..."
-      className="exam-list-container"
+      className="list-container divide-y pb-5"
     >
-      <div role="table" aria-label="Exams" className="exam-list">
         <ExamListHeader showManage={rights.remove || rights.rename} />
         <LoadingItem showManage={rights.remove || rights.rename} />
         <LoadingItem showManage={rights.remove || rights.rename} />
@@ -22,8 +21,9 @@ const Loading = async () => {
         <LoadingItem showManage={rights.remove || rights.rename} />
         <LoadingItem showManage={rights.remove || rights.rename} />
         <LoadingItem showManage={rights.remove || rights.rename} />
-      </div>
-    </div>
+        <LoadingItem showManage={rights.remove || rights.rename} />
+        <LoadingItem showManage={rights.remove || rights.rename} />
+    </main>
   )
 }
 

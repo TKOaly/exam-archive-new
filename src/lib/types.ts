@@ -160,11 +160,13 @@ export type ExamInfo = z.infer<typeof ExamInfo>
 export const AdminS3Object = z
   .object({
     id: z.number(),
+    mime_type: z.string(),
     file_name: z.string(),
     file_path: z.string()
   })
   .transform(obj => ({
     id: obj.id,
+    mimeType: obj.mime_type,
     fileName: obj.file_name,
     filePath: obj.file_path
   }))

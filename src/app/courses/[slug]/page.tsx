@@ -41,10 +41,10 @@ const Page = async ({ params }: any) => {
   }
 
   return (
-    <div
+    <main
       role="table"
       aria-label="Exams"
-      className="list-container divide-y pb-5"
+      className="list-container divide-y"
       data-course-id={course.id}
       data-course-name={course.name}
     >
@@ -53,7 +53,7 @@ const Page = async ({ params }: any) => {
       {course.exams.map(exam => (
         <ExamListItem exam={exam} showManage={rights.remove || rights.rename} />
       ))}
-    </div>
+    </main>
   )
 }
 

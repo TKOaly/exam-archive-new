@@ -44,7 +44,7 @@ const Page = async ({ params }: any) => {
   // }
 
   return (
-    <div className="flex flex-col gap-8 pb-5">
+    <div className="content-container flex flex-col gap-8 pb-5">
       <RenameCourse courseId={course.id} currentName={course.name} />
       <DeleteCourse courseId={course.id} courseName={course.name} />
     </div>

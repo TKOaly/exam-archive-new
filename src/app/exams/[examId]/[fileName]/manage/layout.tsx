@@ -42,16 +42,14 @@ const Layout = async ({
   }
 
   return (
-    <>
+    <div className="page-container bg-gray-50 shadow-lg">
       <ListingNavigation
-        title={`Manage exam ${exam.fileName}`}
+        title={`Manage exam ${exam.fileName.replace(/_/g, '_\u200b')}`}
         label={`Back to course "${exam.courseName}"`}
         backButtonHref={urlForCourse(exam.courseId, exam.courseName)}
       ></ListingNavigation>
-      <div className="page-container">
-        <main>{children}</main>
-      </div>
-    </>
+      {children}
+    </div>
   )
 }
 

@@ -10,10 +10,10 @@ const Page = async () => {
   const courses = await getCourseListing()
 
   return (
-    <div
+    <main
       role="table"
       aria-label="Courses"
-      className="list-container divide-y pb-5"
+      className="list-container divide-y"
     >
       <CourseListHeader showManage={rights.remove || rights.rename} />
       {courses.length === 0 && <NoCoursesFound />}
@@ -26,7 +26,7 @@ const Page = async () => {
           />
         )
       })}
-    </div>
+    </main>
   )
 }
 

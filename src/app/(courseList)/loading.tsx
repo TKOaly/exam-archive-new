@@ -1,24 +1,29 @@
 import CourseListHeader from '@components/CourseList/CourseListHeader'
 import LoadingItem from '@components/CourseList/Loading'
 
-const Loading = () => {
+import { getSessionUser } from '@services/tkoUserService'
+
+const Loading = async () => {
+  const { rights } = await getSessionUser()
+
   return (
-    <div
+    <main
       role="alert"
       aria-label="Loading courses..."
-      className="course-list-container"
+      className="list-container divide-y pb-5"
     >
-      <div aria-label="Courses" className="course-list" role="table">
-        <CourseListHeader />
-        <LoadingItem />
-        <LoadingItem />
-        <LoadingItem />
-        <LoadingItem />
-        <LoadingItem />
-        <LoadingItem />
-        <LoadingItem />
-      </div>
-    </div>
+        <CourseListHeader showManage={rights.rename || rights.remove} />
+        <LoadingItem showManage={rights.rename || rights.remove} />
+        <LoadingItem showManage={rights.rename || rights.remove} />
+        <LoadingItem showManage={rights.rename || rights.remove} />
+        <LoadingItem showManage={rights.rename || rights.remove} />
+        <LoadingItem showManage={rights.rename || rights.remove} />
+        <LoadingItem showManage={rights.rename || rights.remove} />
+        <LoadingItem showManage={rights.rename || rights.remove} />
+        <LoadingItem showManage={rights.rename || rights.remove} />
+        <LoadingItem showManage={rights.rename || rights.remove} />
+        <LoadingItem showManage={rights.rename || rights.remove} />
+    </main>
   )
 }
 

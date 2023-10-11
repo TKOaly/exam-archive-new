@@ -27,4 +27,14 @@ const [DocumentIcon, PdfIcon, PhotoIcon] = [
   )
 })
 
-export { DocumentIcon, PdfIcon, PhotoIcon }
+const iconForFile = (mimeType: string) => {
+  if (mimeType.startsWith('image/')) {
+    return PhotoIcon
+  }
+  if (mimeType === 'application/pdf') {
+    return PdfIcon
+  }
+  return DocumentIcon
+}
+
+export { DocumentIcon, PdfIcon, PhotoIcon, iconForFile }

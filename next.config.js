@@ -10,8 +10,10 @@ const nextConfig = {
   distDir: `dist/${process.env.NODE_ENV}`,
   reactStrictMode: true,
   experimental: {
-    serverActions: true,
-    serverActionsBodySizeLimit: '25mb'
+    serverActions: { bodySizeLimit: '25mb' }
+  },
+  devIndicators: {
+    buildActivityPosition: 'bottom-right',
   },
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')]

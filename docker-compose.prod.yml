@@ -45,4 +45,4 @@ services:
 
 networks:
   prod:
-    name: exam-archive-new-prod
+    name: tarpisto-prod

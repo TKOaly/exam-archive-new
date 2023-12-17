@@ -11,11 +11,11 @@ services:
       timeout: 5s
       retries: 5
     environment:
-      INITIAL_BUCKETS: 'local/exam-archive-local'
+      INITIAL_BUCKETS: 'local/tarpisto-local'
       MINIO_ROOT_USER: tarpisto
       MINIO_ROOT_PASSWORD: tarpisto
     volumes:
-      - exam-archive-minio-data:/data
+      - tarpisto-minio-data:/data
     ports:
       - 127.0.0.1::9000
       - 127.0.0.1::9001
@@ -35,7 +35,7 @@ services:
       - POSTGRES_DB=tarpisto
       - PGDATA=/data/pgdata
     volumes:
-      - exam-archive-pg-data:/data/pgdata
+      - tarpisto-pg-data:/data/pgdata
 
   adminer:
     image: adminer:4.8.1-standalone
@@ -43,5 +43,5 @@ services:
       - 127.0.0.1:9003:8080
 
 volumes:
-  exam-archive-pg-data:
-  exam-archive-minio-data:
+  tarpisto-pg-data:
+  tarpisto-minio-data:

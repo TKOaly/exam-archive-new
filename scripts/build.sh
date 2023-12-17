@@ -2,7 +2,7 @@
 set -o errexit -o nounset -o pipefail
 
 readonly repository="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd)"
-export COMPOSE_PROJECT_NAME="exam-archive-new-build"
+export COMPOSE_PROJECT_NAME="tarpisto-build"
 source "$repository/scripts/common.sh"
 
 function stop() {

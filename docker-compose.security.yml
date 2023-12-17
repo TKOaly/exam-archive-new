@@ -56,4 +56,4 @@ services:
 
 networks:
   security:
-    name: exam-archive-new-security
+    name: tarpisto-security

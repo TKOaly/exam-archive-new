@@ -21,7 +21,7 @@ npm_ci
 function main() {
     pushd "$repository"
 
-    session="exam-archive"
+    session="tarpisto"
 
     tmux kill-session -t $session || true
     tmux start-server

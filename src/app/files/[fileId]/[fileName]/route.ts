@@ -19,9 +19,7 @@ export const GET = async (
   if (isNaN(fileId)) {
     return new NextResponse('404 File not found', { status: 404 })
   }
-  console.log('fileId', fileId)
   const file = await findFileById(fileId)
-  console.log('file', file)
   if (!file) {
     return new NextResponse('404 File not found', { status: 404 })
   }

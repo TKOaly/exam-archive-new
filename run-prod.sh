@@ -2,7 +2,7 @@
 set -o errexit -o nounset -o pipefail
 
 readonly repository="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-export COMPOSE_PROJECT_NAME="exam-archive-new-prod"
+export COMPOSE_PROJECT_NAME="tarpisto-prod"
 source "$repository/scripts/common.sh"
 
 function stop() {
@@ -35,7 +35,7 @@ function main() {
     export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-"tarpisto"}
 
     export AWS_S3_FORCE_PATH_STYLE=${AWS_S3_FORCE_PATH_STYLE:-true}
-    export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"exam-archive-local"}
+    export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"tarpisto-local"}
 
     export NODE_ENV=${NODE_ENV:-"production"}
     export APP_ENV=${APP_ENV:-"development"}

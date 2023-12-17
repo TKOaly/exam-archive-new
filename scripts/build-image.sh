@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
 
-export COMPOSE_PROJECT_NAME="exam-archive-new-build"
+export COMPOSE_PROJECT_NAME="tarpisto-build"
 readonly repository="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd)"
 source "$repository/scripts/common.sh"
 

@@ -7,7 +7,7 @@ on:
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: registry.tko-aly.fi
-  IMAGE_NAME: exam-archive
+  IMAGE_NAME: tarpisto
 
 jobs:
   build:

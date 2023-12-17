@@ -1,6 +1,6 @@
-# exam-archive-new
+# Tärpistö
 
-Actually new exam archive
+Actually new exam archive. And a little bit more.
 
 ## Table of contents
 
@@ -22,7 +22,7 @@ Actually new exam archive
 ### Quick guide
 
 1. Run `start-local-env.sh`. This will set up development environment and runs all needed commands. Script will also tell if you are missing some tooling listed below.
-2. _(OPTIONAL)_ If you want to test with realish users, set up `user-service` and make sure that there's a service for exam-archive, might need to change the permission bits to `770`. By default, the service will just skip authentication and log you in. If local user service cookie is detected, exam-archive tries to authenticate against it.
+2. _(OPTIONAL)_ If you want to test with realish users, set up `user-service` and make sure that there's a service for Tärpistö, might need to change the permission bits to `770`. By default, the service will just skip authentication and log you in. If local user service cookie is detected, Tärpistö tries to authenticate against it.
 3. Then go to <http://127.0.0.1:9000>
 
 ### Other good to know commands
@@ -106,7 +106,7 @@ To deploy a new release to production, author a new Github Release. Use semver. 
 | `AWS_SECRET_ACCESS_KEY`   | Your AWS secret access key                                                                                                                                                                          | Storing exam files           | `tarpisto`                                               |
 | `AWS_S3_ENDPOINT`         | Url used to communicate with S3                                                                                                                                                                     | Storing exam files           | `http://s3:9000`                                         |
 | `AWS_S3_FORCE_PATH_STYLE` | Is path style enforced in S3 communication                                                                                                                                                          | Storing exam files           | `true`                                                   |
-| `AWS_S3_BUCKET_ID`        | ID of used S3 bucket                                                                                                                                                                                | Storing exam files           | `exam-archive-local`                                     |
+| `AWS_S3_BUCKET_ID`        | ID of used S3 bucket                                                                                                                                                                                | Storing exam files           | `tarpisto-local`                                     |
 
 ## License
 

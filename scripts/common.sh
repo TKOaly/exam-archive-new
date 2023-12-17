@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd)"
-COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-"exam-archive-new"}
+COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-"tarpisto"}
 
 function check_node_version() {
     pushd "$repository"
@@ -123,7 +123,7 @@ function build_app() {
 
     export AWS_S3_ENDPOINT=${AWS_S3_ENDPOINT:-"http://$(docker-compose port s3 9000)"}
     export AWS_S3_FORCE_PATH_STYLE=${AWS_S3_FORCE_PATH_STYLE:-true}
-    export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"exam-archive-local"}
+    export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"tarpisto-local"}
 
     export NODE_ENV=${NODE_ENV:-"production"}
     export APP_ENV=${APP_ENV:-"development"}

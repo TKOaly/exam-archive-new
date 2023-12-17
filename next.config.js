@@ -13,7 +13,7 @@ const nextConfig = {
     serverActions: { bodySizeLimit: '25mb' }
   },
   devIndicators: {
-    buildActivityPosition: 'bottom-right',
+    buildActivityPosition: 'bottom-right'
   },
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')]

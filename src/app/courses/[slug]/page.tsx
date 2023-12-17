@@ -53,11 +53,13 @@ const Page = async ({ params }: any) => {
           data-course-id={course.id}
           data-course-name={course.name}
         >
-          <FileListHeader showManage={rights.remove || rights.rename} />
+          {course.exams.length > 0 && (
+            <FileListHeader showManage={rights.remove || rights.rename} />
+          )}
           {course.exams.length === 0 && <NotFound />}
-          {course.exams.map(exam => (
+          {course.exams.map(file => (
             <FileListItem
-              exam={exam}
+              file={file}
               showManage={rights.remove || rights.rename}
             />
           ))}
@@ -74,11 +76,13 @@ const Page = async ({ params }: any) => {
           data-course-id={course.id}
           data-course-name={course.name}
         >
-          <FileListHeader showManage={rights.remove || rights.rename} />
+          {course.notes.length > 0 && (
+            <FileListHeader showManage={rights.remove || rights.rename} />
+          )}
           {course.notes.length === 0 && <NotFound />}
-          {course.notes.map(exam => (
+          {course.notes.map(file => (
             <FileListItem
-              exam={exam}
+              file={file}
               showManage={rights.remove || rights.rename}
             />
           ))}
@@ -95,11 +99,13 @@ const Page = async ({ params }: any) => {
           data-course-id={course.id}
           data-course-name={course.name}
         >
-          <FileListHeader showManage={rights.remove || rights.rename} />
+          {course.exercises.length > 0 && (
+            <FileListHeader showManage={rights.remove || rights.rename} />
+          )}
           {course.exercises.length === 0 && <NotFound />}
-          {course.exercises.map(exam => (
+          {course.exercises.map(file => (
             <FileListItem
-              exam={exam}
+              file={file}
               showManage={rights.remove || rights.rename}
             />
           ))}
@@ -116,11 +122,13 @@ const Page = async ({ params }: any) => {
           data-course-id={course.id}
           data-course-name={course.name}
         >
-          <FileListHeader showManage={rights.remove || rights.rename} />
+          {course.others.length > 0 && (
+            <FileListHeader showManage={rights.remove || rights.rename} />
+          )}
           {course.others.length === 0 && <NotFound />}
-          {course.others.map(exam => (
+          {course.others.map(file => (
             <FileListItem
-              exam={exam}
+              file={file}
               showManage={rights.remove || rights.rename}
             />
           ))}

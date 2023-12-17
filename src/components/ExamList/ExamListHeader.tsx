@@ -8,7 +8,7 @@ const ExamListHeader = ({ showManage }: { showManage: boolean }) => {
         role="columnheader"
         className="list-row-name self-end font-serif font-bold lowercase"
       >
-        Exam
+        File
       </div>
       <div
         role="columnheader"

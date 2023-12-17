@@ -139,6 +139,7 @@ export const getCourseInfo = async (
     `
     SELECT
       e.id,
+      e.type,
       e.course_id,
       e.file_name,
       e.mime_type,
@@ -151,11 +152,18 @@ export const getCourseInfo = async (
     [courseId]
   )
 
-  const exams = examsResult.rows.map(exam => ExamLI.parse(exam))
+  const files = examsResult.rows.map(exam => ExamLI.parse(exam))
+  const exams = files.filter(file => file.type === 'exam')
+  const notes = files.filter(file => file.type === 'note')
+  const exercises = files.filter(file => file.type === 'exercise')
+  const others = files.filter(file => file.type === 'other')
 
   return {
     ...course,
-    exams
+    exams,
+    notes,
+    exercises,
+    others
   }
 }
 
@@ -306,13 +314,13 @@ export const createExam = async (exam: CreateExam) => {
   const result = await dbPool.query(
     `
     INSERT INTO exams
-      (course_id, file_name, mime_type, file_path, upload_date)
+      (type, course_id, file_name, mime_type, file_path, upload_date)
     VALUES
-      ($1, $2, $3, $4, NOW())
+      ($1, $2, $3, $4, $5, NOW())
     RETURNING
-      id, course_id, file_name, mime_type, upload_date, file_path
+      id, type, course_id, file_name, mime_type, upload_date, file_path
   `,
-    [exam.courseId, exam.fileName, exam.mimeType, exam.filePath]
+    [exam.type, exam.courseId, exam.fileName, exam.mimeType, exam.filePath]
   )
 
   const createdExam = ExamLI.parse(result.rows[0])

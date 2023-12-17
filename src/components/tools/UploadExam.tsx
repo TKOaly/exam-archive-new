@@ -24,6 +24,7 @@ const UploadExam = async ({ courseId }: UploadExamProps) => {
     if (!isRights) {
       return 'Unauthorized'
     }
+    const type = formData.get('type') as string
     const courseId = parseInt(formData.get('courseId') as string, 10) // TODO: make better type check
 
     const course = await getCourseInfo(courseId)
@@ -56,6 +57,7 @@ const UploadExam = async ({ courseId }: UploadExamProps) => {
         await s3.send(new PutObjectCommand(params))
 
         const exam = await createExam({
+          type: type,
           courseId: course.id,
           fileName: originalFilename,
           filePath: params.Key as string,
@@ -79,6 +81,18 @@ const UploadExam = async ({ courseId }: UploadExamProps) => {
         <p className="font-serif text-xl font-bold leading-tight">
           Upload a new file here
         </p>
+        <div className="flex flex-col">
+          <p>Select type:</p>
+          <select
+            name="type"
+            className="my-2 box-border w-full p-3 shadow-lg ring ring-inset ring-gray-800 focus:ring-gray-400 lg:w-1/2"
+          >
+            <option value="exam">Exam</option>
+            <option value="notes">Lecture notes</option>
+            <option value="exercise">Exercise</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
         <input
           type="file"
           name="file"

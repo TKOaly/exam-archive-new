@@ -21,12 +21,16 @@ export interface CourseListItem extends Course {
 
 export interface CourseInfo extends Course {
   exams: ExamListItem[]
+  notes: ExamListItem[]
+  exercises: ExamListItem[]
+  others: ExamListItem[]
 }
 
 export type ExamId = number
 
 export interface ExamListItem {
   id: ExamId
+  type: string
   courseId: CourseId
   fileName: string
   mimeType: string
@@ -91,6 +95,7 @@ declare module 'next-auth/jwt' {
 export const ExamLI = z
   .object({
     id: z.number(),
+    type: z.string(),
     course_id: z.number(),
     file_name: z.string(),
     mime_type: z.string(),
@@ -99,6 +104,7 @@ export const ExamLI = z
   })
   .transform(exam => ({
     id: exam.id,
+    type: exam.type,
     courseId: exam.course_id,
     fileName: exam.file_name,
     mimeType: exam.mime_type,
@@ -125,6 +131,7 @@ export const CourseLI = z
 export type CourseLI = z.infer<typeof CourseLI>
 
 export const CreateExam = z.object({
+  type: z.string(),
   courseId: z.number(),
   fileName: z.string(),
   mimeType: z.string(),

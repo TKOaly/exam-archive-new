@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { urlForCourse } from './courses'
-import { examDownloadUrl } from './exams'
+import { fileDownloadUrl } from './files'
 import { DefaultUser } from 'next-auth'
 
 export type CourseId = number
@@ -20,16 +20,16 @@ export interface CourseListItem extends Course {
 }
 
 export interface CourseInfo extends Course {
-  exams: ExamListItem[]
-  notes: ExamListItem[]
-  exercises: ExamListItem[]
-  others: ExamListItem[]
+  exams: FileListItem[]
+  notes: FileListItem[]
+  exercises: FileListItem[]
+  others: FileListItem[]
 }
 
-export type ExamId = number
+export type FileId = number
 
-export interface ExamListItem {
-  id: ExamId
+export interface FileListItem {
+  id: FileId
   type: string
   courseId: CourseId
   fileName: string
@@ -38,8 +38,8 @@ export interface ExamListItem {
   downloadUrl: string
 }
 
-export interface Exam {
-  id: ExamId
+export interface File {
+  id: FileId
   courseId: CourseId
   fileName: string
   mimeType: string
@@ -92,7 +92,7 @@ declare module 'next-auth/jwt' {
   }
 }
 
-export const ExamLI = z
+export const FileLI = z
   .object({
     id: z.number(),
     type: z.string(),
@@ -102,24 +102,24 @@ export const ExamLI = z
     upload_date: z.date(),
     file_path: z.string().uuid()
   })
-  .transform(exam => ({
-    id: exam.id,
-    type: exam.type,
-    courseId: exam.course_id,
-    fileName: exam.file_name,
-    mimeType: exam.mime_type,
-    uploadDate: exam.upload_date,
-    filePath: exam.file_path,
-    downloadUrl: examDownloadUrl(exam.id, exam.file_name)
+  .transform(file => ({
+    id: file.id,
+    type: file.type,
+    courseId: file.course_id,
+    fileName: file.file_name,
+    mimeType: file.mime_type,
+    uploadDate: file.upload_date,
+    filePath: file.file_path,
+    downloadUrl: fileDownloadUrl(file.id, file.file_name)
   }))
-export type ExamLI = z.infer<typeof ExamLI>
+export type FileLI = z.infer<typeof FileLI>
 
 export const CourseLI = z
   .object({
     id: z.number(),
     name: z.string(),
     last_modified: z.date().nullable(),
-    exams: z.array(ExamLI).default([])
+    exams: z.array(FileLI).default([])
   })
   .transform(course => ({
     id: course.id,
@@ -130,14 +130,14 @@ export const CourseLI = z
   }))
 export type CourseLI = z.infer<typeof CourseLI>
 
-export const CreateExam = z.object({
+export const CreateFile = z.object({
   type: z.string().regex(/exam|notes|exercise|other/),
   courseId: z.number(),
   fileName: z.string(),
   mimeType: z.string(),
   filePath: z.string()
 })
-export type CreateExam = z.infer<typeof CreateExam>
+export type CreateFile = z.infer<typeof CreateFile>
 
 export const CreateCourse = z.object({
   name: z.string()
@@ -151,7 +151,7 @@ export const Count = z
   .transform(count => count.count)
 export type Count = z.infer<typeof Count>
 
-export const ExamInfo = z
+export const FileInfo = z
   .object({
     file_name: z.string(),
     type: z.string(),
@@ -164,7 +164,7 @@ export const ExamInfo = z
     courseId: obj.course_id,
     courseName: obj.name
   }))
-export type ExamInfo = z.infer<typeof ExamInfo>
+export type FileInfo = z.infer<typeof FileInfo>
 
 export const AdminS3Object = z
   .object({
@@ -184,18 +184,15 @@ export type AdminS3Object = z.infer<typeof AdminS3Object>
 export const CourseName = z.string().min(1)
 export type CourseName = z.infer<typeof CourseName>
 
-export const ExamName = z.string().min(1)
-export type ExamName = z.infer<typeof ExamName>
-
-export const ExamFile = z
+export const UpdateFileInfo = z
   .object({
-    examId: z.string().regex(/^\d+$/),
-    examName: z.string().min(1),
+    fileId: z.string().regex(/^\d+$/),
+    fileName: z.string().min(1),
     type: z.string().regex(/exam|notes|exercise|other/)
   })
   .transform(obj => ({
-    examId: parseInt(obj.examId, 10),
-    examName: obj.examName,
+    fileId: parseInt(obj.fileId, 10),
+    fileName: obj.fileName,
     type: obj.type
   }))
-export type ExamFile = z.infer<typeof ExamFile>
+export type UpdateFileInfo = z.infer<typeof UpdateFileInfo>

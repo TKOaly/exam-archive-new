@@ -4,7 +4,7 @@ import { notFound, redirect } from 'next/navigation'
 import { getCourseInfo } from '@services/archive'
 
 import Modal from '@components/Modal'
-import UploadExam from '@components/tools/UploadExam'
+import UploadFiles from '@components/tools/UploadFiles'
 import { validateRights } from '@services/tkoUserService'
 
 const parseSlug = (slug: string) => {
@@ -44,9 +44,9 @@ const Page = async ({ params }: any) => {
   // // }
 
   return (
-    <Modal title="Upload exam">
+    <Modal title="Upload files">
       <div className="flex flex-col gap-8">
-        <UploadExam courseId={id} />
+        <UploadFiles courseId={id} />
       </div>
     </Modal>
   )

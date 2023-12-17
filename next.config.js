@@ -63,7 +63,7 @@ const nextConfig = {
       },
       {
         source: '/download/:path*',
-        destination: '/exams/:path*',
+        destination: '/files/:path*',
         permanent: true
       }
     ]

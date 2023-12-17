@@ -4,7 +4,7 @@ import contentDisposition from 'content-disposition'
 import { randomUUID as uuidv4 } from 'crypto'
 import { transliterate } from 'transliteration'
 
-import { getCourseInfo, createExam } from '@services/archive'
+import { getCourseInfo, createFile } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
 import s3 from '@services/s3'
 import configs from '@lib/config'
@@ -22,6 +22,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     const body = await req.formData()
+    const type = body.get('type') as string
     const courseId = parseInt(body.get('courseId') as string, 10)
 
     const course = await getCourseInfo(courseId)
@@ -38,7 +39,7 @@ export const POST = async (req: NextRequest) => {
       .filter(entry => entry instanceof File)
       .map(entry => entry as File)
 
-    const exams = await Promise.all(
+    const uploadedFiles = await Promise.all(
       files.map(async file => {
         const originalFilename = file.name as string
         const contentType = file.type as string
@@ -58,17 +59,18 @@ export const POST = async (req: NextRequest) => {
 
         await s3.send(new PutObjectCommand(params))
 
-        const exam = await createExam({
+        const createdFile = await createFile({
+          type: type,
           courseId: course.id,
           fileName: originalFilename,
           filePath: params.Key as string,
           mimeType: contentType
         })
-        return exam
+        return createdFile
       })
     )
 
-    return NextResponse.json(exams)
+    return NextResponse.json(uploadedFiles)
   } catch (e) {
     console.error('Error while uploading exam', e)
     return NextResponse.json(

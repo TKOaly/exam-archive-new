@@ -38,7 +38,7 @@ export const generateMetadata = async ({
   }
 
   return {
-    title: `Upload exam - ${course.name} - Tärpistö - TKO-äly ry`,
+    title: `Upload file - ${course.name} - Tärpistö - TKO-äly ry`,
     description: 'The TKO-äly ry exam archive'
   }
 }
@@ -60,7 +60,7 @@ const Layout = async ({
   return (
     <div className="page-container bg-gray-50 shadow-lg">
       <ListingNavigation
-        title={`Upload exam to ${course.name}`}
+        title={`Upload file to ${course.name}`}
         label={`Back to course "${course.name}"`}
         backButtonHref={urlForCourse(course.id, course.name)}
       ></ListingNavigation>

@@ -42,7 +42,7 @@ const DeleteCourse = async ({ courseId, courseName }: DeleteCourseProps) => {
         <p className="font-serif text-xl font-bold leading-tight">
           Delete course
         </p>
-        <p>Course can only be deleted after all exams have been deleted.</p>
+        <p>Course can only be deleted after all files have been deleted.</p>
         <input hidden name="courseId" defaultValue={courseId} />
         <Button
           type="submit"

@@ -1,33 +1,33 @@
 import { redirect } from 'next/navigation'
 
 import { urlForCourse } from '@lib/courses'
-import { deleteExam, findCourseByExamId } from '@services/archive'
+import { deleteFile, findCourseByFileId } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
 
 import Button from '@components/Button'
 
-interface DeleteExamProps {
-  examId: number
+interface DeleteFileProps {
+  fileId: number
   fileName: string
 }
 
-const DeleteExam = async ({ examId, fileName }: DeleteExamProps) => {
-  const handleDeleteExam = async (formData: FormData) => {
+const DeleteFile = async ({ fileId, fileName }: DeleteFileProps) => {
+  const handleDeleteFile = async (formData: FormData) => {
     'use server'
     const isRights = await validateRights('remove')
     if (!isRights) {
       return `Unauthorized`
     }
 
-    const examId = parseInt(formData.get('examId') as string, 10) // TODO: make better type check
+    const fileId = parseInt(formData.get('fileId') as string, 10) // TODO: make better type check
 
-    const course = await findCourseByExamId(examId)
+    const course = await findCourseByFileId(fileId)
 
     if (!course) {
-      return 'Exam does not exist.'
+      return 'File does not exist.'
     }
 
-    await deleteExam(examId)
+    await deleteFile(fileId)
 
     redirect(urlForCourse(course.id, course.name))
   }
@@ -39,17 +39,17 @@ const DeleteExam = async ({ examId, fileName }: DeleteExamProps) => {
   }
 
   return (
-    <form action={handleDeleteExam}>
+    <form action={handleDeleteFile}>
       <div className="flex flex-col gap-2">
         <p className="font-serif text-xl font-bold leading-tight">
-          Delete exam
+          Delete file
         </p>
-        <input hidden name="examId" defaultValue={examId} />
+        <input hidden name="fileId" defaultValue={fileId} />
         <Button
           type="submit"
-          name="deleteExam"
-          title={`Delete exam "${fileName}"`}
-          text={`Delete exam`}
+          name="deleteFile"
+          title={`Delete file "${fileName}"`}
+          text={`Delete file`}
           className="w-fit text-left"
         />
       </div>
@@ -57,4 +57,4 @@ const DeleteExam = async ({ examId, fileName }: DeleteExamProps) => {
   )
 }
 
-export default DeleteExam
+export default DeleteFile

@@ -3,13 +3,14 @@ import { z } from 'zod'
 import contentDisposition from 'content-disposition'
 import { transliterate } from 'transliteration'
 
-import { getExamFileNameById, renameExamFile } from '@services/archive'
+import { getFileNameById, updateFile } from '@services/archive'
 import configs from '@lib/config'
 import s3 from '@services/s3'
 import { validateRights } from '@services/tkoUserService'
 
-const RenameExamBody = z.object({
-  examId: z.number(),
+const UpdateFileBody = z.object({
+  fileId: z.number(),
+  type: z.string().regex(/exam|notes|exercise|other/),
   name: z.string().min(1)
 })
 
@@ -27,32 +28,41 @@ export const POST = async (req: NextRequest) => {
 
     const body = await req.json()
 
-    const { examId, name } = RenameExamBody.parse(body)
+    const { fileId, type, name } = UpdateFileBody.parse(body)
 
     if (!name) {
       return NextResponse.json(
-        { error: `name missing` },
+        { error: `Name missing` },
         {
           status: 400
         }
       )
     }
 
-    const oldName = await getExamFileNameById(examId)
+    if (!type) {
+      return NextResponse.json(
+        { error: `Type missing` },
+        {
+          status: 400
+        }
+      )
+    }
+
+    const oldName = await getFileNameById(fileId)
 
     if (oldName === null) {
       return NextResponse.json(
-        { error: `exam not found` },
+        { error: `File not found` },
         {
           status: 404
         }
       )
     }
 
-    const updatedExam = await renameExamFile(examId, name)
-    if (updatedExam === null) {
+    const updatedFile = await updateFile(fileId, type, name)
+    if (updatedFile === null) {
       console.error(
-        new Error(`Exam renaming didn't update any exams! Exam ID: ${examId}`)
+        new Error(`File updating didn't update any files! File ID: ${fileId}`)
       )
       return NextResponse.json(
         { error: '500 Internal Server Error' },
@@ -64,29 +74,29 @@ export const POST = async (req: NextRequest) => {
 
     // To change the Content Disposition header on S3, we need to make a copy of the
     // object
-    const s3key = updatedExam.filePath
+    const s3key = updatedFile.filePath
     try {
       await s3.copyObject({
         CopySource: `${configs.AWS_S3_BUCKET_ID}/${s3key}`,
         Bucket: configs.AWS_S3_BUCKET_ID,
         Key: s3key,
         ACL: 'private',
-        ContentType: updatedExam.mimeType,
-        ContentDisposition: contentDisposition(updatedExam.fileName, {
+        ContentType: updatedFile.mimeType,
+        ContentDisposition: contentDisposition(updatedFile.fileName, {
           type: 'inline',
-          fallback: transliterate(updatedExam.fileName)
+          fallback: transliterate(updatedFile.fileName)
         }),
         MetadataDirective: 'REPLACE'
       })
     } catch (e) {
       // s3 failed! revert!
-      await renameExamFile(examId, oldName.fileName)
+      await updateFile(fileId, type, oldName.fileName)
       console.error('S3 rename failed!', e)
       throw e
     }
     return NextResponse.json({ ok: true })
   } catch (e) {
-    console.error('Error while renaming exam', e)
+    console.error('Error while renaming file', e)
     return NextResponse.json(
       { error: '500 Internal Server Error' },
       {

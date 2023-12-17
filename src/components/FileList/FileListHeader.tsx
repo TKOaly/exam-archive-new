@@ -1,4 +1,4 @@
-const ExamListHeader = ({ showManage }: { showManage: boolean }) => {
+const FileListHeader = ({ showManage }: { showManage: boolean }) => {
   return (
     <div role="row" className="list-row py-2">
       <div role="columnheader" className="list-row-icon">
@@ -29,4 +29,4 @@ const ExamListHeader = ({ showManage }: { showManage: boolean }) => {
   )
 }
 
-export default ExamListHeader
+export default FileListHeader

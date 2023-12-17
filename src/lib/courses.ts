@@ -17,11 +17,11 @@ export const urlForCourseCreation = () => `/courses/create`
 export const urlForCourseManagement = (id: number, name: string) =>
   `${urlForCourse(id, name)}/manage`
 
-export const urlForExamUpload = (id: number, name: string) =>
+export const urlForFileUpload = (id: number, name: string) =>
   `${urlForCourse(id, name)}/upload`
 
-export const urlForExam = (examId: number, fileName: string) =>
-  `/exams/${examId}/${fileName}`
+export const urlForFile = (fileId: number, fileName: string) =>
+  `/files/${fileId}/${fileName}`
 
-export const urlForExamManagement = (examId: number, fileName: string) =>
-  `${urlForExam(examId, fileName)}/manage`
+export const urlForExamManagement = (fileId: number, fileName: string) =>
+  `${urlForFile(fileId, fileName)}/manage`

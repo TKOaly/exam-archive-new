@@ -4,14 +4,14 @@ import {
   CourseListItem,
   CourseInfo,
   CourseId,
-  ExamId,
-  Exam,
+  FileId,
+  File,
   CourseLI,
-  ExamLI,
-  CreateExam,
+  FileLI,
+  CreateFile,
   CreateCourse,
   Count,
-  ExamInfo
+  FileInfo
 } from '@lib/types'
 
 export class CourseNotFoundError extends Error {
@@ -51,7 +51,7 @@ export const deleteCourse = async (courseId: CourseId) => {
     throw new CourseNotFoundError('Course not found.')
   }
 
-  const nonDeletedExams = await dbPool.query(
+  const nonDeletedFiles = await dbPool.query(
     `
     SELECT
       COUNT(e.id)::INTEGER AS count
@@ -61,8 +61,8 @@ export const deleteCourse = async (courseId: CourseId) => {
     [courseId]
   )
 
-  if (Count.parse(nonDeletedExams.rows[0]) > 0) {
-    throw new CannotDeleteError('Cannot delete a course with exam documents.')
+  if (Count.parse(nonDeletedFiles.rows[0]) > 0) {
+    throw new CannotDeleteError('Cannot delete a course with documents.')
   }
 
   const result = await dbPool.query(
@@ -80,14 +80,14 @@ export const deleteCourse = async (courseId: CourseId) => {
   return deletedCourse
 }
 
-export const deleteExam = async (examId: ExamId) =>
+export const deleteFile = async (fileId: FileId) =>
   await dbPool.query(
     `
     UPDATE exams
     SET removed_at = NOW()
     WHERE id = $1 AND removed_at IS NULL
   `,
-    [examId]
+    [fileId]
   )
 
 export const renameCourse = async (
@@ -135,7 +135,7 @@ export const getCourseInfo = async (
     return null
   }
 
-  const examsResult = await dbPool.query(
+  const filesResult = await dbPool.query(
     `
     SELECT
       e.id,
@@ -152,7 +152,7 @@ export const getCourseInfo = async (
     [courseId]
   )
 
-  const files = examsResult.rows.map(exam => ExamLI.parse(exam))
+  const files = filesResult.rows.map(file => FileLI.parse(file))
   const exams = files.filter(file => file.type === 'exam')
   const notes = files.filter(file => file.type === 'notes')
   const exercises = files.filter(file => file.type === 'exercise')
@@ -220,8 +220,8 @@ export const findCourseById = async (
   return course.data
 }
 
-export const findCourseByExamId = async (
-  examId: ExamId
+export const findCourseByFileId = async (
+  fileId: FileId
 ): Promise<Course | null> => {
   const result = await dbPool.query(
     `
@@ -237,7 +237,7 @@ export const findCourseByExamId = async (
     GROUP BY c.id
     LIMIT 1
   `,
-    [examId]
+    [fileId]
   )
 
   const course = CourseLI.safeParse(result.rows[0])
@@ -249,9 +249,9 @@ export const findCourseByExamId = async (
   return course.data
 }
 
-export const getExamFileNameById = async (
-  examId: ExamId
-): Promise<ExamInfo | null> => {
+export const getFileNameById = async (
+  fileId: FileId
+): Promise<FileInfo | null> => {
   const result = await dbPool.query(
     `
     SELECT
@@ -264,10 +264,10 @@ export const getExamFileNameById = async (
     WHERE e.id = $1 AND e.removed_at IS NULL
     LIMIT 1
   `,
-    [examId]
+    [fileId]
   )
 
-  const info = ExamInfo.safeParse(result.rows[0])
+  const info = FileInfo.safeParse(result.rows[0])
 
   if (!info.success) {
     return null
@@ -276,11 +276,11 @@ export const getExamFileNameById = async (
   return info.data
 }
 
-export const renameExamFile = async (
-  examId: ExamId,
+export const updateFile = async (
+  fileId: FileId,
   newType: string,
   newFilename: string
-): Promise<Exam | null> => {
+): Promise<File | null> => {
   const updatedRows = await dbPool.query(
     `
     UPDATE exams
@@ -290,11 +290,11 @@ export const renameExamFile = async (
     RETURNING
       id, type, course_id, file_name, mime_type, upload_date, file_path
   `,
-    [examId, newFilename, newType]
+    [fileId, newFilename, newType]
   )
 
-  const updatedExam = ExamLI.parse(updatedRows.rows[0])
-  return updatedExam
+  const updatedFile = FileLI.parse(updatedRows.rows[0])
+  return updatedFile
 }
 
 export const createCourse = async (course: CreateCourse) => {
@@ -313,7 +313,7 @@ export const createCourse = async (course: CreateCourse) => {
   return createdCourse
 }
 
-export const createExam = async (exam: CreateExam) => {
+export const createFile = async (file: CreateFile) => {
   const result = await dbPool.query(
     `
     INSERT INTO exams
@@ -323,15 +323,15 @@ export const createExam = async (exam: CreateExam) => {
     RETURNING
       id, type, course_id, file_name, mime_type, upload_date, file_path
   `,
-    [exam.type, exam.courseId, exam.fileName, exam.mimeType, exam.filePath]
+    [file.type, file.courseId, file.fileName, file.mimeType, file.filePath]
   )
 
-  const createdExam = ExamLI.parse(result.rows[0])
+  const createdFile = FileLI.parse(result.rows[0])
 
-  return createdExam
+  return createdFile
 }
 
-export const getAllExams = async () => {
+export const getAllFiles = async () => {
   const results = await dbPool.query(
     `
     SELECT
@@ -346,16 +346,17 @@ export const getAllExams = async () => {
   `
   )
 
-  const exams = results.rows.map(exam => ExamLI.parse(exam))
+  const files = results.rows.map(file => FileLI.parse(file))
 
-  return exams
+  return files
 }
 
-export const findExamById = async (examId: number) => {
+export const findFileById = async (fileId: number) => {
   const result = await dbPool.query(
     `
     SELECT
       e.id,
+      e.type,
       e.course_id,
       e.file_name,
       e.mime_type,
@@ -365,14 +366,14 @@ export const findExamById = async (examId: number) => {
     WHERE e.id = $1 AND e.removed_at IS NULL
     LIMIT 1
   `,
-    [examId]
+    [fileId]
   )
 
-  const exam = ExamLI.safeParse(result.rows[0])
+  const file = FileLI.safeParse(result.rows[0])
 
-  if (!exam.success) {
+  if (!file.success) {
     return null
   }
 
-  return exam.data
+  return file.data
 }

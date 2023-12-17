@@ -7,18 +7,18 @@ import { redirect } from 'next/navigation'
 
 import configs from '@lib/config'
 import { urlForCourse } from '@lib/courses'
-import { getCourseInfo, createExam } from '@services/archive'
+import { getCourseInfo, createFile } from '@services/archive'
 import s3 from '@services/s3'
 import { validateRights } from '@services/tkoUserService'
 
 import Button from '@components/Button'
 
-interface UploadExamProps {
+interface UploadFileProps {
   courseId: number
 }
 
-const UploadExam = async ({ courseId }: UploadExamProps) => {
-  const uploadExam = async (formData: FormData) => {
+const UploadFiles = async ({ courseId }: UploadFileProps) => {
+  const uploadFiles = async (formData: FormData) => {
     'use server'
     const isRights = await validateRights('upload')
     if (!isRights) {
@@ -36,7 +36,7 @@ const UploadExam = async ({ courseId }: UploadExamProps) => {
       .filter(entry => entry instanceof File)
       .map(entry => entry as File)
 
-    const exams = await Promise.all(
+    const uploadedFiles = await Promise.all(
       files.map(async file => {
         const originalFilename = file.name as string
         const contentType = file.type as string
@@ -56,7 +56,7 @@ const UploadExam = async ({ courseId }: UploadExamProps) => {
 
         await s3.send(new PutObjectCommand(params))
 
-        const exam = await createExam({
+        const createdFile = await createFile({
           type: type,
           courseId: course.id,
           fileName: originalFilename,
@@ -64,7 +64,7 @@ const UploadExam = async ({ courseId }: UploadExamProps) => {
           mimeType: contentType
         })
 
-        return exam
+        return createdFile
       })
     )
     redirect(urlForCourse(course.id, course.name))
@@ -76,7 +76,7 @@ const UploadExam = async ({ courseId }: UploadExamProps) => {
   }
 
   return (
-    <form action={uploadExam}>
+    <form action={uploadFiles}>
       <div className="flex flex-col gap-2">
         <p className="font-serif text-xl font-bold leading-tight">
           Upload a new file here
@@ -104,8 +104,8 @@ const UploadExam = async ({ courseId }: UploadExamProps) => {
         <input hidden name="courseId" defaultValue={courseId} />
         <Button
           type="submit"
-          name="uploadExam"
-          title={`Upload exam`}
+          name="uploadFile"
+          title={`Upload files`}
           text={`Upload`}
           className="w-fit text-left"
         />
@@ -114,4 +114,4 @@ const UploadExam = async ({ courseId }: UploadExamProps) => {
   )
 }
 
-export default UploadExam
+export default UploadFiles

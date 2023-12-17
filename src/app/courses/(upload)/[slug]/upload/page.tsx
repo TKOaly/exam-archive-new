@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 // import { slugifyCourseName, urlForCourse } from '@lib/courses'
 import { getCourseInfo } from '@services/archive'
 
-import UploadExam from '@components/tools/UploadExam'
+import UploadFiles from '@components/tools/UploadFiles'
 import { validateRights } from '@services/tkoUserService'
 
 const parseSlug = (slug: string) => {
@@ -44,7 +44,7 @@ const Page = async ({ params }: any) => {
 
   return (
     <div className="content-container flex flex-col gap-8 pb-5">
-      <UploadExam courseId={course.id} />
+      <UploadFiles courseId={course.id} />
     </div>
   )
 }

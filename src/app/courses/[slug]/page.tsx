@@ -3,9 +3,9 @@ import { notFound, redirect } from 'next/navigation'
 import { getSessionUser } from '@services/tkoUserService'
 import { getCourseInfo } from '@services/archive'
 
-import ExamListHeader from '@components/ExamList/ExamListHeader'
-import NoExamsFound from '@components/ExamList/NoExamsFound'
-import ExamListItem from '@components/ExamList/ExamListItem'
+import FileListHeader from '@components/FileList/FileListHeader'
+import NotFound from '@components/FileList/NotFound'
+import FileListItem from '@components/FileList/FileListItem'
 
 // import { slugifyCourseName, urlForCourse } from '@lib/courses'
 
@@ -53,10 +53,10 @@ const Page = async ({ params }: any) => {
           data-course-id={course.id}
           data-course-name={course.name}
         >
-          <ExamListHeader showManage={rights.remove || rights.rename} />
-          {course.exams.length === 0 && <NoExamsFound />}
+          <FileListHeader showManage={rights.remove || rights.rename} />
+          {course.exams.length === 0 && <NotFound />}
           {course.exams.map(exam => (
-            <ExamListItem
+            <FileListItem
               exam={exam}
               showManage={rights.remove || rights.rename}
             />
@@ -74,10 +74,10 @@ const Page = async ({ params }: any) => {
           data-course-id={course.id}
           data-course-name={course.name}
         >
-          <ExamListHeader showManage={rights.remove || rights.rename} />
-          {course.notes.length === 0 && <NoExamsFound />}
+          <FileListHeader showManage={rights.remove || rights.rename} />
+          {course.notes.length === 0 && <NotFound />}
           {course.notes.map(exam => (
-            <ExamListItem
+            <FileListItem
               exam={exam}
               showManage={rights.remove || rights.rename}
             />
@@ -95,10 +95,10 @@ const Page = async ({ params }: any) => {
           data-course-id={course.id}
           data-course-name={course.name}
         >
-          <ExamListHeader showManage={rights.remove || rights.rename} />
-          {course.exercises.length === 0 && <NoExamsFound />}
+          <FileListHeader showManage={rights.remove || rights.rename} />
+          {course.exercises.length === 0 && <NotFound />}
           {course.exercises.map(exam => (
-            <ExamListItem
+            <FileListItem
               exam={exam}
               showManage={rights.remove || rights.rename}
             />
@@ -116,10 +116,10 @@ const Page = async ({ params }: any) => {
           data-course-id={course.id}
           data-course-name={course.name}
         >
-          <ExamListHeader showManage={rights.remove || rights.rename} />
-          {course.others.length === 0 && <NoExamsFound />}
+          <FileListHeader showManage={rights.remove || rights.rename} />
+          {course.others.length === 0 && <NotFound />}
           {course.others.map(exam => (
-            <ExamListItem
+            <FileListItem
               exam={exam}
               showManage={rights.remove || rights.rename}
             />

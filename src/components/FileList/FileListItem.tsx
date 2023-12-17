@@ -5,7 +5,7 @@ import fiLocale from 'date-fns/locale/fi'
 import Link from 'next/link'
 import { PencilSquareIcon } from '@heroicons/react/24/solid'
 
-import { type ExamListItem } from '@lib/types'
+import type { FileListItem as FileListItemType } from '@lib/types'
 
 import { iconForFile } from '@components/icons/File'
 
@@ -17,13 +17,13 @@ const splitExtension = (fileName: string) => {
   return { extname, basename }
 }
 
-interface ExamListItemProps {
-  exam: ExamListItem
+interface FileListItemProps {
+  file: FileListItemType
   showManage: boolean
 }
 
-const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
-  const { id, fileName, mimeType, uploadDate, downloadUrl } = exam
+const FileListItem = ({ file, showManage }: FileListItemProps) => {
+  const { id, fileName, mimeType, uploadDate, downloadUrl } = file
   const Icon = iconForFile(mimeType)
 
   const { extname, basename } = splitExtension(fileName)
@@ -33,8 +33,8 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
       key={id}
       role="row"
       className="list-row py-2 hover:bg-slate-100"
-      data-exam-id={id}
-      data-exam-name={fileName}
+      data-file-id={id}
+      data-file-name={fileName}
     >
       <Icon
         role="cell"
@@ -69,17 +69,17 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
       {showManage && (
         <Link
           role="cell"
-          aria-label={`Manage "${fileName}"`}
+          aria-label={`Manage file "${fileName}"`}
           title={`Manage "${fileName}"`}
           href={`${downloadUrl}/manage`}
           className="list-row-manage mx-2 flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"
         >
           <PencilSquareIcon className="h-4 w-4 self-center" />{' '}
-          <span className="sr-only">{`Manage "${fileName}"`}</span>
+          <span className="sr-only">{`Manage file "${fileName}"`}</span>
         </Link>
       )}
     </div>
   )
 }
 
-export default ExamListItem
+export default FileListItem

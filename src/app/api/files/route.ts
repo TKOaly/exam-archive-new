@@ -1,15 +1,8 @@
-import { findExamById } from '@services/archive'
+import { getAllFiles } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export const GET = async (
-  req: Request,
-  {
-    params
-  }: {
-    params: { examId: string }
-  }
-) => {
+export const GET = async (req: NextRequest) => {
   try {
     const isRights = await validateRights('access')
     if (!isRights) {
@@ -21,12 +14,10 @@ export const GET = async (
       )
     }
 
-    const examId = parseInt(params.examId, 10)
-
-    const exam = await findExamById(examId)
-    return NextResponse.json(exam)
+    const files = await getAllFiles()
+    return NextResponse.json(files)
   } catch (e) {
-    console.error('Error while getting exam', e)
+    console.error('Error while getting files', e)
     return NextResponse.json(
       { error: '500 Internal Server Error' },
       {

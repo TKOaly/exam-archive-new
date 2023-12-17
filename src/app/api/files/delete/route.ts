@@ -1,14 +1,14 @@
 import { z } from 'zod'
 
-import { findCourseByExamId, deleteExam } from '@services/archive'
+import { findCourseByFileId, deleteFile } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
 import { NextRequest, NextResponse } from 'next/server'
 
-const DeleteExamBody = z
+const DeleteFileBody = z
   .object({
-    examId: z.number()
+    fileId: z.number()
   })
-  .transform(examId => examId.examId)
+  .transform(fileId => fileId.fileId)
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -24,9 +24,9 @@ export const POST = async (req: NextRequest) => {
 
     const body = await req.json()
 
-    const examId = DeleteExamBody.parse(body)
+    const fileId = DeleteFileBody.parse(body)
 
-    const course = await findCourseByExamId(examId)
+    const course = await findCourseByFileId(fileId)
     if (!course) {
       return NextResponse.json(
         { error: `Exam does not exist.` },
@@ -36,7 +36,7 @@ export const POST = async (req: NextRequest) => {
       )
     }
 
-    await deleteExam(examId)
+    await deleteFile(fileId)
     // don't delete from S3, purge S3 objects with no references separately via admin panel
     // also, TODO admin panel lol!
 

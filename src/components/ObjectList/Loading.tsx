@@ -1,6 +1,9 @@
-const Loading = ({ showManage }: { showManage: boolean }) => {
+const Loading = () => {
   return (
-    <div role="row" className="admin-list-row animate-pulse py-2 hover:bg-slate-100">
+    <div
+      role="row"
+      className="admin-list-row animate-pulse py-2 hover:bg-slate-100"
+    >
       <div
         role="cell"
         className="list-row-icon mx-2 h-6 w-6 rounded-lg bg-gray-300"

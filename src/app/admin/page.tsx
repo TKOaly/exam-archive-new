@@ -5,8 +5,8 @@ import { adminGetS3Objects, sortByPrefixThenObjNameAsc } from '@services/admin'
 
 import { validateRights } from '@services/tkoUserService'
 
-import FileListItem from '@components/FileList/FileListItem'
-import FileListHeader from '@components/FileList/FileListHeader'
+import ObjectListItem from '@components/ObjectList/ObjectListItem'
+import ObjectListHeader from '@components/ObjectList/ObjectListHeader'
 
 const Page = async () => {
   if (config.NODE_ENV !== 'development') {
@@ -23,16 +23,16 @@ const Page = async () => {
   const objects = s3Objects.sort(sortByPrefixThenObjNameAsc)
 
   return (
-          <main
-            role="table"
-            aria-label="Files"
-            className="admin-list-container divide-y"
-          >
-            <FileListHeader />
-            {objects.map((file) => (
-              <FileListItem file={file} />
-            ))}
-          </main>
+    <main
+      role="table"
+      aria-label="Files"
+      className="admin-list-container divide-y"
+    >
+      <ObjectListHeader />
+      {objects.map(file => (
+        <ObjectListItem file={file} />
+      ))}
+    </main>
   )
 }
 

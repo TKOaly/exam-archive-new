@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 
 import { urlForCourse } from '@lib/courses'
-import { ExamName } from '@lib/types'
+import { ExamFile, ExamName } from '@lib/types'
 import { getExamFileNameById, renameExamFile } from '@services/archive'
 import { validateRights } from '@services/tkoUserService'
 
@@ -10,10 +10,15 @@ import Input from '@components/Input'
 
 interface RenameExamProps {
   currentName: string
+  currentType: string
   examId: number
 }
 
-const RenameExam = async ({ currentName, examId }: RenameExamProps) => {
+const RenameExam = async ({
+  currentName,
+  currentType,
+  examId
+}: RenameExamProps) => {
   const handleRenameExam = async (formData: FormData) => {
     'use server'
     const isRights = await validateRights('rename')
@@ -21,26 +26,27 @@ const RenameExam = async ({ currentName, examId }: RenameExamProps) => {
       return `Unauthorized`
     }
 
-    const body = ExamName.safeParse(formData.get('examName'))
+    const body = ExamFile.safeParse({
+      examId: formData.get('examId'),
+      examName: formData.get('examName'),
+      type: formData.get('type')
+    })
     if (!body.success) {
-      return 'Invalid exam name'
+      return 'Invalid exam parameters'
     }
 
-    const examId = parseInt(formData.get('examId') as string, 10) // TODO: make better type check
-    if (isNaN(examId)) {
-      return 'Invalid exam id'
-    }
+    const { examId, examName, type } = body.data
 
     const info = await getExamFileNameById(examId)
     if (!info) {
       return `Exam not found`
     }
 
-    if (body.data === currentName) {
+    if (examName === currentName && type === currentType) {
       return 'No changes needed'
     }
 
-    await renameExamFile(examId, body.data)
+    await renameExamFile(examId, type, examName)
     redirect(urlForCourse(info.courseId, info.courseName))
   }
 
@@ -62,6 +68,19 @@ const RenameExam = async ({ currentName, examId }: RenameExamProps) => {
           defaultValue={currentName}
           className="w-full lg:w-1/2"
         />
+        <div className="flex flex-col">
+          <p>Select type:</p>
+          <select
+            name="type"
+            className="my-2 box-border w-full p-3 shadow-lg ring ring-inset ring-gray-800 focus:ring-gray-400 lg:w-1/2"
+            defaultValue={currentType}
+          >
+            <option value="exam">Exam</option>
+            <option value="notes">Lecture notes</option>
+            <option value="exercise">Exercise</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
         <input hidden name="examId" defaultValue={examId} />
         <Button
           type="submit"

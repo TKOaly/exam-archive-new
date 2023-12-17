@@ -154,7 +154,7 @@ export const getCourseInfo = async (
 
   const files = examsResult.rows.map(exam => ExamLI.parse(exam))
   const exams = files.filter(file => file.type === 'exam')
-  const notes = files.filter(file => file.type === 'note')
+  const notes = files.filter(file => file.type === 'notes')
   const exercises = files.filter(file => file.type === 'exercise')
   const others = files.filter(file => file.type === 'other')
 
@@ -256,6 +256,7 @@ export const getExamFileNameById = async (
     `
     SELECT
       e.file_name,
+      e.type,
       e.course_id,
       c.name
     FROM exams e
@@ -277,17 +278,19 @@ export const getExamFileNameById = async (
 
 export const renameExamFile = async (
   examId: ExamId,
+  newType: string,
   newFilename: string
 ): Promise<Exam | null> => {
   const updatedRows = await dbPool.query(
     `
     UPDATE exams
-    SET file_name = $2
+    SET file_name = $2,
+        type = $3
     WHERE id = $1 AND removed_at IS NULL
     RETURNING
-      id, course_id, file_name, mime_type, upload_date, file_path
+      id, type, course_id, file_name, mime_type, upload_date, file_path
   `,
-    [examId, newFilename]
+    [examId, newFilename, newType]
   )
 
   const updatedExam = ExamLI.parse(updatedRows.rows[0])

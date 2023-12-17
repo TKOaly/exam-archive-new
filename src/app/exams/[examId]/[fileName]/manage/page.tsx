@@ -27,7 +27,11 @@ const Page = async ({
 
   return (
     <div className="content-container flex flex-col gap-8 pb-5">
-      <RenameExam examId={examId} currentName={exam.fileName} />
+      <RenameExam
+        examId={examId}
+        currentName={exam.fileName}
+        currentType={exam.type}
+      />
       <DeleteExam examId={examId} fileName={exam.fileName} />
     </div>
   )

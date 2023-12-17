@@ -30,6 +30,7 @@ const ExamListItem = ({ exam, showManage }: ExamListItemProps) => {
 
   return (
     <div
+      key={id}
       role="row"
       className="list-row py-2 hover:bg-slate-100"
       data-exam-id={id}

@@ -131,7 +131,7 @@ export const CourseLI = z
 export type CourseLI = z.infer<typeof CourseLI>
 
 export const CreateExam = z.object({
-  type: z.string(),
+  type: z.string().regex(/exam|notes|exercise|other/),
   courseId: z.number(),
   fileName: z.string(),
   mimeType: z.string(),
@@ -154,11 +154,13 @@ export type Count = z.infer<typeof Count>
 export const ExamInfo = z
   .object({
     file_name: z.string(),
+    type: z.string(),
     course_id: z.number(),
     name: z.string()
   })
   .transform(obj => ({
     fileName: obj.file_name,
+    type: obj.type,
     courseId: obj.course_id,
     courseName: obj.name
   }))
@@ -184,3 +186,16 @@ export type CourseName = z.infer<typeof CourseName>
 
 export const ExamName = z.string().min(1)
 export type ExamName = z.infer<typeof ExamName>
+
+export const ExamFile = z
+  .object({
+    examId: z.string().regex(/^\d+$/),
+    examName: z.string().min(1),
+    type: z.string().regex(/exam|notes|exercise|other/)
+  })
+  .transform(obj => ({
+    examId: parseInt(obj.examId, 10),
+    examName: obj.examName,
+    type: obj.type
+  }))
+export type ExamFile = z.infer<typeof ExamFile>

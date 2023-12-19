@@ -7,13 +7,16 @@ SCRIPT_ARGS=( "$@" )
 
 function wait-for-server() {
     ADDRESS="$1"
+    MC_USER="${MINIO_ROOT_USER:-minioadmin}"
+    MC_PASSWORD="${MINIO_ROOT_PASSWORD:-minioadmin}"
 
     set +e # ignore curl's error code since we need to handle it ourselves
+    mc alias -q set local "http://$ADDRESS" "$MC_USER" "$MC_PASSWORD" > /dev/null
     while true
     do
         # wait until curling the address gives OK return code
         # (see curl manpage for what -f does)
-        curl -fs "http://$ADDRESS" &> /dev/null && break
+        mc admin -q info local > /dev/null && break
         sleep 1
     done
     set -e # revert set -e so script stops on errors
@@ -68,8 +71,8 @@ then
     # file.
     echo ""
     echo "Starting server to check bucket status..."
-    API_ADDRESS="127.0.0.1:9000"
-    CONSOLE_ADDRESS="127.0.0.1:9001"
+    API_ADDRESS="127.0.0.1:9001"
+    CONSOLE_ADDRESS="127.0.0.1:9002"
     minio server "$DATA_DIR" \
         --quiet \
         --address "$API_ADDRESS" \
@@ -77,10 +80,12 @@ then
         & # background process
     SERVER_PID=$!
 
+    sleep 2
+
     echo ""
     echo "Server started. Waiting for console to come up."
     # Wait for the admin console to wake up
-    wait-for-server "$CONSOLE_ADDRESS"
+    wait-for-server "$API_ADDRESS"
 
     echo ""
     echo "Server awake. Checking bucket status and creating missing buckets."

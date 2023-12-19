@@ -58,7 +58,7 @@ function db_health_check() {
 
     echo "::debug::Database health check in $COMPOSE_PROJECT_NAME"
     COUNTER=0
-    until docker-compose exec -t db pg_isready -U tarpisto &>/dev/null; do
+    until COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME docker-compose exec -t db pg_isready -U tarpisto &>/dev/null; do
         echo "Waiting for database to be healthy. Trying again in 5 seconds."
 
         COUNTER=$((COUNTER+1))
@@ -84,7 +84,7 @@ function s3_health_check() {
 
     echo "::debug::S3 health check in $COMPOSE_PROJECT_NAME"
     COUNTER=0
-    until curl -I "http://$(docker-compose port s3 9000)/minio/health/live" &>/dev/null; do
+    until curl -I "http://$(COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME docker-compose port s3 9001)/minio/health/live" &>/dev/null; do
         echo "Waiting for s3 to be healthy. Trying again in 5 seconds."
 
         COUNTER=$((COUNTER+1))

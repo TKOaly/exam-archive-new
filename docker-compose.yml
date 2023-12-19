@@ -6,7 +6,7 @@ services:
       context: ./docker
       dockerfile: minio.Dockerfile
     healthcheck:
-      test: curl -f http://localhost:9000/minio/health/live
+      test: mc admin info local
       interval: 5s
       timeout: 5s
       retries: 5
@@ -17,8 +17,8 @@ services:
     volumes:
       - tarpisto-minio-data:/data
     ports:
-      - 127.0.0.1::9000
-      - 127.0.0.1::9001
+      - 127.0.0.1::9001 # S3
+      - 127.0.0.1::9002 # Console
 
   db:
     image: postgres:15.2-alpine

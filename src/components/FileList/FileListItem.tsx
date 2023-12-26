@@ -1,6 +1,6 @@
 import path from 'path'
-import formatDate from 'date-fns/format'
-import fiLocale from 'date-fns/locale/fi'
+import { format } from 'date-fns'
+import { fi as fiLocale } from 'date-fns/locale'
 
 import Link from 'next/link'
 import { PencilSquareIcon } from '@heroicons/react/24/solid'
@@ -57,13 +57,13 @@ const FileListItem = ({ file, showManage }: FileListItemProps) => {
         <time
           role="cell"
           className="list-row-date font-mono text-xs text-gray-600"
-          title={`Uploaded on ${formatDate(uploadDate, 'yyyy-MM-dd', {
+          title={`Uploaded on ${format(uploadDate, 'yyyy-MM-dd', {
             locale: fiLocale
           })}`}
           dateTime={uploadDate.toISOString()}
           data-test-id="upload-date-time"
         >
-          {formatDate(uploadDate, 'yyyy-MM-dd', { locale: fiLocale })}
+          {format(uploadDate, 'yyyy-MM-dd', { locale: fiLocale })}
         </time>
       )}
       {showManage && (

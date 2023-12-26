@@ -1,5 +1,5 @@
-import formatDate from 'date-fns/format'
-import fiLocale from 'date-fns/locale/fi'
+import { format } from 'date-fns'
+import { fi as fiLocale } from 'date-fns/locale'
 
 import Link from 'next/link'
 import { FolderIcon, PencilSquareIcon } from '@heroicons/react/24/solid'
@@ -39,13 +39,13 @@ const CourseListItem = ({ course, showManage }: CourseListItemProps) => {
         <time
           role="cell"
           className="list-row-date font-mono text-xs text-gray-600"
-          title={`Last modified on ${formatDate(lastModified, 'yyyy-MM-dd', {
+          title={`Last modified on ${format(lastModified, 'yyyy-MM-dd', {
             locale: fiLocale
           })}`}
           dateTime={lastModified.toISOString()}
           data-test-id="last-modified-time"
         >
-          {formatDate(lastModified, 'yyyy-MM-dd', { locale: fiLocale })}
+          {format(lastModified, 'yyyy-MM-dd', { locale: fiLocale })}
         </time>
       )}
       {showManage && (

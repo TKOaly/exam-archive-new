@@ -376,7 +376,7 @@ test.describe('accessibility tests', () => {
   })
 
   test('not found', async ({ page, browserName, isMobile }, { title }) => {
-    await page.goto('/exams/999-no-existing-course')
+    await page.goto('/courses/999-no-existing-course')
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude('next-route-announcer')

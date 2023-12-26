@@ -11,6 +11,10 @@ const Error = ({ error, reset }: { error: Error; reset: () => void }) => {
     console.error('Error:', error)
   }, [error])
 
+  if (error.message === 'NEXT_NOT_FOUND') {
+    return null
+  }
+
   return (
     <main>
       <div className="m-5 flex flex-col items-center gap-4 bg-gray-50 px-20 py-10">

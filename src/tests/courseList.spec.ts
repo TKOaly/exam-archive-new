@@ -1,11 +1,11 @@
 import { expect } from '@playwright/test'
 import { test } from './fixtures'
-import { CourseListItem, ExamListItem } from '../lib/types'
+import { CourseListItem, FileListItem } from '../lib/types'
 import { urlForCourse, urlForCourseListing } from '../lib/courses'
 
 test.describe('courseList looks right', () => {
   let courses: CourseListItem[] = []
-  let exams: ExamListItem[] = []
+  let files: FileListItem[] = []
 
   test.beforeAll(async ({ request }, { workerIndex }) => {
     const introRes = await request.post('/api/courses/create', {
@@ -14,9 +14,10 @@ test.describe('courseList looks right', () => {
     const introCourse: CourseListItem = await introRes.json()
     courses = [...courses, introCourse]
 
-    const newExamsRes = await request.post('/api/exams/upload', {
+    const newFilesRes = await request.post('/api/files/upload', {
       multipart: {
         courseId: introCourse.id,
+        type: 'exam',
         document: {
           name: `document-${workerIndex}.txt`,
           mimeType: 'text/plain',
@@ -34,9 +35,9 @@ test.describe('courseList looks right', () => {
         }
       }
     })
-    const newExams: ExamListItem[] = await newExamsRes.json()
+    const newFiles: FileListItem[] = await newFilesRes.json()
 
-    exams = [...exams, ...newExams]
+    files = [...files, ...newFiles]
 
     const advancedRes = await request.post('/api/courses/create', {
       data: { courseName: `Advanced course in Testing -${workerIndex}-` }
@@ -47,11 +48,11 @@ test.describe('courseList looks right', () => {
 
   test.afterAll(async ({ request }) => {
     await Promise.all(
-      exams.map(
-        async exam =>
-          await request.post(`/api/exams/delete`, {
+      files.map(
+        async file =>
+          await request.post(`/api/files/delete`, {
             data: {
-              examId: exam.id
+              fileId: file.id
             }
           })
       )
@@ -85,7 +86,7 @@ test.describe('courseList looks right', () => {
     await courseList.goto()
 
     const headers = page.getByRole('row', {
-      name: `Icon Course${isMobile ? ' ' : ' Last modified '}Manage`
+      name: `Icon Course Last modified Manage`
     })
     await expect(headers).toBeVisible()
   })
@@ -102,10 +103,10 @@ test.describe('courseList looks right', () => {
     const name = row.getByText(`Introduction to testing -${workerIndex}-`, {
       exact: true
     })
-    const lastModified = row.getByTestId(
-      `last-modified-time${isMobile ? '-mobile' : ''}`
+    const lastModified = row.getByTestId(`last-modified-time`)
+    const manage = row.getByLabel(
+      `Manage course "Introduction to testing -${workerIndex}-"`
     )
-    const manage = row.getByRole('link', { name: 'manage' })
     const manageIcon = manage.locator('svg').first()
 
     await expect(row).toBeVisible()
@@ -140,6 +141,17 @@ test.describe('courseList looks right', () => {
     )
   })
 
+  test('courselisting row does not show manage if no rights', async ({
+    kayttajaPage
+  }, { workerIndex }) => {
+    await kayttajaPage.goto('/')
+
+    const manage = kayttajaPage.getByLabel(
+      `Manage course "Introduction to testing -${workerIndex}-"`
+    )
+    await expect(manage).not.toBeVisible()
+  })
+
   test('courselisting row hides last modified if no exams', async ({
     courseList
   }, { workerIndex }) => {
@@ -148,12 +160,12 @@ test.describe('courseList looks right', () => {
     const row = await courseList.getCourseItemRowByName(
       `Advanced course in Testing -${workerIndex}-`
     )
-    const lastModified = row.getByTestId('last-modified')
+    const lastModified = row.getByTestId('last-modified-time')
     await expect(row).toBeVisible()
     await expect(row).toHaveText(
       `Advanced course in Testing -${workerIndex}- Manage course "Advanced course in Testing -${workerIndex}-"`
     )
-    await expect(lastModified).toBeEmpty()
+    await expect(lastModified).not.toBeVisible()
   })
 
   test('manage course navigation is right', async ({ courseList, page }, {
@@ -182,7 +194,7 @@ test.describe('courseList looks right', () => {
   })
 })
 
-// test('examList screenshot testing', async ({ page }) => {
+// test('FileLIst screenshot testing', async ({ page }) => {
 //   await page.goto('/')
 //   await expect(page).toHaveScreenshot({
 //     fullPage: true
@@ -196,7 +208,7 @@ test.describe('courselisting functions works', () => {
     })
     const introCourse: CourseListItem = await introRes.json()
 
-    await request.post('/api/exams/upload', {
+    await request.post('/api/files/upload', {
       multipart: {
         courseId: introCourse.id,
         pdf: {
@@ -209,15 +221,15 @@ test.describe('courselisting functions works', () => {
   })
 
   test.afterEach(async ({ request }, { testId }) => {
-    const exams: ExamListItem[] = await (await request.get('/api/exams')).json()
+    const files: FileListItem[] = await (await request.get('/api/files')).json()
     await Promise.all(
-      exams
-        .filter(exam => exam.fileName.includes(testId))
+      files
+        .filter(file => file.fileName.includes(testId))
         .map(
-          async exam =>
-            await request.post(`/api/exams/delete`, {
+          async file =>
+            await request.post(`/api/files/delete`, {
               data: {
-                examId: exam.id
+                fileId: file.id
               }
             })
         )
@@ -265,8 +277,7 @@ test.describe('courselisting functions works', () => {
 
     await expect(modal).not.toBeVisible()
 
-    // Disabled as https://github.com/vercel/next.js/issues/42784#issuecomment-1311778290 needs investigation
-    // await expect(page).toHaveTitle(`${name} - Tärpistö - TKO-äly ry`)
+    await expect(page).toHaveTitle(`${name} - Tärpistö - TKO-äly ry`)
 
     // Disabled as flash messages are not shown yet
     // const success = page.getByText(
@@ -297,8 +308,7 @@ test.describe('courselisting functions works', () => {
 
     await page.waitForURL(/introduction-to-course-creation/)
 
-    // Disabled as https://github.com/vercel/next.js/issues/42784#issuecomment-1311778290 needs investigation
-    // await expect(page).toHaveTitle(`${name} - Tärpistö - TKO-äly ry`)
+    await expect(page).toHaveTitle(`${name} - Tärpistö - TKO-äly ry`)
 
     // Disabled as flash messages are not shown yet
     // const success = page.getByText(
@@ -307,7 +317,7 @@ test.describe('courselisting functions works', () => {
     // await expect(success).toBeVisible()
   })
 
-  test('rename course via modal works', async ({ page, courseList, examList }, {
+  test('rename course via modal works', async ({ page, courseList, fileList }, {
     testId
   }) => {
     await courseList.gotoCourseManagementModalByName(
@@ -348,7 +358,7 @@ test.describe('courselisting functions works', () => {
     // await expect(success).toBeVisible()
   })
 
-  test('rename course works', async ({ page, courseList, examList }, {
+  test('rename course works', async ({ page, courseList, fileList }, {
     testId
   }) => {
     await courseList.gotoCourseManagementByName(

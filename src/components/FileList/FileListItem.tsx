@@ -69,7 +69,7 @@ const FileListItem = ({ file, showManage }: FileListItemProps) => {
       {showManage && (
         <Link
           role="cell"
-          aria-label={`Manage file "${fileName}"`}
+          aria-label={`Manage "${fileName}"`}
           title={`Manage "${fileName}"`}
           href={`${downloadUrl}/manage`}
           className="list-row-manage mx-2 flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"

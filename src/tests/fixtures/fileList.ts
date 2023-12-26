@@ -2,11 +2,11 @@ import { Page, Locator } from '@playwright/test'
 import {
   urlForCourse,
   urlForCourseListing,
-  urlForExamManagement,
-  urlForExamUpload
+  urlForFileManagement,
+  urlForFileUpload
 } from '../../lib/courses'
 
-export class ExamList {
+export class FileList {
   private readonly fileInput: Locator
   private readonly uploadButton: Locator
 
@@ -20,7 +20,7 @@ export class ExamList {
   }
 
   async gotoUpload(courseId: number, courseName: string) {
-    await this.page.goto(urlForExamUpload(courseId, courseName))
+    await this.page.goto(urlForFileUpload(courseId, courseName))
   }
 
   async gotoUploadById(courseId: number) {
@@ -28,7 +28,7 @@ export class ExamList {
     const courseName = (await this.page
       .locator(`[data-course-id="${courseId}"]`)
       .getAttribute('data-course-name')) as string
-    await this.page.goto(urlForExamUpload(courseId, courseName))
+    await this.page.goto(urlForFileUpload(courseId, courseName))
   }
 
   async gotoUploadByName(courseName: string) {
@@ -36,7 +36,7 @@ export class ExamList {
     const courseId = (await this.page
       .locator(`[data-course-name="${courseName}"]`)
       .getAttribute('data-course-id')) as string
-    await this.page.goto(urlForExamUpload(parseInt(courseId), courseName))
+    await this.page.goto(urlForFileUpload(parseInt(courseId), courseName))
   }
 
   async openUploadModal() {
@@ -45,19 +45,19 @@ export class ExamList {
     await this.page.waitForURL(new RegExp('upload'))
   }
 
-  async gotoExamManagement(examId: number, fileName: string) {
-    await this.page.goto(urlForExamManagement(examId, fileName))
+  async gotoFileManagement(fileId: number, fileName: string) {
+    await this.page.goto(urlForFileManagement(fileId, fileName))
   }
 
-  async openExamManagementModalById(examId: number) {
-    const row = await this.getExamItemRowById(examId)
+  async openFileManagementModalById(fileId: number) {
+    const row = await this.getFileItemRowById(fileId)
     const link = await row.getByRole('link', { name: 'manage' })
     await link.click()
     await this.page.waitForURL(new RegExp('manage'))
   }
 
-  async openExamManagementModalByName(fileName: string) {
-    const row = await this.getExamItemRowByName(fileName)
+  async openFileManagementModalByName(fileName: string) {
+    const row = await this.getFileItemRowByName(fileName)
     const link = await row.getByRole('link', { name: 'manage' })
     await link.click()
     await this.page.waitForURL(new RegExp('manage'))
@@ -72,64 +72,78 @@ export class ExamList {
     await this.uploadButton.click()
   }
 
-  async getExamItemRowById(examId: number) {
-    return await this.page.locator(`div[data-exam-id="${examId}"]`)
+  private getLabelByType = (type: string) => {
+    if (type === 'exam') return 'Exams'
+    if (type === 'notes') return 'Lecture notes'
+    if (type === 'exercise') return 'Exercises'
+    if (type === 'other') return 'Others'
+    return 'Exams'
   }
 
-  async getExamItemRowByName(examName: string) {
-    return await this.page.locator(`div[data-exam-name="${examName}"]`)
+  async getFileItemRowById(fileId: number, type?: string) {
+    const locator = type
+      ? this.page.getByLabel(this.getLabelByType(type))
+      : this.page.getByLabel('Exams')
+    return await locator.locator(`div[data-file-id="${fileId}"]`)
   }
 
-  private async getExamRenameInputById(examId: number) {
-    const examItemRow = await this.getExamItemRowById(examId)
-    return examItemRow.locator('input[name="examName"]')
+  async getFileItemRowByName(fileName: string, type?: string) {
+    const locator = type
+      ? this.page.getByLabel(this.getLabelByType(type))
+      : this.page.getByLabel('Exams')
+    return await locator.locator(`div[data-file-name="${fileName}"]`)
   }
 
-  private async getExamRenameInputByName(examName: string) {
-    const examItemRow = await this.getExamItemRowByName(examName)
-    return examItemRow.locator('input[name="examName"]')
+  private async getFileRenameInputById(fileId: number) {
+    const examItemRow = await this.getFileItemRowById(fileId)
+    return examItemRow.locator('input[name="fileName"]')
   }
 
-  private async getExamRenameSubmitById(examId: number) {
-    const examItemRow = await this.getExamItemRowById(examId)
+  private async getFileRenameInputByName(fileName: string) {
+    const examItemRow = await this.getFileItemRowByName(fileName)
+    return examItemRow.locator('input[name="fileName"]')
+  }
+
+  private async getFileRenameSubmitById(fileId: number) {
+    const examItemRow = await this.getFileItemRowById(fileId)
     return examItemRow.getByRole('button', {
-      name: 'renameExam'
+      name: 'renameFile'
     })
   }
 
-  private async getExamRenameSubmitByName(examName: string) {
-    const examItemRow = await this.getExamItemRowByName(examName)
+  private async getFileRenameSubmitByName(fileName: string) {
+    const examItemRow = await this.getFileItemRowByName(fileName)
     return examItemRow.getByRole('button', {
-      name: 'renameExam'
+      name: 'renameFile'
     })
   }
 
-  private async getExamDeleteSubmitById(examId: number) {
-    const examItemRow = await this.getExamItemRowById(examId)
+  private async getFileDeleteSubmitById(fileId: number) {
+    const examItemRow = await this.getFileItemRowById(fileId)
     return examItemRow.getByRole('button', {
-      name: 'deleteExam'
+      name: 'deleteFile'
     })
   }
 
-  private async getExamDeleteSubmitByName(examName: string) {
-    const examItemRow = await this.getExamItemRowByName(examName)
+  private async getFileDeleteSubmitByName(fileName: string) {
+    const examItemRow = await this.getFileItemRowByName(fileName)
     return examItemRow.getByRole('button', {
-      name: 'deleteExam'
+      name: 'deleteFile'
     })
   }
 
-  async renameExamById(examId: number, newName: string) {
-    await (await this.getExamRenameInputById(examId)).fill(newName)
-    await (await this.getExamRenameSubmitById(examId)).click()
+  async renameFileById(fileId: number, newName: string) {
+    await (await this.getFileRenameInputById(fileId)).fill(newName)
+    await (await this.getFileRenameSubmitById(fileId)).click()
   }
-  async renameExamByName(examName: string, newName: string) {
-    await (await this.getExamRenameInputByName(examName)).fill(newName)
-    await (await this.getExamRenameSubmitByName(examName)).click()
+  async renameFileByName(fileName: string, newName: string) {
+    await (await this.getFileRenameInputByName(fileName)).fill(newName)
+    await (await this.getFileRenameSubmitByName(fileName)).click()
   }
-  async deleteExamById(examId: number) {
-    await (await this.getExamDeleteSubmitById(examId)).click()
+  async deleteFileById(fileId: number) {
+    await (await this.getFileDeleteSubmitById(fileId)).click()
   }
-  async deleteExamByName(examName: string) {
-    await (await this.getExamDeleteSubmitByName(examName)).click()
+  async deleteFileByName(fileName: string) {
+    await (await this.getFileDeleteSubmitByName(fileName)).click()
   }
 }

@@ -23,5 +23,5 @@ export const urlForFileUpload = (id: number, name: string) =>
 export const urlForFile = (fileId: number, fileName: string) =>
   `/files/${fileId}/${fileName}`
 
-export const urlForExamManagement = (fileId: number, fileName: string) =>
+export const urlForFileManagement = (fileId: number, fileName: string) =>
   `${urlForFile(fileId, fileName)}/manage`

@@ -1,4 +1,5 @@
 import { UserRole, UserMembership, AccessRight } from '@lib/types'
+import { headers } from 'next/headers'
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { AuthOptions } from 'next-auth'

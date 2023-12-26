@@ -41,7 +41,11 @@ const Page = async ({ params }: any) => {
   }
 
   return (
-    <main className="flex flex-col gap-8">
+    <main
+      className="flex flex-col gap-8"
+      data-course-id={course.id}
+      data-course-name={course.name}
+    >
       <div className="flex flex-col gap-1 divide-y divide-yellow-500">
         <h3 className="px-2 font-serif text-xl font-bold lowercase leading-tight">
           Exams
@@ -50,8 +54,6 @@ const Page = async ({ params }: any) => {
           role="table"
           aria-label="Exams"
           className="list-container divide-y"
-          data-course-id={course.id}
-          data-course-name={course.name}
         >
           {course.exams.length > 0 && (
             <FileListHeader showManage={rights.remove || rights.rename} />
@@ -73,8 +75,6 @@ const Page = async ({ params }: any) => {
           role="table"
           aria-label="Lecture notes"
           className="list-container divide-y"
-          data-course-id={course.id}
-          data-course-name={course.name}
         >
           {course.notes.length > 0 && (
             <FileListHeader showManage={rights.remove || rights.rename} />
@@ -96,8 +96,6 @@ const Page = async ({ params }: any) => {
           role="table"
           aria-label="Exercises"
           className="list-container divide-y"
-          data-course-id={course.id}
-          data-course-name={course.name}
         >
           {course.exercises.length > 0 && (
             <FileListHeader showManage={rights.remove || rights.rename} />
@@ -119,8 +117,6 @@ const Page = async ({ params }: any) => {
           role="table"
           aria-label="Others"
           className="list-container divide-y"
-          data-course-id={course.id}
-          data-course-name={course.name}
         >
           {course.others.length > 0 && (
             <FileListHeader showManage={rights.remove || rights.rename} />

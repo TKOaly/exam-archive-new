@@ -43,7 +43,11 @@ const Page = async ({ params }: any) => {
   // }
 
   return (
-    <div className="content-container flex flex-col gap-8 pb-5">
+    <div
+      className="content-container flex flex-col gap-8 pb-5"
+      data-course-id={course.id}
+      data-course-name={course.name}
+    >
       <UploadFiles courseId={course.id} />
     </div>
   )

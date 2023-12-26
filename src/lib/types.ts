@@ -66,6 +66,8 @@ export enum UserMembership {
   Kunniajasen = 'kunniajasen'
 }
 
+export type UserRights = { [right in AccessRight]: boolean }
+
 export interface TarpistoUser extends DefaultUser {
   role: UserRole
   membership: UserMembership

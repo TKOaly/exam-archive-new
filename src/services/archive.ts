@@ -323,7 +323,13 @@ export const createFile = async (file: CreateFile) => {
     RETURNING
       id, type, course_id, file_name, mime_type, upload_date, file_path
   `,
-    [file.type, file.courseId, file.fileName, file.mimeType, file.filePath]
+    [
+      file.type || 'exam',
+      file.courseId,
+      file.fileName,
+      file.mimeType,
+      file.filePath
+    ]
   )
 
   const createdFile = FileLI.parse(result.rows[0])
@@ -336,6 +342,7 @@ export const getAllFiles = async () => {
     `
     SELECT
       e.id,
+      e.type,
       e.course_id,
       e.file_name,
       e.mime_type,

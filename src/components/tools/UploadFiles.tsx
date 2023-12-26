@@ -95,7 +95,7 @@ const UploadFiles = async ({ courseId }: UploadFileProps) => {
         </div>
         <input
           type="file"
-          name="file"
+          name="files"
           aria-label="Select files to upload"
           title="Select files to upload"
           multiple

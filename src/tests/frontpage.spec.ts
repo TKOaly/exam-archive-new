@@ -1,7 +1,36 @@
+import { encode } from 'next-auth/jwt'
 import { test, expect } from '@playwright/test'
+import config from '@lib/config'
+import { UserMembership, UserRole } from '@lib/types'
 
 test.describe('frontpage of Tärpistö works', () => {
-  test('header is right', async ({ page }) => {
+  test.beforeEach(async ({ page, context }) => {
+    const token = await encode({
+      token: {
+        name: 'dev',
+        role: 'yllapitaja' as UserRole,
+        membership: 'jasen' as UserMembership,
+        rights: { access: true, upload: true, remove: true, rename: true }
+      },
+      secret: config.USER_SERVICE_SECRET
+    })
+
+    await context.addCookies([
+      {
+        name: 'next-auth.session-token',
+        value: token,
+        domain: '127.0.0.1',
+        path: '/',
+        httpOnly: true,
+        sameSite: 'Lax',
+        expires: -1
+      }
+    ])
+
+    await page.goto('/')
+  })
+
+  test('header is right', async ({ page, context }) => {
     await page.goto('/')
 
     await expect(page).toHaveTitle(/Tärpistö - TKO-äly ry/)
@@ -60,27 +89,26 @@ test.describe('frontpage of Tärpistö works', () => {
   test('footer is right', async ({ page }) => {
     await page.goto('/')
 
-    const footer = page.getByText('Tärpistö - The TKO-äly ry exam archive.')
+    const footer = page.getByText('The TKO-äly ry exam archive.')
     await expect(footer).toBeVisible()
 
     const contact = page.getByText('tarpisto@tko-aly.fi')
     await expect(contact).toBeVisible()
     await expect(contact).toHaveAttribute('href', 'mailto:tarpisto@tko-aly.fi')
 
-    const links = page.getByTestId('footer-links')
-    await expect(links).toBeVisible()
-    await expect(links.locator('a', { hasText: 'TKO-äly ry' })).toHaveAttribute(
+    await expect(page.locator('a', { hasText: 'TKO-äly ry' })).toHaveAttribute(
       'href',
       'https://www.tko-aly.fi/'
     )
-    await expect(links.locator('a', { hasText: 'Privacy' })).toHaveAttribute(
+    await expect(page.locator('a', { hasText: 'Privacy' })).toHaveAttribute(
       'href',
       'https://www.tko-aly.fi/tietosuoja'
     )
-    await expect(
-      links.locator('a', { hasText: 'Source code' })
-    ).toHaveAttribute('href', 'https://github.com/TKOaly/exam-archive-new/')
-    await expect(links.locator('a', { hasText: 'Fuksiwiki' })).toHaveAttribute(
+    await expect(page.locator('a', { hasText: 'Source code' })).toHaveAttribute(
+      'href',
+      'https://github.com/TKOaly/exam-archive-new/'
+    )
+    await expect(page.locator('a', { hasText: 'Fuksiwiki' })).toHaveAttribute(
       'href',
       'https://fuksiwiki.tko-aly.fi/T%C3%A4rpist%C3%B6'
     )

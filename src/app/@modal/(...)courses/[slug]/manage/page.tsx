@@ -46,7 +46,11 @@ const Page = async ({ params }: any) => {
 
   return (
     <Modal title={`Manage course "${course.name}"`}>
-      <div className="flex flex-col gap-8">
+      <div
+        className="flex flex-col gap-8"
+        data-course-id={course.id}
+        data-course-name={course.name}
+      >
         <RenameCourse courseId={course.id} currentName={course.name} />
         <DeleteCourse courseId={course.id} courseName={course.name} />
       </div>

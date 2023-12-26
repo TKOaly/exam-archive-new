@@ -1,11 +1,12 @@
 import { expect } from '@playwright/test'
 import { test } from './fixtures'
-import { CourseListItem, ExamListItem } from '../lib/types'
-import { slugifyCourseName } from '../lib/courses'
+import { CourseListItem, FileListItem } from '../lib/types'
+import { urlForCourse } from '../lib/courses'
+import { setAuthentication, getToken } from './utils'
 
-test.describe('examList looks right', () => {
+test.describe('FileList looks right', () => {
   let courses: CourseListItem[] = []
-  let exams: ExamListItem[] = []
+  let files: FileListItem[] = []
 
   test.beforeAll(async ({ request }, { workerIndex }) => {
     const introRes = await request.post('/api/courses/create', {
@@ -14,29 +15,75 @@ test.describe('examList looks right', () => {
     const introCourse: CourseListItem = await introRes.json()
     courses = [...courses, introCourse]
 
-    const newExamsRes = await request.post('/api/exams/upload', {
+    const newExamsFilesRes = await request.post('/api/files/upload', {
       multipart: {
         courseId: introCourse.id,
+        type: 'exam',
         document: {
-          name: `document-${workerIndex}.txt`,
+          name: `exam-document-${workerIndex}.txt`,
           mimeType: 'text/plain',
           buffer: Buffer.from('This is a test.')
         },
         pdf: {
-          name: `pdf-${workerIndex}.pdf`,
+          name: `exam-pdf-${workerIndex}.pdf`,
           mimeType: 'application/pdf',
           buffer: Buffer.from('This is a test.')
         },
         png: {
-          name: `image-${workerIndex}.png`,
+          name: `exam-image-${workerIndex}.png`,
           mimeType: 'image/png',
           buffer: Buffer.from('This is a test.')
         }
       }
     })
-    const newExams: ExamListItem[] = await newExamsRes.json()
+    const newExamsFiles: FileListItem[] = await newExamsFilesRes.json()
 
-    exams = [...exams, ...newExams]
+    files = [...files, ...newExamsFiles]
+
+    const newNotesFilesRes = await request.post('/api/files/upload', {
+      multipart: {
+        courseId: introCourse.id,
+        type: 'notes',
+        pdf: {
+          name: `notes-pdf-${workerIndex}.pdf`,
+          mimeType: 'application/pdf',
+          buffer: Buffer.from('This is a test.')
+        }
+      }
+    })
+    const newNotesFiles: FileListItem[] = await newNotesFilesRes.json()
+
+    files = [...files, ...newNotesFiles]
+
+    const newExercisesFilesRes = await request.post('/api/files/upload', {
+      multipart: {
+        courseId: introCourse.id,
+        type: 'exercise',
+        pdf: {
+          name: `exercise-pdf-${workerIndex}.pdf`,
+          mimeType: 'application/pdf',
+          buffer: Buffer.from('This is a test.')
+        }
+      }
+    })
+    const newExercisesFiles: FileListItem[] = await newExercisesFilesRes.json()
+
+    files = [...files, ...newExercisesFiles]
+
+    const newOthersFilesRes = await request.post('/api/files/upload', {
+      multipart: {
+        courseId: introCourse.id,
+        type: 'other',
+        pdf: {
+          name: `other-pdf-${workerIndex}.pdf`,
+          mimeType: 'application/pdf',
+          buffer: Buffer.from('This is a test.')
+        }
+      }
+    })
+    const newOthersFiles: FileListItem[] = await newOthersFilesRes.json()
+
+    files = [...files, ...newOthersFiles]
 
     const advancedRes = await request.post('/api/courses/create', {
       data: { courseName: `Advanced course in Testing -${workerIndex}-` }
@@ -47,11 +94,11 @@ test.describe('examList looks right', () => {
 
   test.afterAll(async ({ request }) => {
     await Promise.all(
-      exams.map(
-        async exam =>
-          await request.post(`/api/exams/delete`, {
+      files.map(
+        async file =>
+          await request.post(`/api/files/delete`, {
             data: {
-              examId: exam.id
+              fileId: file.id
             }
           })
       )
@@ -67,7 +114,7 @@ test.describe('examList looks right', () => {
     )
   })
 
-  test('examlisting works', async ({ page, courseList }, { workerIndex }) => {
+  test('FileListing works', async ({ page, courseList }, { workerIndex }) => {
     await courseList.gotoCourseByName(
       `Introduction to testing -${workerIndex}-`
     )
@@ -105,58 +152,114 @@ test.describe('examList looks right', () => {
     await expect(redirectHeading).toBeVisible()
   })
 
-  test('examlisting headers are correct', async ({
-    page,
-    courseList,
-    isMobile
-  }, { workerIndex }) => {
+  test('FileListing headers are correct', async ({ page, courseList }, {
+    workerIndex
+  }) => {
     await courseList.gotoCourseByName(
       `Introduction to testing -${workerIndex}-`
     )
 
-    const headers = page.getByRole('row', {
-      name: `Icon Exam${isMobile ? ' ' : ' Upload date '}Manage`
+    const examsHeaders = page.getByLabel('Exams').getByRole('row', {
+      name: `Icon File Upload date Manage`
     })
-    await expect(headers).toBeVisible()
+    await expect(examsHeaders).toBeVisible()
+
+    const notesHeaders = page.getByLabel('Lecture notes').getByRole('row', {
+      name: `Icon File Upload date Manage`
+    })
+    await expect(notesHeaders).toBeVisible()
+
+    const exercisesHeaders = page.getByLabel('Exercises').getByRole('row', {
+      name: `Icon File Upload date Manage`
+    })
+    await expect(exercisesHeaders).toBeVisible()
+
+    const othersHeaders = page.getByLabel('Others').getByRole('row', {
+      name: `Icon File Upload date Manage`
+    })
+    await expect(othersHeaders).toBeVisible()
   })
 
-  test('if no exams added, show no exams found', async ({ page, courseList }, {
+  test('FileListing headers are hidden if not files', async ({
+    page,
+    courseList
+  }, { workerIndex }) => {
+    await courseList.gotoCourseByName(
+      `Advanced course in Testing -${workerIndex}-`
+    )
+
+    const examsHeaders = page.getByLabel('Exams').getByRole('row', {
+      name: `Icon File Upload date Manage`
+    })
+    await expect(examsHeaders).not.toBeVisible()
+
+    const notesHeaders = page.getByLabel('Exams').getByRole('row', {
+      name: `Icon File Upload date Manage`
+    })
+    await expect(notesHeaders).not.toBeVisible()
+
+    const exercisesHeaders = page.getByLabel('Exams').getByRole('row', {
+      name: `Icon File Upload date Manage`
+    })
+    await expect(exercisesHeaders).not.toBeVisible()
+
+    const othersHeaders = page.getByLabel('Exams').getByRole('row', {
+      name: `Icon File Upload date Manage`
+    })
+    await expect(othersHeaders).not.toBeVisible()
+  })
+
+  test('if no files added, show no rows found', async ({ page, courseList }, {
     workerIndex
   }) => {
     await courseList.gotoCourseByName(
       `Advanced course in Testing -${workerIndex}-`
     )
 
-    const notification = page.getByText(`No exams found.`)
-    await expect(notification).toBeVisible()
+    const examsNoRows = page
+      .getByLabel('Exams')
+      .getByRole('row', { name: 'No rows found.' })
+    await expect(examsNoRows).toBeVisible()
+
+    const notesNoRows = page
+      .getByLabel('Lecture notes')
+      .getByRole('row', { name: 'No rows found.' })
+    await expect(notesNoRows).toBeVisible()
+
+    const excercisesNoRows = page
+      .getByLabel('Exercises')
+      .getByRole('row', { name: 'No rows found.' })
+    await expect(excercisesNoRows).toBeVisible()
+
+    const othersNoRows = page
+      .getByLabel('Others')
+      .getByRole('row', { name: 'No rows found.' })
+    await expect(othersNoRows).toBeVisible()
   })
 
-  test('examlisting row is correct with correct icon', async ({
+  test('FileListing row is correct with correct icon', async ({
     page,
     courseList,
-    examList,
-    isMobile
+    fileList
   }, { workerIndex }) => {
     await courseList.gotoCourseByName(
       `Introduction to testing -${workerIndex}-`
     )
 
-    const documentRow = await examList.getExamItemRowByName(
-      `document-${workerIndex}.txt`
+    const documentRow = await fileList.getFileItemRowByName(
+      `exam-document-${workerIndex}.txt`
     )
     const documentIcon = documentRow.locator('img').nth(0)
-    const name = documentRow.getByText(`document-${workerIndex}.txt`, {
+    const name = documentRow.getByText(`exam-document-${workerIndex}.txt`, {
       exact: true
     })
-    const lastModified = documentRow.getByTestId(
-      `upload-date-time${isMobile ? '-mobile' : ''}`
-    )
+    const lastModified = documentRow.getByTestId(`upload-date-time`)
     const documentExamId = await page.getAttribute(
-      `[data-exam-name="document-${workerIndex}.txt"]`,
-      'data-exam-id'
+      `[data-file-name="exam-document-${workerIndex}.txt"]`,
+      'data-file-id'
     )
     const manageButton = documentRow.getByTitle(
-      `Manage exam "document-${workerIndex}.txt"`
+      `Manage "exam-document-${workerIndex}.txt"`
     )
 
     await expect(documentRow).toBeVisible()
@@ -170,20 +273,22 @@ test.describe('examList looks right', () => {
     )
     await expect(name).toHaveAttribute(
       'href',
-      `/exams/${documentExamId}/document-${workerIndex}.txt`
+      `/files/${documentExamId}/exam-document-${workerIndex}.txt`
     )
     await expect(lastModified).toHaveText(
       `${new Date().toISOString().split('T')[0]}`
     )
 
-    const pdfRow = await examList.getExamItemRowByName(`pdf-${workerIndex}.pdf`)
+    const pdfRow = await fileList.getFileItemRowByName(
+      `exam-pdf-${workerIndex}.pdf`
+    )
     const pdfIcon = pdfRow.locator('img').nth(0)
 
     await expect(pdfRow).toBeVisible()
     await expect(pdfIcon).toHaveAttribute('src', new RegExp('icon-pdf'))
 
-    const imageRow = await examList.getExamItemRowByName(
-      `image-${workerIndex}.png`
+    const imageRow = await fileList.getFileItemRowByName(
+      `exam-image-${workerIndex}.png`
     )
     const imageIcon = imageRow.locator('img').nth(0)
 
@@ -191,16 +296,58 @@ test.describe('examList looks right', () => {
     await expect(imageIcon).toHaveAttribute('src', new RegExp('icon-photo'))
   })
 
-  test('upload exam navigation is correct', async ({ page, examList }, {
+  test('manage file button is not shown if no rights', async ({
+    kayttajaPage
+  }, { workerIndex }) => {
+    await kayttajaPage.goto('/')
+
+    const courseRow = await kayttajaPage.getByRole('row', {
+      name: `Introduction to testing -${workerIndex}-`
+    })
+
+    await courseRow
+      .getByText(`Introduction to testing -${workerIndex}-`, { exact: true })
+      .click()
+
+    const exam = await kayttajaPage
+      .getByLabel('Exams')
+      .locator(`div[data-file-name="exam-pdf-${workerIndex}.pdf"]`)
+    const notes = await kayttajaPage
+      .getByLabel('Lecture notes')
+      .locator(`div[data-file-name="notes-pdf-${workerIndex}.pdf"]`)
+    const exercise = await kayttajaPage
+      .getByLabel('Exercises')
+      .locator(`div[data-file-name="exercise-pdf-${workerIndex}.pdf"]`)
+    const other = await kayttajaPage
+      .getByLabel('Others')
+      .locator(`div[data-file-name="other-pdf-${workerIndex}.pdf"]`)
+
+    const examManage = exam.getByRole('link', { name: 'manage' })
+    const notesManage = notes.getByRole('link', { name: 'manage' })
+    const exerciseManage = exercise.getByRole('link', { name: 'manage' })
+    const otherManage = other.getByRole('link', { name: 'manage' })
+
+    await expect(examManage).not.toBeVisible()
+    await expect(notesManage).not.toBeVisible()
+    await expect(exerciseManage).not.toBeVisible()
+    await expect(otherManage).not.toBeVisible()
+  })
+
+  test('upload files navigation is correct', async ({ page, fileList }, {
     workerIndex
   }) => {
-    await examList.gotoUploadByName(`Introduction to testing -${workerIndex}-`)
+    await fileList.gotoUploadByName(`Introduction to testing -${workerIndex}-`)
+
+    const courseId = (await page.getAttribute(
+      `[data-course-name="Introduction to testing -${workerIndex}-"]`,
+      'data-course-id'
+    )) as string
 
     const backButton = page.getByLabel(
       `Back to course "Introduction to testing -${workerIndex}-"`
     )
     const heading = page.getByRole('heading', {
-      name: `Upload exam to Introduction to testing -${workerIndex}-`
+      name: `Upload files to "Introduction to testing -${workerIndex}-"`
     })
 
     await expect(heading).toBeVisible()
@@ -208,37 +355,37 @@ test.describe('examList looks right', () => {
 
     await backButton.click()
 
-    await page.waitForURL(new RegExp('^(?!\b.*upload.*\b).*$'))
-
-    const redirectHeading = page.getByRole('heading', {
-      name: `Introduction to testing -${workerIndex}-`
-    })
-    await expect(redirectHeading).toBeVisible()
+    await page.waitForURL(
+      urlForCourse(
+        parseInt(courseId),
+        `Introduction to testing -${workerIndex}-`
+      )
+    )
   })
 
-  test('manage exam navigation is correct', async ({
+  test('manage file navigation is correct', async ({
     page,
     courseList,
-    examList
+    fileList
   }, { workerIndex }) => {
     await courseList.gotoCourseByName(
       `Introduction to testing -${workerIndex}-`
     )
 
-    const row = await examList.getExamItemRowByName(
-      `document-${workerIndex}.txt`
+    const row = await fileList.getFileItemRowByName(
+      `exam-document-${workerIndex}.txt`
     )
-    const examId = (await row.getAttribute('data-exam-id')) as string
-    await examList.gotoExamManagement(
+    const examId = (await row.getAttribute('data-file-id')) as string
+    await fileList.gotoFileManagement(
       parseInt(examId),
-      `document-${workerIndex}.txt`
+      `exam-document-${workerIndex}.txt`
     )
 
     const backButton = page.getByLabel(
       `Back to course "Introduction to testing -${workerIndex}-"`
     )
     const heading = page.getByRole('heading', {
-      name: `Manage exam document-${workerIndex}.txt`
+      name: `Manage file "exam-document-${workerIndex}.txt"`
     })
 
     await expect(heading).toBeVisible()
@@ -255,23 +402,24 @@ test.describe('examList looks right', () => {
   })
 })
 
-// test('examList screenshot testing', async ({ page }) => {
+// test('FileLIst screenshot testing', async ({ page }) => {
 //   await page.goto('/archive/3-advanced-course-in-machine-learning')
 //   await expect(page).toHaveScreenshot({
 //     fullPage: true
 //   })
 // })
 
-test.describe('examlisting functions right', () => {
-  test.beforeEach(async ({ request }, { testId }) => {
+test.describe('FileListing functions right', () => {
+  test.beforeEach(async ({ request, context }, { testId }) => {
     const introRes = await request.post('/api/courses/create', {
       data: { courseName: `Introduction to testing ${testId}` }
     })
     const introCourse: CourseListItem = await introRes.json()
 
-    await request.post('/api/exams/upload', {
+    await request.post('/api/files/upload', {
       multipart: {
         courseId: introCourse.id,
+        type: 'exam',
         pdf: {
           name: `existing-${testId}.pdf`,
           mimeType: 'application/pdf',
@@ -281,16 +429,16 @@ test.describe('examlisting functions right', () => {
     })
   })
 
-  test.afterEach(async ({ request }, { testId }) => {
-    const exams: ExamListItem[] = await (await request.get('/api/exams')).json()
+  test.afterEach(async ({ request, context }, { testId }) => {
+    const files: FileListItem[] = await (await request.get('/api/files')).json()
     await Promise.all(
-      exams
-        .filter(exam => exam.fileName.includes(testId))
+      files
+        .filter(file => file.fileName.includes(testId))
         .map(
-          async exam =>
-            await request.post(`/api/exams/delete`, {
+          async file =>
+            await request.post(`/api/files/delete`, {
               data: {
-                examId: exam.id
+                fileId: file.id
               }
             })
         )
@@ -311,18 +459,28 @@ test.describe('examlisting functions right', () => {
     )
   })
 
-  test('upload new file via modal works', async ({
+  test('upload new exam file via modal works', async ({
     page,
     courseList,
-    examList
+    fileList
   }, { testId }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
-    await examList.openUploadModal()
+    await fileList.openUploadModal()
 
-    const fileInput = page.locator("input[type='file']")
+    const courseId = (await page.getAttribute(
+      `[data-course-name="Introduction to testing ${testId}"]`,
+      'data-course-id'
+    )) as string
+
+    const typeInput = page.locator("select[name='type']")
+    await expect(typeInput).toBeVisible()
+
+    await typeInput.selectOption({ label: 'Exam' })
+
+    const fileInput = page.locator("input[name='files']")
     await expect(fileInput).toBeVisible()
 
-    const filename = `${testId}.pdf`
+    const filename = `exam-${testId}.pdf`
 
     // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
     await fileInput.setInputFiles({
@@ -331,15 +489,17 @@ test.describe('examlisting functions right', () => {
       buffer: Buffer.from('Test file.')
     })
 
-    const uploadButton = page.getByRole('button', { name: 'Upload exam' })
+    const uploadButton = page.getByRole('button', { name: 'Upload' })
     await expect(uploadButton).toBeVisible()
     await uploadButton.click()
 
     await test.slow() // add timeout for making sure file is uploaded
 
-    await page.waitForURL(new RegExp('^(?!\b.*upload.*\b).*$'))
+    await page.waitForURL(
+      urlForCourse(parseInt(courseId), `Introduction to testing ${testId}`)
+    )
 
-    const row = await examList.getExamItemRowByName(filename)
+    const row = await fileList.getFileItemRowByName(filename, 'exam')
     await expect(row).toBeVisible()
 
     const modal = page.getByTestId('modal')
@@ -350,15 +510,28 @@ test.describe('examlisting functions right', () => {
     // await expect(success).toBeVisible()
   })
 
-  test('upload new file works', async ({ page, courseList, examList }, {
-    testId
-  }) => {
-    await examList.gotoUploadByName(`Introduction to testing ${testId}`)
+  test('upload new lecture notes file via modal works', async ({
+    page,
+    courseList,
+    fileList
+  }, { testId }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+    await fileList.openUploadModal()
 
-    const fileInput = page.locator("input[type='file']")
+    const courseId = (await page.getAttribute(
+      `[data-course-name="Introduction to testing ${testId}"]`,
+      'data-course-id'
+    )) as string
+
+    const typeInput = page.locator("select[name='type']")
+    await expect(typeInput).toBeVisible()
+
+    await typeInput.selectOption({ label: 'Lecture notes' })
+
+    const fileInput = page.locator("input[name='files']")
     await expect(fileInput).toBeVisible()
 
-    const filename = `${testId}.pdf`
+    const filename = `notes-${testId}.pdf`
 
     // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
     await fileInput.setInputFiles({
@@ -367,13 +540,158 @@ test.describe('examlisting functions right', () => {
       buffer: Buffer.from('Test file.')
     })
 
-    const uploadButton = page.getByRole('button', { name: 'Upload exam' })
+    const uploadButton = page.getByRole('button', { name: 'Upload' })
     await expect(uploadButton).toBeVisible()
     await uploadButton.click()
 
     await test.slow() // add timeout for making sure file is uploaded
 
-    const row = await examList.getExamItemRowByName(filename)
+    await page.waitForURL(
+      urlForCourse(parseInt(courseId), `Introduction to testing ${testId}`)
+    )
+
+    const row = await fileList.getFileItemRowByName(filename, 'notes')
+    await expect(row).toBeVisible()
+
+    const modal = page.getByTestId('modal')
+    await expect(modal).not.toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Exam ${filename} created!`)
+    // await expect(success).toBeVisible()
+  })
+
+  test('upload new exercise file via modal works', async ({
+    page,
+    courseList,
+    fileList
+  }, { testId }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+    await fileList.openUploadModal()
+
+    const courseId = (await page.getAttribute(
+      `[data-course-name="Introduction to testing ${testId}"]`,
+      'data-course-id'
+    )) as string
+
+    const typeInput = page.locator("select[name='type']")
+    await expect(typeInput).toBeVisible()
+
+    await typeInput.selectOption({ label: 'Exercise' })
+
+    const fileInput = page.locator("input[name='files']")
+    await expect(fileInput).toBeVisible()
+
+    const filename = `exercise-${testId}.pdf`
+
+    // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
+    await fileInput.setInputFiles({
+      name: filename,
+      mimeType: 'application/pdf',
+      buffer: Buffer.from('Test file.')
+    })
+
+    const uploadButton = page.getByRole('button', { name: 'Upload' })
+    await expect(uploadButton).toBeVisible()
+    await uploadButton.click()
+
+    await test.slow() // add timeout for making sure file is uploaded
+
+    await page.waitForURL(
+      urlForCourse(parseInt(courseId), `Introduction to testing ${testId}`)
+    )
+
+    const row = await fileList.getFileItemRowByName(filename, 'exercise')
+    await expect(row).toBeVisible()
+
+    const modal = page.getByTestId('modal')
+    await expect(modal).not.toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Exam ${filename} created!`)
+    // await expect(success).toBeVisible()
+  })
+
+  test('upload new other file via modal works', async ({
+    page,
+    courseList,
+    fileList
+  }, { testId }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+    await fileList.openUploadModal()
+
+    const courseId = (await page.getAttribute(
+      `[data-course-name="Introduction to testing ${testId}"]`,
+      'data-course-id'
+    )) as string
+
+    const typeInput = page.locator("select[name='type']")
+    await expect(typeInput).toBeVisible()
+
+    await typeInput.selectOption({ label: 'Other' })
+
+    const fileInput = page.locator("input[name='files']")
+    await expect(fileInput).toBeVisible()
+
+    const filename = `other-${testId}.pdf`
+
+    // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
+    await fileInput.setInputFiles({
+      name: filename,
+      mimeType: 'application/pdf',
+      buffer: Buffer.from('Test file.')
+    })
+
+    const uploadButton = page.getByRole('button', { name: 'Upload' })
+    await expect(uploadButton).toBeVisible()
+    await uploadButton.click()
+
+    await test.slow() // add timeout for making sure file is uploaded
+
+    await page.waitForURL(
+      urlForCourse(parseInt(courseId), `Introduction to testing ${testId}`)
+    )
+
+    const row = await fileList.getFileItemRowByName(filename, 'other')
+    await expect(row).toBeVisible()
+
+    const modal = page.getByTestId('modal')
+    await expect(modal).not.toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Exam ${filename} created!`)
+    // await expect(success).toBeVisible()
+  })
+
+  test('upload new file works', async ({ page, courseList, fileList }, {
+    testId
+  }) => {
+    await fileList.gotoUploadByName(`Introduction to testing ${testId}`)
+
+    const typeInput = page.locator("select[name='type']")
+    await expect(typeInput).toBeVisible()
+
+    await typeInput.selectOption({ label: 'Exam' })
+
+    const fileInput = page.locator("input[type='file']")
+    await expect(fileInput).toBeVisible()
+
+    const filename = `exam-${testId}.pdf`
+
+    // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
+    await fileInput.setInputFiles({
+      name: filename,
+      mimeType: 'application/pdf',
+      buffer: Buffer.from('Test file.')
+    })
+
+    const uploadButton = page.getByRole('button', { name: 'Upload' })
+    await expect(uploadButton).toBeVisible()
+    await uploadButton.click()
+
+    await test.slow() // add timeout for making sure file is uploaded
+
+    const row = await fileList.getFileItemRowByName(filename, 'exam')
     await expect(row).toBeVisible()
 
     // Flash messages not implemented yet
@@ -381,10 +699,15 @@ test.describe('examlisting functions right', () => {
     // await expect(success).toBeVisible()
   })
 
-  test('upload multiple file works', async ({ page, courseList, examList }, {
+  test('upload multiple file works', async ({ page, courseList, fileList }, {
     testId
   }) => {
-    await examList.gotoUploadByName(`Introduction to testing ${testId}`)
+    await fileList.gotoUploadByName(`Introduction to testing ${testId}`)
+
+    const typeInput = page.locator("select[name='type']")
+    await expect(typeInput).toBeVisible()
+
+    await typeInput.selectOption({ label: 'Exam' })
 
     const fileInput = page.locator("input[type='file']")
     await expect(fileInput).toBeVisible()
@@ -392,27 +715,33 @@ test.describe('examlisting functions right', () => {
     // this will be application/octet-stream because of buffer even if it says application/pdf in mimetype...
     await fileInput.setInputFiles([
       {
-        name: `${testId}-1.pdf`,
+        name: `exam-${testId}-1.pdf`,
         mimeType: 'application/pdf',
         buffer: Buffer.from('Test file.')
       },
       {
-        name: `${testId}-2.pdf`,
+        name: `exam-${testId}-2.pdf`,
         mimeType: 'application/pdf',
         buffer: Buffer.from('Test file.')
       }
     ])
 
-    const uploadButton = page.getByRole('button', { name: 'Upload exam' })
+    const uploadButton = page.getByRole('button', { name: 'Upload' })
     await expect(uploadButton).toBeVisible()
     await uploadButton.click()
 
     await test.slow() // add timeout for making sure file is uploaded
 
-    const row1 = await examList.getExamItemRowByName(`${testId}-1.pdf`)
+    const row1 = await fileList.getFileItemRowByName(
+      `exam-${testId}-1.pdf`,
+      'exam'
+    )
     await expect(row1).toBeVisible()
 
-    const row2 = await examList.getExamItemRowByName(`${testId}-2.pdf`)
+    const row2 = await fileList.getFileItemRowByName(
+      `exam-${testId}-2.pdf`,
+      'exam'
+    )
     await expect(row2).toBeVisible()
 
     // Flash messages not implemented yet
@@ -420,33 +749,34 @@ test.describe('examlisting functions right', () => {
     // await expect(success).toBeVisible()
   })
 
-  test('rename exam via modal works', async ({ page, courseList, examList }, {
+  test('rename file via modal works', async ({ page, courseList, fileList }, {
     testId
   }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
 
-    const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    const row = await fileList.getFileItemRowByName(
+      `existing-${testId}.pdf`,
+      'exam'
+    )
     await expect(row).toBeVisible()
 
-    const manageButton = row.getByRole('link', {
-      name: `Manage exam "existing-${testId}.pdf"`
-    })
+    const manageButton = row.getByLabel(`Manage "existing-${testId}.pdf"`)
     await manageButton.click()
 
     const modal = page.getByTestId('modal')
 
-    const renameInput = modal.locator('input[name="examName"]')
-    const renameButton = modal.getByRole('button', {
-      name: `Rename exam "existing-${testId}.pdf"`
+    const renameInput = modal.locator('input[name="fileName"]')
+    const saveButton = modal.getByRole('button', {
+      name: `Save file "existing-${testId}.pdf"`
     })
 
     const newFilename = `renamed-${testId}.pdf`
     await renameInput.fill(newFilename)
-    await renameButton.click()
+    await saveButton.click()
 
     await page.waitForURL(new RegExp('^(?!\b.*manage.*\b).*$'))
 
-    const newRow = await examList.getExamItemRowByName(newFilename)
+    const newRow = await fileList.getFileItemRowByName(newFilename, 'exam')
     const name = newRow.getByText(newFilename, { exact: true })
     await expect(name).toBeVisible()
 
@@ -457,30 +787,117 @@ test.describe('examlisting functions right', () => {
     // await expect(success).toBeVisible()
   })
 
-  test('rename exam works', async ({ page, courseList, examList }, {
+  test('change type of file via modal works', async ({
+    page,
+    courseList,
+    fileList
+  }, { testId }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+
+    const row = await fileList.getFileItemRowByName(
+      `existing-${testId}.pdf`,
+      'exam'
+    )
+    await expect(row).toBeVisible()
+
+    const manageButton = row.getByLabel(`Manage "existing-${testId}.pdf"`)
+    await manageButton.click()
+
+    const modal = page.getByTestId('modal')
+
+    const typeInput = modal.locator('select[name="type"]')
+    const saveButton = modal.getByRole('button', {
+      name: `Save file "existing-${testId}.pdf"`
+    })
+
+    await typeInput.selectOption({ label: 'Lecture notes' })
+    await saveButton.click()
+
+    await page.waitForURL(new RegExp('^(?!\b.*manage.*\b).*$'))
+
+    const newRow = await fileList.getFileItemRowByName(
+      `existing-${testId}.pdf`,
+      'notes'
+    )
+    const name = newRow.getByText(`existing-${testId}.pdf`, { exact: true })
+    await expect(name).toBeVisible()
+
+    await expect(modal).not.toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Exam has been renamed from X to Y.`)
+    // await expect(success).toBeVisible()
+  })
+
+  test('rename file and change of type via modal works', async ({
+    page,
+    courseList,
+    fileList
+  }, { testId }) => {
+    await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
+
+    const row = await fileList.getFileItemRowByName(
+      `existing-${testId}.pdf`,
+      'exam'
+    )
+    await expect(row).toBeVisible()
+
+    const manageButton = row.getByLabel(`Manage "existing-${testId}.pdf"`)
+    await manageButton.click()
+
+    const modal = page.getByTestId('modal')
+
+    const renameInput = modal.locator('input[name="fileName"]')
+    const typeInput = modal.locator('select[name="type"]')
+    const saveButton = modal.getByRole('button', {
+      name: `Save file "existing-${testId}.pdf"`
+    })
+
+    const newFilename = `renamed-${testId}.pdf`
+    await renameInput.fill(newFilename)
+    await typeInput.selectOption({ label: 'Lecture notes' })
+    await saveButton.click()
+
+    await page.waitForURL(new RegExp('^(?!\b.*manage.*\b).*$'))
+
+    const newRow = await fileList.getFileItemRowByName(newFilename, 'notes')
+    const name = newRow.getByText(newFilename, { exact: true })
+    await expect(name).toBeVisible()
+
+    await expect(modal).not.toBeVisible()
+
+    // Flash messages not implemented yet
+    // const success = page.getByText(`Exam has been renamed from X to Y.`)
+    // await expect(success).toBeVisible()
+  })
+
+  test('rename file works', async ({ page, courseList, fileList }, {
     testId
   }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
 
-    const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    const row = await fileList.getFileItemRowByName(
+      `existing-${testId}.pdf`,
+      'exam'
+    )
     await expect(row).toBeVisible()
 
-    const examId = (await row.getAttribute('data-exam-id')) as string
-    await examList.gotoExamManagement(
-      parseInt(examId),
+    const fileId = (await row.getAttribute('data-file-id')) as string
+    await fileList.gotoFileManagement(
+      parseInt(fileId),
       `existing-${testId}.pdf`
     )
 
-    const renameInput = page.locator('input[name="examName"]')
+    const renameInput = page.locator('input[name="fileName"]')
     const renameButton = page.getByRole('button', {
-      name: `Rename exam "existing-${testId}.pdf"`
+      name: `Save file "existing-${testId}.pdf"`
     })
 
     const newFilename = `renamed-${testId}.pdf`
     await renameInput.fill(newFilename)
     await renameButton.click()
 
-    const newRow = await examList.getExamItemRowByName(newFilename)
+    const newRow = await fileList.getFileItemRowByName(newFilename, 'exam')
     const name = newRow.getByText(newFilename, { exact: true })
     await expect(name).toBeVisible()
 
@@ -489,28 +906,29 @@ test.describe('examlisting functions right', () => {
     // await expect(success).toBeVisible()
   })
 
-  test('delete exam via modal works', async ({ page, courseList, examList }, {
+  test('delete file via modal works', async ({ page, courseList, fileList }, {
     testId
   }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
 
-    const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    const row = await fileList.getFileItemRowByName(`existing-${testId}.pdf`)
     await expect(row).toBeVisible()
 
-    const manageButton = row.getByRole('link', {
-      name: `Manage exam "existing-${testId}.pdf"`
-    })
+    const manageButton = row.getByLabel(`Manage "existing-${testId}.pdf"`)
     await manageButton.click()
 
     const modal = page.getByTestId('modal')
     const deleteButton = modal.getByRole('button', {
-      name: `Delete exam "existing-${testId}.pdf"`
+      name: `Delete file "existing-${testId}.pdf"`
     })
     await deleteButton.click()
 
     await page.waitForURL(new RegExp('^(?!\b.*manage.*\b).*$'))
 
-    const newRow = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    const newRow = await fileList.getFileItemRowByName(
+      `existing-${testId}.pdf`,
+      'exam'
+    )
     await expect(newRow).not.toBeVisible()
 
     await expect(modal).not.toBeVisible()
@@ -520,26 +938,29 @@ test.describe('examlisting functions right', () => {
     // await expect(success).toBeVisible()
   })
 
-  test('delete exam works', async ({ page, courseList, examList }, {
+  test('delete file works', async ({ page, courseList, fileList }, {
     testId
   }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
 
-    const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    const row = await fileList.getFileItemRowByName(`existing-${testId}.pdf`)
     await expect(row).toBeVisible()
 
-    const examId = (await row.getAttribute('data-exam-id')) as string
-    await examList.gotoExamManagement(
+    const examId = (await row.getAttribute('data-file-id')) as string
+    await fileList.gotoFileManagement(
       parseInt(examId),
       `existing-${testId}.pdf`
     )
 
     const deleteButton = page.getByRole('button', {
-      name: `Delete exam "existing-${testId}.pdf"`
+      name: `Delete file "existing-${testId}.pdf"`
     })
     await deleteButton.click()
 
-    const newRow = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    const newRow = await fileList.getFileItemRowByName(
+      `existing-${testId}.pdf`,
+      'exam'
+    )
     await expect(newRow).not.toBeVisible()
 
     // Flash messages not implemented yet
@@ -547,14 +968,14 @@ test.describe('examlisting functions right', () => {
     // await expect(success).toBeVisible()
   })
 
-  test('opening exam makes popup like pdf viewer etc', async ({
+  test('opening file makes popup like pdf viewer etc', async ({
     page,
     courseList,
-    examList
+    fileList
   }, { testId }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
 
-    const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
+    const row = await fileList.getFileItemRowByName(`existing-${testId}.pdf`)
     const name = row.getByText(`existing-${testId}.pdf`, { exact: true })
 
     const [page1] = await Promise.all([

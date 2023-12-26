@@ -44,7 +44,7 @@ const Layout = async ({
   return (
     <div className="page-container bg-gray-50 shadow-lg">
       <ListingNavigation
-        title={`Manage file ${file.fileName.replace(/_/g, '_\u200b')}`}
+        title={`Manage file "${file.fileName.replace(/_/g, '_\u200b')}"`}
         label={`Back to course "${file.courseName}"`}
         backButtonHref={urlForCourse(file.courseId, file.courseName)}
       ></ListingNavigation>

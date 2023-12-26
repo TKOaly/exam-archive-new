@@ -11,7 +11,7 @@ const config: PlaywrightTestConfig = {
   },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI
     ? 'github'
@@ -27,7 +27,8 @@ const config: PlaywrightTestConfig = {
   use: {
     actionTimeout: 0,
     baseURL: `http://127.0.0.1:${PORT}`,
-    screenshot: 'only-on-failure',
+    // screenshot: 'only-on-failure',
+    screenshot: 'on',
     video: 'retain-on-failure',
     trace: 'retain-on-failure',
     testIdAttribute: 'data-test-id'

@@ -44,8 +44,12 @@ const Page = async ({ params }: any) => {
   // // }
 
   return (
-    <Modal title="Upload files">
-      <div className="flex flex-col gap-8">
+    <Modal title={`Upload files to "${course.name}"`}>
+      <div
+        className="flex flex-col gap-8"
+        data-course-id={course.id}
+        data-course-name={course.name}
+      >
         <UploadFiles courseId={id} />
       </div>
     </Modal>

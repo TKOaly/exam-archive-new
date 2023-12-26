@@ -2,20 +2,59 @@ import { expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import { createHtmlReport } from 'axe-html-reporter'
 import { test } from './fixtures'
-import { CourseListItem, ExamListItem } from '../lib/types'
+import { CourseListItem, FileListItem } from '../lib/types'
 
 test.describe('accessibility tests', () => {
+  test.describe.configure({ retries: 0 })
+
   test.beforeEach(async ({ request }, { testId }) => {
     const introRes = await request.post('/api/courses/create', {
       data: { courseName: `Introduction to testing ${testId}` }
     })
     const introCourse: CourseListItem = await introRes.json()
 
-    await request.post('/api/exams/upload', {
+    await request.post('/api/files/upload', {
       multipart: {
         courseId: introCourse.id,
+        type: 'exam',
         pdf: {
-          name: `existing-${testId}.pdf`,
+          name: `exam-${testId}.pdf`,
+          mimeType: 'application/pdf',
+          buffer: Buffer.from('This is a test.')
+        }
+      }
+    })
+
+    await request.post('/api/files/upload', {
+      multipart: {
+        courseId: introCourse.id,
+        type: 'notes',
+        pdf: {
+          name: `notes-${testId}.pdf`,
+          mimeType: 'application/pdf',
+          buffer: Buffer.from('This is a test.')
+        }
+      }
+    })
+
+    await request.post('/api/files/upload', {
+      multipart: {
+        courseId: introCourse.id,
+        type: 'exercise',
+        pdf: {
+          name: `exercise-${testId}.pdf`,
+          mimeType: 'application/pdf',
+          buffer: Buffer.from('This is a test.')
+        }
+      }
+    })
+
+    await request.post('/api/files/upload', {
+      multipart: {
+        courseId: introCourse.id,
+        type: 'other',
+        pdf: {
+          name: `other-${testId}.pdf`,
           mimeType: 'application/pdf',
           buffer: Buffer.from('This is a test.')
         }
@@ -28,15 +67,15 @@ test.describe('accessibility tests', () => {
   })
 
   test.afterEach(async ({ request }, { testId }) => {
-    const exams: ExamListItem[] = await (await request.get('/api/exams')).json()
+    const files: FileListItem[] = await (await request.get('/api/files')).json()
     await Promise.all(
-      exams
-        .filter(exam => exam.fileName.includes(testId))
+      files
+        .filter(file => file.fileName.includes(testId))
         .map(
-          async exam =>
-            await request.post(`/api/exams/delete`, {
+          async file =>
+            await request.post(`/api/files/delete`, {
               data: {
-                examId: exam.id
+                fileId: file.id
               }
             })
         )
@@ -57,13 +96,10 @@ test.describe('accessibility tests', () => {
     )
   })
 
-  test('courselist', async ({
-    page,
-    browserName,
-    isMobile,
-    courseList,
-    examList
-  }, { title, testId }) => {
+  test('courselist', async ({ page, browserName, isMobile, courseList }, {
+    title,
+    testId
+  }) => {
     await courseList.goto()
     await page
       .locator(`[data-course-name="Introduction to testing ${testId}"]`)
@@ -177,7 +213,7 @@ test.describe('accessibility tests', () => {
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
-  test('examlist with exams', async ({
+  test('fileList with files', async ({
     page,
     browserName,
     isMobile,
@@ -203,7 +239,7 @@ test.describe('accessibility tests', () => {
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
-  test('empty examlist', async ({ page, browserName, isMobile, courseList }, {
+  test('empty fileList', async ({ page, browserName, isMobile, courseList }, {
     title,
     testId
   }) => {
@@ -227,19 +263,19 @@ test.describe('accessibility tests', () => {
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
-  test('upload exam', async ({
+  test('upload file', async ({
     page,
     browserName,
     isMobile,
     courseList,
-    examList
+    fileList
   }, { testId, title }) => {
     await courseList.goto()
     const row = await courseList.getCourseItemRowByName(
       `Introduction to testing ${testId}`
     )
     const courseId = (await row.getAttribute('data-course-id')) as string
-    await examList.gotoUpload(
+    await fileList.gotoUpload(
       parseInt(courseId),
       `Introduction to testing ${testId}`
     )
@@ -259,18 +295,18 @@ test.describe('accessibility tests', () => {
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
-  test('manage exam', async ({
+  test('manage file', async ({
     page,
     browserName,
     isMobile,
     courseList,
-    examList
+    fileList
   }, { testId, title }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
-    const row = await examList.getExamItemRowByName(`existing-${testId}.pdf`)
-    const examId = (await row.getAttribute('data-exam-id')) as string
-    await examList.gotoExamManagement(
-      parseInt(examId),
+    const row = await fileList.getFileItemRowByName(`existing-${testId}.pdf`)
+    const fileId = (await row.getAttribute('data-file-id')) as string
+    await fileList.gotoFileManagement(
+      parseInt(fileId),
       `existing-${testId}.pdf`
     )
 
@@ -289,15 +325,15 @@ test.describe('accessibility tests', () => {
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
-  test('upload exam modal', async ({
+  test('upload file modal', async ({
     page,
     browserName,
     isMobile,
     courseList,
-    examList
+    fileList
   }, { testId, title }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
-    await examList.openUploadModal()
+    await fileList.openUploadModal()
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude('next-route-announcer')
@@ -314,15 +350,15 @@ test.describe('accessibility tests', () => {
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
-  test('manage exam modal', async ({
+  test('manage file modal', async ({
     page,
     browserName,
     isMobile,
     courseList,
-    examList
+    fileList
   }, { testId, title }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
-    await examList.openExamManagementModalByName(`existing-${testId}.pdf`)
+    await fileList.openFileManagementModalByName(`existing-${testId}.pdf`)
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude('next-route-announcer')

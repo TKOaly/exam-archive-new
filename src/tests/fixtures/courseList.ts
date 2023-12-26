@@ -20,7 +20,7 @@ export class CourseList {
   }
 
   async getCourseItemRowByName(courseName: string) {
-    return await this.page.locator(`div[data-course-name="${courseName}"]`)
+    return await this.page.getByRole('row', { name: `${courseName}` })
   }
 
   async goto() {
@@ -52,7 +52,7 @@ export class CourseList {
   async gotoCourseByName(courseName: string) {
     await this.goto()
     const row = await this.getCourseItemRowByName(courseName)
-    const link = await row.getByRole('link', { name: courseName, exact: true })
+    const link = await row.getByRole('cell', { name: courseName, exact: true })
     await link.click()
     const slug = slugifyCourseName(courseName)
     await this.page.waitForURL(new RegExp(slug))
@@ -78,7 +78,7 @@ export class CourseList {
   async gotoCourseManagementModalById(courseId: number) {
     await this.goto()
     const row = await this.getCourseItemRowById(courseId)
-    const link = await row.getByRole('link', { name: `Manage course` })
+    const link = await row.getByRole('link', { name: `manage` })
     await link.click()
     await this.page.waitForURL(new RegExp(`${courseId}`))
   }
@@ -86,7 +86,7 @@ export class CourseList {
   async gotoCourseManagementModalByName(courseName: string) {
     await this.goto()
     const row = await this.getCourseItemRowByName(courseName)
-    const link = await row.getByRole('link', { name: `Manage course` })
+    const link = await row.getByLabel(`Manage course "${courseName}"`)
     await link.click()
     const slug = slugifyCourseName(courseName)
     await this.page.waitForURL(new RegExp(slug))

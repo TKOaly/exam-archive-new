@@ -57,11 +57,14 @@ const RenameCourse = async ({ currentName, courseId }: RenameCourseProps) => {
   }
 
   return (
-    <form action={handleRenameCourse}>
+    <form action={handleRenameCourse} aria-labelledby="renameCourseTitle">
       <div className="flex flex-col gap-2">
-        <p className="font-serif text-xl font-bold leading-tight">
+        <h3
+          id="renameCourseTitle"
+          className="font-serif text-xl font-bold leading-tight"
+        >
           Rename course
-        </p>
+        </h3>
         <Input
           name="courseName"
           title={`Give new name for course "${currentName}"`}

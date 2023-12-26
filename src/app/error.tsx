@@ -12,7 +12,7 @@ const Error = ({ error, reset }: { error: Error; reset: () => void }) => {
   }, [error])
 
   if (error.message === 'NEXT_NOT_FOUND') {
-    return null
+    return <></>
   }
 
   return (

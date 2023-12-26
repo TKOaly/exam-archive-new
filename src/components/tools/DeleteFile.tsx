@@ -39,11 +39,14 @@ const DeleteFile = async ({ fileId, fileName }: DeleteFileProps) => {
   }
 
   return (
-    <form action={handleDeleteFile}>
+    <form action={handleDeleteFile} aria-labelledby="deleteFileTitle">
       <div className="flex flex-col gap-2">
-        <p className="font-serif text-xl font-bold leading-tight">
+        <h3
+          id="deleteFileTitle"
+          className="font-serif text-xl font-bold leading-tight"
+        >
           Delete file
-        </p>
+        </h3>
         <input hidden name="fileId" defaultValue={fileId} />
         <Button
           type="submit"

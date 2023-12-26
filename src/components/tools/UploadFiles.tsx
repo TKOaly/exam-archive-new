@@ -76,14 +76,18 @@ const UploadFiles = async ({ courseId }: UploadFileProps) => {
   }
 
   return (
-    <form action={uploadFiles}>
+    <form action={uploadFiles} aria-labelledby="uploadFilesTitle">
       <div className="flex flex-col gap-2">
-        <p className="font-serif text-xl font-bold leading-tight">
+        <h3
+          id="uploadFilesTitle"
+          className="font-serif text-xl font-bold leading-tight"
+        >
           Upload a new file here
-        </p>
+        </h3>
         <div className="flex flex-col">
-          <p>Select type:</p>
+          <label htmlFor="type">Select type:</label>
           <select
+            id="type"
             name="type"
             className="my-2 box-border w-full p-3 shadow-lg ring ring-inset ring-gray-800 focus:ring-gray-400 lg:w-1/2"
           >

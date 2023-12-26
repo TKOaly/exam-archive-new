@@ -88,13 +88,16 @@ const UpdateFile = async ({
   }
 
   return (
-    <form action={handleUpdateFile}>
+    <form action={handleUpdateFile} aria-labelledby="updateFileTitle">
       <div className="flex flex-col gap-2">
-        <p className="font-serif text-xl font-bold leading-tight">
+        <h3
+          id="updateFileTitle"
+          className="font-serif text-xl font-bold leading-tight"
+        >
           Manage file
-        </p>
+        </h3>
         <div className="flex flex-col">
-          <p>Filename:</p>
+          <label htmlFor="fileName">Filename:</label>
           <Input
             name="fileName"
             title={`Give new name for file "${currentName}"`}
@@ -103,8 +106,9 @@ const UpdateFile = async ({
           />
         </div>
         <div className="flex flex-col">
-          <p>Select type:</p>
+          <label htmlFor="type">Select type:</label>
           <select
+            id="type"
             name="type"
             className="my-2 box-border w-full bg-transparent p-3 shadow-lg ring ring-inset ring-gray-800 focus:ring-gray-400 lg:w-1/2"
             defaultValue={currentType}

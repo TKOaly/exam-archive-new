@@ -7,7 +7,7 @@ export const metadata = {
 
 const NotFoundPage = () => {
   return (
-    <main>
+    <div role="alert">
       <div className="m-5 flex flex-col items-center gap-4 bg-gray-50 px-20 py-10">
         <h2 className="mx-1 my-2 shrink font-serif text-3xl font-extrabold leading-tight">
           404 - Not Found
@@ -19,7 +19,7 @@ const NotFoundPage = () => {
           Back to courselisting
         </Link>
       </div>
-    </main>
+    </div>
   )
 }
 

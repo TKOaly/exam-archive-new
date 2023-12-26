@@ -10,8 +10,12 @@ export const metadata = {
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="page-container bg-gray-50 shadow-lg">
-      <ListingNavigation title="Objects in database" backButtonHref='/' label="Back to course listing" />
-      {children}
+      <ListingNavigation
+        title="Objects in database"
+        backButtonHref="/"
+        label="Back to course listing"
+      />
+      <main>{children}</main>
     </div>
   )
 }

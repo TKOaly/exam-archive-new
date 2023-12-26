@@ -46,6 +46,7 @@ const Page = async ({ params }: any) => {
   return (
     <Modal title={`Upload files to "${course.name}"`}>
       <div
+        aria-label={`Upload files to "${course.name}"`}
         className="flex flex-col gap-8"
         data-course-id={course.id}
         data-course-name={course.name}

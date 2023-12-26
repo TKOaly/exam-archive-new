@@ -42,17 +42,18 @@ const FileListItem = ({ file, showManage }: FileListItemProps) => {
         alt=""
         className="list-row-icon mx-2 h-6 w-6 flex-shrink-0"
       />
-      <Link
-        role="cell"
-        href={downloadUrl}
-        title={`Open "${fileName}"`}
-        arial-label={`Open "${fileName}"`}
-        target="_blank"
-        className="list-row-name hover:underline hover:decoration-cyan-500"
-      >
-        {basename}
-        {extname}
-      </Link>
+      <div role="cell">
+        <Link
+          href={downloadUrl}
+          title={`Open "${fileName}"`}
+          arial-label={`Open "${fileName}"`}
+          target="_blank"
+          className="list-row-name hover:underline hover:decoration-cyan-500"
+        >
+          {basename}
+          {extname}
+        </Link>
+      </div>
       {uploadDate && (
         <time
           role="cell"
@@ -67,16 +68,17 @@ const FileListItem = ({ file, showManage }: FileListItemProps) => {
         </time>
       )}
       {showManage && (
-        <Link
-          role="cell"
-          aria-label={`Manage "${fileName}"`}
-          title={`Manage "${fileName}"`}
-          href={`${downloadUrl}/manage`}
-          className="list-row-manage mx-2 flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"
-        >
-          <PencilSquareIcon className="h-4 w-4 self-center" />{' '}
-          <span className="sr-only">{`Manage file "${fileName}"`}</span>
-        </Link>
+        <div role="cell">
+          <Link
+            aria-label={`Manage "${fileName}"`}
+            title={`Manage "${fileName}"`}
+            href={`${downloadUrl}/manage`}
+            className="list-row-manage mx-2 flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"
+          >
+            <PencilSquareIcon className="h-4 w-4 self-center" />{' '}
+            <span className="sr-only">{`Manage file "${fileName}"`}</span>
+          </Link>
+        </div>
       )}
     </div>
   )

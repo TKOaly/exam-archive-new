@@ -41,7 +41,7 @@ const Page = async ({ params }: any) => {
   }
 
   return (
-    <main
+    <div
       className="flex flex-col gap-8"
       data-course-id={course.id}
       data-course-name={course.name}
@@ -130,7 +130,7 @@ const Page = async ({ params }: any) => {
           ))}
         </div>
       </div>
-    </main>
+    </div>
   )
 }
 

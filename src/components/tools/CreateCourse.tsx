@@ -38,11 +38,14 @@ const CreateCourse = async () => {
   }
 
   return (
-    <form action={handleCourseCreation}>
+    <form action={handleCourseCreation} aria-labelledby="newCourseTitle">
       <div className="flex flex-col gap-2">
-        <p className="font-serif text-xl font-bold leading-tight">
+        <h3
+          id="newCourseTitle"
+          className="font-serif text-xl font-bold leading-tight"
+        >
           Add a new course
-        </p>
+        </h3>
         <Input
           name="courseName"
           title={`Give name for new course`}

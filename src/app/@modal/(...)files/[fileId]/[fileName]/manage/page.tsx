@@ -28,7 +28,10 @@ const Page = async ({
 
   return (
     <Modal title={`Manage file "${file.fileName}"`}>
-      <div className="flex flex-col gap-8">
+      <div
+        aria-label={`Manage file "${file.fileName}"`}
+        className="flex flex-col gap-8"
+      >
         <UpdateFile
           fileId={fileId}
           currentType={file.type}

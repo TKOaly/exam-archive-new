@@ -20,7 +20,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
           create
         </Link>
       </ListingNavigation>
-      {children}
+      <main>{children}</main>
     </div>
   )
 }

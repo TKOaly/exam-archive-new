@@ -174,7 +174,6 @@ test.describe('accessibility tests', () => {
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude('next-route-announcer')
-      .exclude('next-route-announcer')
       .analyze()
     createHtmlReport({
       results: accessibilityScanResults,
@@ -303,7 +302,7 @@ test.describe('accessibility tests', () => {
     fileList
   }, { testId, title }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
-    const row = await fileList.getFileItemRowByName(`existing-${testId}.pdf`)
+    const row = await fileList.getFileItemRowByName(`exam-${testId}.pdf`)
     const fileId = (await row.getAttribute('data-file-id')) as string
     await fileList.gotoFileManagement(
       parseInt(fileId),
@@ -358,7 +357,7 @@ test.describe('accessibility tests', () => {
     fileList
   }, { testId, title }) => {
     await courseList.gotoCourseByName(`Introduction to testing ${testId}`)
-    await fileList.openFileManagementModalByName(`existing-${testId}.pdf`)
+    await fileList.openFileManagementModalByName(`exam-${testId}.pdf`)
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .exclude('next-route-announcer')

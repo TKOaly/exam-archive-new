@@ -60,7 +60,7 @@ const Layout = async ({
   }
 
   return (
-    <div className='page-container bg-gray-50 shadow-lg'>
+    <div className="page-container bg-gray-50 shadow-lg">
       <ListingNavigation
         title={course.name}
         backButtonHref="/"
@@ -73,7 +73,7 @@ const Layout = async ({
           upload
         </Link>
       </ListingNavigation>
-      {children}
+      <main>{children}</main>
     </div>
   )
 }

@@ -47,6 +47,7 @@ const Page = async ({ params }: any) => {
   return (
     <Modal title={`Manage course "${course.name}"`}>
       <div
+        aria-label={`Manage course "${course.name}"`}
         className="flex flex-col gap-8"
         data-course-id={course.id}
         data-course-name={course.name}

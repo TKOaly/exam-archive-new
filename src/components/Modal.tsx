@@ -25,9 +25,9 @@ const Modal = ({
           className="pointer-events-auto z-20 flex w-full flex-col bg-white bg-clip-padding"
         >
           <div className="flex flex-shrink-0 items-center justify-between px-20 py-5">
-            <h1 className="font-serif text-4xl font-extrabold text-gray-800">
+            <h2 className="font-serif text-4xl font-extrabold text-gray-800">
               {title}
-            </h1>
+            </h2>
             <button onClick={() => router.back()}>
               <XCircleIcon className="h-8 w-8 flex-shrink-0" />
               <p className="sr-only">Close</p>

@@ -14,7 +14,7 @@ const Page = async () => {
 
   return (
     <Modal title="Create new course">
-      <div className="flex flex-col gap-8">
+      <div aria-label="Create new course" className="flex flex-col gap-8">
         <CreateCourse />
       </div>
     </Modal>

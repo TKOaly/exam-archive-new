@@ -37,11 +37,14 @@ const DeleteCourse = async ({ courseId, courseName }: DeleteCourseProps) => {
   }
 
   return (
-    <form action={handleDeleteCourse}>
+    <form action={handleDeleteCourse} aria-labelledby="deleteCourseTitle">
       <div className="flex flex-col gap-2">
-        <p className="font-serif text-xl font-bold leading-tight">
+        <h3
+          id="deleteCourseTitle"
+          className="font-serif text-xl font-bold leading-tight"
+        >
           Delete course
-        </p>
+        </h3>
         <p>Course can only be deleted after all files have been deleted.</p>
         <input hidden name="courseId" defaultValue={courseId} />
         <Button

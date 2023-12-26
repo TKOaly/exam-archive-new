@@ -73,7 +73,7 @@ const Layout = async ({
           upload
         </Link>
       </ListingNavigation>
-      {children}
+      <main>{children}</main>
     </div>
   )
 }

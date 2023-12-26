@@ -21,7 +21,7 @@ const Layout = async ({
         backButtonHref="/"
         label="Back to course listing"
       ></ListingNavigation>
-      {children}
+      <main>{children}</main>
     </div>
   )
 }

@@ -23,7 +23,7 @@ const Page = async () => {
   const objects = s3Objects.sort(sortByPrefixThenObjNameAsc)
 
   return (
-    <main
+    <div
       role="table"
       aria-label="Files"
       className="admin-list-container divide-y"
@@ -32,7 +32,7 @@ const Page = async () => {
       {objects.map(file => (
         <ObjectListItem file={file} />
       ))}
-    </main>
+    </div>
   )
 }
 

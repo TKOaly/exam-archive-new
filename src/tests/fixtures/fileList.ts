@@ -51,14 +51,15 @@ export class FileList {
 
   async openFileManagementModalById(fileId: number) {
     const row = await this.getFileItemRowById(fileId)
-    const link = await row.getByRole('link', { name: 'manage' })
+    const fileName = (await row.getAttribute('data-file-name')) as string
+    const link = await row.getByTitle(`Manage "${fileName}"`)
     await link.click()
     await this.page.waitForURL(new RegExp('manage'))
   }
 
   async openFileManagementModalByName(fileName: string) {
     const row = await this.getFileItemRowByName(fileName)
-    const link = await row.getByRole('link', { name: 'manage' })
+    const link = await row.getByTitle(`Manage "${fileName}"`)
     await link.click()
     await this.page.waitForURL(new RegExp('manage'))
   }

@@ -48,7 +48,7 @@ const Layout = async ({
         label={`Back to course "${file.courseName}"`}
         backButtonHref={urlForCourse(file.courseId, file.courseName)}
       ></ListingNavigation>
-      {children}
+      <main>{children}</main>
     </div>
   )
 }

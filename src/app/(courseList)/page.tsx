@@ -10,11 +10,7 @@ const Page = async () => {
   const courses = await getCourseListing()
 
   return (
-    <main
-      role="table"
-      aria-label="Courses"
-      className="list-container divide-y"
-    >
+    <div role="table" aria-label="Courses" className="list-container divide-y">
       <CourseListHeader showManage={rights.remove || rights.rename} />
       {courses.length === 0 && <NoCoursesFound />}
       {courses.map(course => {
@@ -26,7 +22,7 @@ const Page = async () => {
           />
         )
       })}
-    </main>
+    </div>
   )
 }
 

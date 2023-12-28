@@ -95,7 +95,18 @@ export const roleRights: {
 export const getSessionUser = async () => {
   const session = await getServerSession(authConfig)
 
-  if (!session || !session.user) redirect('/auth/signin')
+  if (!session || !session.user) {
+    if (config.APP_ENV === 'development') {
+      return {
+        id: 1,
+        name: 'dev',
+        role: UserRole.Yllapitaja,
+        membership: UserMembership.Jasen,
+        rights: roleRights[UserRole.Yllapitaja]
+      }
+    }
+    redirect('/auth/signin')
+  }
 
   return session.user
 }
@@ -103,7 +114,12 @@ export const getSessionUser = async () => {
 export const validateRights = async (...neededRights: AccessRight[]) => {
   const session = await getServerSession(authConfig)
 
-  if (!session || !session.user) return false
+  if (!session || !session.user) {
+    if (config.APP_ENV === 'development') {
+      return true
+    }
+    return false
+  }
   if (!session.user?.rights) return false
   if (!session.user?.membership) return false
   if (!isActiveMember(session.user.membership)) return false

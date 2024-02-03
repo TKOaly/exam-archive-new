@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation'
 import { dbPool } from '@lib/db'
 import {
   Course,
@@ -126,13 +127,11 @@ export const getCourseListing = async (): Promise<CourseListItem[]> => {
   return courses
 }
 
-export const getCourseInfo = async (
-  courseId: number
-): Promise<CourseInfo | null> => {
+export const getCourseInfo = async (courseId: number): Promise<CourseInfo> => {
   const course = await findCourseById(courseId)
 
   if (!course) {
-    return null
+    notFound()
   }
 
   const filesResult = await dbPool.query(
@@ -249,9 +248,7 @@ export const findCourseByFileId = async (
   return course.data
 }
 
-export const getFileNameById = async (
-  fileId: FileId
-): Promise<FileInfo | null> => {
+export const getFileNameById = async (fileId: FileId): Promise<FileInfo> => {
   const result = await dbPool.query(
     `
     SELECT
@@ -270,7 +267,7 @@ export const getFileNameById = async (
   const info = FileInfo.safeParse(result.rows[0])
 
   if (!info.success) {
-    return null
+    notFound()
   }
 
   return info.data

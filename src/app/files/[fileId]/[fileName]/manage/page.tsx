@@ -1,4 +1,4 @@
-import { notFound, redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
 import { getFileNameById } from '@services/archive'
 
@@ -20,10 +20,6 @@ const Page = async ({
   const fileId = parseInt(params.fileId, 10)
 
   const file = await getFileNameById(parseInt(params.fileId))
-
-  if (!file) {
-    notFound()
-  }
 
   return (
     <div className="content-container flex flex-col gap-8 pb-5">

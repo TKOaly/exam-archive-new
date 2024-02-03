@@ -1,5 +1,4 @@
-import { notFound, redirect } from 'next/navigation'
-
+import { parseSlug } from '@lib/courses'
 import { getSessionUser } from '@services/tkoUserService'
 import { getCourseInfo } from '@services/archive'
 
@@ -7,38 +6,11 @@ import FileListHeader from '@components/FileList/FileListHeader'
 import NotFound from '@components/FileList/NotFound'
 import FileListItem from '@components/FileList/FileListItem'
 
-// import { slugifyCourseName, urlForCourse } from '@lib/courses'
-
-const parseSlug = (slug: string) => {
-  const parsedSlug = slug.match(/(?<id>\d+)-(?<courseSlug>.*)/)
-  if (!parsedSlug || !parsedSlug.groups) {
-    notFound()
-  }
-
-  const id = parseInt(parsedSlug.groups.id, 10)
-
-  if (isNaN(id)) {
-    notFound()
-  }
-
-  return {
-    id,
-    courseSlug: parsedSlug.groups.courseSlug
-  }
-}
-
 const Page = async ({ params }: any) => {
   const { rights } = await getSessionUser()
-  const { id: courseId, courseSlug } = parseSlug(params.slug)
-
-  // if (courseSlug !== slugifyCourseName(course.name)) {
-  //   return redirect(urlForCourse(course.id, course.name))
-  // }
+  const { id: courseId } = parseSlug(params.slug)
 
   const course = await getCourseInfo(courseId)
-  if (!course) {
-    notFound()
-  }
 
   return (
     <div

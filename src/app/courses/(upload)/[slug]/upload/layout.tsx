@@ -1,29 +1,10 @@
 import React from 'react'
 import { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 
-import { urlForCourse } from '@lib/courses'
+import { urlForCourse, parseSlug, verifyCourseSlug } from '@lib/courses'
 import { getCourseInfo } from '@services/archive'
 
 import ListingNavigation from '@components/Navigation'
-
-const parseSlug = (slug: string) => {
-  const parsedSlug = slug.match(/(?<id>\d+)-(?<courseSlug>.*)/)
-  if (!parsedSlug || !parsedSlug.groups) {
-    notFound()
-  }
-
-  const id = parseInt(parsedSlug.groups.id, 10)
-
-  if (isNaN(id)) {
-    notFound()
-  }
-
-  return {
-    id,
-    courseSlug: parsedSlug.groups.courseSlug
-  }
-}
 
 export const generateMetadata = async ({
   params
@@ -32,10 +13,6 @@ export const generateMetadata = async ({
 }): Promise<Metadata> => {
   const { id } = parseSlug(params.slug)
   const course = await getCourseInfo(id)
-
-  if (!course) {
-    notFound()
-  }
 
   return {
     title: `Upload files - ${course.name} - Tärpistö - TKO-äly ry`,
@@ -50,12 +27,10 @@ const Layout = async ({
   children: React.ReactNode
   params: { slug: string }
 }) => {
-  const { id } = parseSlug(params.slug)
+  const { id, courseSlug } = parseSlug(params.slug)
   const course = await getCourseInfo(id)
 
-  if (!course) {
-    notFound()
-  }
+  verifyCourseSlug(course.id, course.name, courseSlug)
 
   return (
     <div className="page-container bg-gray-50 shadow-lg">

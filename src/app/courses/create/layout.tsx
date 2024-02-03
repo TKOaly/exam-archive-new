@@ -7,13 +7,7 @@ export const metadata = {
   description: 'The TKO-äly ry exam archive'
 }
 
-const Layout = async ({
-  children,
-  params
-}: {
-  children: React.ReactNode
-  params: { slug: string }
-}) => {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="page-container bg-gray-50 shadow-lg">
       <ListingNavigation

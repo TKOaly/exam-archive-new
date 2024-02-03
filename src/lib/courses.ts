@@ -1,4 +1,5 @@
 import slugify from 'slugify'
+import { notFound, redirect } from 'next/navigation'
 
 export const slugifyCourseName = (courseName: string) => {
   return slugify(courseName.replace(/c\+\+/i, 'cpp'), {
@@ -25,3 +26,27 @@ export const urlForFile = (fileId: number, fileName: string) =>
 
 export const urlForFileManagement = (fileId: number, fileName: string) =>
   `${urlForFile(fileId, fileName)}/manage`
+
+export const parseSlug = (slug: string) => {
+  const parsedSlug = slug.match(/(?<id>\d+)-(?<courseSlug>.*)/)
+  if (!parsedSlug || !parsedSlug.groups) {
+    notFound()
+  }
+
+  const id = parseInt(parsedSlug.groups.id, 10)
+
+  if (isNaN(id)) {
+    notFound()
+  }
+
+  return {
+    id,
+    courseSlug: parsedSlug.groups.courseSlug
+  }
+}
+
+export const verifyCourseSlug = (id: number, name: string, slug: string) => {
+  if (slug !== slugifyCourseName(name)) {
+    redirect(urlForCourse(id, name))
+  }
+}

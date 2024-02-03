@@ -1,7 +1,7 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-@import "tailwindcss/variants";
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import 'tailwindcss/variants';
 
 @media screen and (min-width: 640px) {
   .header-container {
@@ -54,7 +54,7 @@
     grid-column: navigation-start / navigation-end;
     grid-row: navigation-start / navigation-end;
     display: grid;
-    grid-template-columns: [begin back-start ] min-content [back-end title-start] auto [title-end actions-start] auto [actions-end end];
+    grid-template-columns: [begin back-start] min-content [back-end title-start] auto [title-end actions-start] auto [actions-end end];
     grid-template-rows: [begin back-start title-start actions-start] auto [back-end title-end actions-end end];
     padding-top: theme('spacing.2');
     padding-bottom: theme('spacing.2');

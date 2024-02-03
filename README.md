@@ -11,9 +11,6 @@ Actually new exam archive. And a little bit more.
   - [Adding more test files](#adding-more-test-files)
   - [Seeding database with real data](#seeding-database-with-real-data)
 - [Docker warning](#docker-warning)
-- [Deployment](#deployment)
-  - [Manual infra setup with Terraform](#manual-infra-setup-with-terraform)
-  - [CI to production](#ci-to-production)
 - [Environment variables](#environment-variables)
 - [License](#license)
 
@@ -27,7 +24,7 @@ Actually new exam archive. And a little bit more.
 
 ### Other good to know commands
 
-- `run-prod.sh` will start prod-like environment locally for testing Docker image. There is `APP_ENV=development` enabled for bypassing user service authentication.
+- `run-local-prod.sh` will start prod-like environment locally for testing Docker image. There is `APP_ENV=development` enabled for bypassing user service authentication.
 - `run-security-scan.sh` runs ZAProxy's zap-full-scan.py against app. Mainly used in CI, but also working locally.
 - `run-tests.sh` runs Playwright test suite against app.
 - `seed-dev-db.sh` runs database seeds against local development database. Only needed if you want to have some development test data. Tests handles seeding itself.
@@ -48,45 +45,11 @@ By default, the local minio s3 is seeded with one PDF and one JPG. You can just 
 
 ### Seeding database with real data
 
-1. Download the development database dump (`db.sql`) from [here](https://github.com/TKOaly/exam-archive-dev-db-dump)
-2. Start the database and Adminer:
-   - `docker-compose up -d db adminer`
-3. Open Adminer (navigate to <http://localhost:9003>) and log in with the credentials in `docker-compose.yml`, by default they are:
-   | Key      | Value      |
-   | -------- | -----------|
-   | System   | PostgreSQL |
-   | Server   | `db`       |
-   | Username | `tarpisto` |
-   | Password | `tarpisto` |
-   | Database | `tarpisto` |
-4. Click on Import on the left sidebar and upload `db.sql`
-5. Further possible migrations are runned while starting app.
+1. Run `seed-dev-db.sh`. This will handle seeding development database with real-like data. All test processes handles this process itself and is not dependant of development database.
 
 ## Docker warning
 
 The `.dockerignore` is configured to work as a whitelist so if you add new files or folders which you want to include in the Docker image, update [`.dockerignore`](https://github.com/TKOaly/exam-archive-new/blob/master/.dockerignore).
-
-## Deployment
-
-### Manual infra setup with Terraform
-
-1. `cd tf`
-2. Set correct AWS CLI profile
-
-   ```shell
-   export AWS_PROFILE=default
-   export TF_VAR_aws_profile=default
-   ```
-
-   - Note: if you've created another `aws` cli profile (e.g. have separate profile for personal and for tkoaly), change `default` to that profile's name
-3. `terraform plan`
-   - Will ask for `var.image_version_tag`, set to the deployment tag (latest version in Github Releases), specify **without** `v`, e.g. `1.2.30`.
-     - If tired of doing it again, `export TF_VAR_image_version_tag=1.2.30`
-4. `terraform apply`
-
-### CI to production
-
-To deploy a new release to production, author a new Github Release. Use semver. Make sure the version string is prefixed with `v`, e.g. `v1.2.30` instead of `1.2.30`. The deployment script does a string replace for this, so if you want to release non-v-prefixed versions, update the Github action workflow.
 
 ## Environment variables
 

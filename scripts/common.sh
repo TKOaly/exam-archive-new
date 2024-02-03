@@ -199,6 +199,10 @@ function get_environment_variables() {
 
         export AWS_S3_ENDPOINT=${AWS_S3_ENDPOINT:-"http://$(compose_cmd port s3 9001)"}
         export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"tarpisto-local"}
+
+        export OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME:-"tarpisto"}
+        export OTEL_ENDPOINT=${OTEL_ENDPOINT:-"http://localhost/notexisting"}
+        export OTEL_AUTHORIZATION=${OTEL_AUTHORIZATION:-"http://localhost/notexisting"}
     fi
 
     # Set environment dependant variables

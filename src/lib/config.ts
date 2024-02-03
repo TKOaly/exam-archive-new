@@ -29,12 +29,16 @@ const AWS_SECRET_ACCESS_KEY: string | undefined =
   process.env.AWS_SECRET_ACCESS_KEY!
 const AWS_S3_ENDPOINT: string | undefined = process.env.AWS_S3_ENDPOINT!
 const AWS_S3_BUCKET_ID: string | undefined = process.env.AWS_S3_BUCKET_ID!
+const OTEL_SERVICE_NAME: string | undefined = process.env.OTEL_SERVICE_NAME!
+const OTEL_ENDPOINT: string | undefined = process.env.OTEL_ENDPOINT!
+const OTEL_AUTHORIZATION: string | undefined = process.env.OTEL_AUTHORIZATION!
 
 checkExists(NODE_ENV, APP_ENV, PG_CONNECTION_STRING)
 checkExists(USER_SERVICE_SERVICE_ID, USER_SERVICE_URL, USER_SERVICE_SECRET)
 checkExists(NEXTAUTH_URL, NEXTAUTH_SECRET)
 checkExists(AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
 checkExists(AWS_S3_ENDPOINT, AWS_S3_BUCKET_ID)
+checkExists(OTEL_SERVICE_NAME, OTEL_ENDPOINT, OTEL_AUTHORIZATION)
 
 export default {
   NODE_ENV,
@@ -47,5 +51,8 @@ export default {
   AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY,
   AWS_S3_ENDPOINT,
-  AWS_S3_BUCKET_ID
+  AWS_S3_BUCKET_ID,
+  OTEL_SERVICE_NAME,
+  OTEL_ENDPOINT,
+  OTEL_AUTHORIZATION
 }

@@ -1,6 +1,35 @@
 #!/usr/bin/env bash
+function validate_env() {
+    echo "::debug::Validating \$ENV=${ENV}"
+    if [[ -z "${ENV:-}" ]]
+    then
+        echo "::error title={"ENV"}::\$ENV is not set. Exiting."
+        exit 1
+    fi
+
+    if [[ "$ENV" != "dev" && "$ENV" != "test" && "$ENV" != "security" && "$ENV" != "local" && "$ENV" != "prod" ]]
+    then
+        echo "::error title={"ENV"}::\$ENV is not set to dev, test, security, local or production. Exiting."
+        exit 1
+    fi
+}
+
+validate_env # be sure that env is correctly set as other functions depend on it
+
 readonly repo="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd)"
-COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-"tarpisto"}
+readonly COMPOSE_PROJECT_NAME="tarpisto-$ENV"
+
+function compose_cmd() {
+    required_command docker
+    required_command docker-compose
+
+    if [[ "$ENV" == "test" ]]
+    then
+        docker-compose -f docker-compose.yml "$@"
+    else
+        docker-compose -f docker-compose.yml -f docker-compose.$ENV.yml "$@"
+    fi
+}
 
 function check_node_version() {
     pushd "$repository"
@@ -53,12 +82,9 @@ function npm_ci() {
 function db_health_check() {
     pushd "$repository"
 
-    required_command docker
-    required_command docker-compose
-
     echo "::debug::Database health check in $COMPOSE_PROJECT_NAME"
     COUNTER=0
-    until COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME docker-compose exec -t db pg_isready -U tarpisto &>/dev/null; do
+    until compose_cmd exec -t db pg_isready -U tarpisto &>/dev/null; do
         echo "Waiting for database to be healthy. Trying again in 5 seconds."
 
         COUNTER=$((COUNTER+1))
@@ -79,12 +105,10 @@ function s3_health_check() {
     pushd "$repository"
 
     required_command curl
-    required_command docker
-    required_command docker-compose
 
     echo "::debug::S3 health check in $COMPOSE_PROJECT_NAME"
     COUNTER=0
-    until curl -I "http://$(COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME docker-compose port s3 9001)/minio/health/live" &>/dev/null; do
+    until curl -I "http://$(compose_cmd port s3 9001)/minio/health/live" &>/dev/null; do
         echo "Waiting for s3 to be healthy. Trying again in 5 seconds."
 
         COUNTER=$((COUNTER+1))
@@ -105,28 +129,8 @@ function build_app() {
     echo "::group::Building application"
 
     required_command npm
-    required_command docker
 
-    export PORT=${PORT:-"9010"}
-    export PG_CONNECTION_STRING=${PG_CONNECTION_STRING:-"postgresql://tarpisto:tarpisto@$(docker-compose port db 5432)/tarpisto"}
-
-    export USER_SERVICE_SERVICE_ID=${USER_SERVICE_SERVICE_ID:-"11188b9c-9534-4faf-8355-60973b720647"}
-    export USER_SERVICE_URL=${USER_SERVICE_URL:-"http://127.0.0.1:8080"}
-    export USER_SERVICE_SECRET=${USER_SERVICE_SECRET:-"catlike-meringue-tying-PASTERN-bed-simply"}
-
-    export NEXTAUTH_URL=${NEXTAUTH_URL:-"http://127.0.0.1:9000"}
-    export NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-"catlike-meringue-tying-PASTERN-bed-simply"}
-
-    export AWS_REGION=${AWS_REGION:-"eu-west-1"}
-    export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-"tarpisto"}
-    export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-"tarpisto"}
-
-    export AWS_S3_ENDPOINT=${AWS_S3_ENDPOINT:-"http://$(docker-compose port s3 9001)"}
-    export AWS_S3_FORCE_PATH_STYLE=${AWS_S3_FORCE_PATH_STYLE:-true}
-    export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"tarpisto-local"}
-
-    export NODE_ENV=${NODE_ENV:-"production"}
-    export APP_ENV=${APP_ENV:-"development"}
+    get_environment_variables
 
     echo "::debug::Running database migrations"
     npm run db:migrate
@@ -162,4 +166,56 @@ function build_docker_image() {
         docker buildx bake -f docker-bake.hcl -f ${DOCKER_INFO}
         echo "::endgroup::"
     fi
+}
+
+function get_environment_variables() {
+    if [[ "$ENV" == "dev" || "$ENV" == "test" || "$ENV" == "security" || "$ENV" == "local" ]]
+    then
+        # Set environment variables for local development only
+        export PG_CONNECTION_STRING=${PG_CONNECTION_STRING:-"postgresql://tarpisto:tarpisto@$(compose_cmd port db 5432)/tarpisto"}
+
+        export USER_SERVICE_SERVICE_ID=${USER_SERVICE_SERVICE_ID:-"11188b9c-9534-4faf-8355-60973b720647"}
+        export USER_SERVICE_URL=${USER_SERVICE_URL:-"http://127.0.0.1:8080"}
+        export USER_SERVICE_SECRET=${USER_SERVICE_SECRET:-"catlike-meringue-tying-PASTERN-bed-simply"}
+
+        export NEXTAUTH_URL=${NEXTAUTH_URL:-"http://127.0.0.1:9000"}
+        export NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-"catlike-meringue-tying-PASTERN-bed-simply"}
+
+        export AWS_REGION=${AWS_REGION:-"eu-west-1"}
+        export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-"tarpisto"}
+        export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-"tarpisto"}
+
+        export AWS_S3_ENDPOINT=${AWS_S3_ENDPOINT:-"http://$(compose_cmd port s3 9001)"}
+        export AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID:-"tarpisto-local"}
+    fi
+
+    # Set environment dependant variables
+    if [[ "$ENV" == "dev" ]]
+    then
+        export PORT=${PORT:-"9000"}
+        export APP_ENV="development"
+        export NODE_ENV="development"
+    elif [[ "$ENV" == "test" ]]
+    then
+        export PORT=${PORT:-"9010"}
+        export APP_ENV="development"
+        export NODE_ENV="test"
+    elif [[ "$ENV" == "security" ]]
+    then
+        export PORT=${PORT:-"9020"}
+        export APP_ENV="development"
+        export NODE_ENV="production"
+    elif [[ "$ENV" == "local" ]]
+    then
+        export PORT=${PORT:-"9030"}
+        export APP_ENV="development"
+        export NODE_ENV="production"
+    else
+        export PORT=${PORT:-"9000"}
+        export APP_ENV="production"
+        export NODE_ENV="production"
+    fi
+
+    # Set environment variables for all environments
+    export NEXT_TELEMETRY_DISABLED=1
 }

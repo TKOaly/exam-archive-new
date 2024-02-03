@@ -28,15 +28,13 @@ const AWS_ACCESS_KEY_ID: string | undefined = process.env.AWS_ACCESS_KEY_ID!
 const AWS_SECRET_ACCESS_KEY: string | undefined =
   process.env.AWS_SECRET_ACCESS_KEY!
 const AWS_S3_ENDPOINT: string | undefined = process.env.AWS_S3_ENDPOINT!
-const AWS_S3_FORCE_PATH_STYLE: string | undefined =
-  process.env.AWS_S3_FORCE_PATH_STYLE!
 const AWS_S3_BUCKET_ID: string | undefined = process.env.AWS_S3_BUCKET_ID!
 
 checkExists(NODE_ENV, APP_ENV, PG_CONNECTION_STRING)
 checkExists(USER_SERVICE_SERVICE_ID, USER_SERVICE_URL, USER_SERVICE_SECRET)
 checkExists(NEXTAUTH_URL, NEXTAUTH_SECRET)
 checkExists(AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
-checkExists(AWS_S3_ENDPOINT, AWS_S3_FORCE_PATH_STYLE, AWS_S3_BUCKET_ID)
+checkExists(AWS_S3_ENDPOINT, AWS_S3_BUCKET_ID)
 
 export default {
   NODE_ENV,
@@ -49,6 +47,5 @@ export default {
   AWS_ACCESS_KEY_ID,
   AWS_SECRET_ACCESS_KEY,
   AWS_S3_ENDPOINT,
-  AWS_S3_FORCE_PATH_STYLE,
   AWS_S3_BUCKET_ID
 }

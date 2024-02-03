@@ -37,11 +37,6 @@ services:
     volumes:
       - tarpisto-pg-data:/data/pgdata
 
-  adminer:
-    image: adminer:4.8.1-standalone
-    ports:
-      - 127.0.0.1:9003:8080
-
 volumes:
   tarpisto-pg-data:
   tarpisto-minio-data:

@@ -1,7 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
 
-const PORT = 9010
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 9010
 
 const config: PlaywrightTestConfig = {
   testDir: './src/tests',
@@ -27,8 +27,7 @@ const config: PlaywrightTestConfig = {
   use: {
     actionTimeout: 0,
     baseURL: `http://127.0.0.1:${PORT}`,
-    // screenshot: 'only-on-failure',
-    screenshot: 'on',
+    screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     trace: 'retain-on-failure',
     testIdAttribute: 'data-test-id'

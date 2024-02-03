@@ -3,11 +3,11 @@ version: '3.9'
 services:
   db:
     networks:
-      - prod
+      - local
 
   s3:
     networks:
-      - prod
+      - local
 
   tarpisto:
     image: tarpisto/tarpisto:latest
@@ -32,15 +32,14 @@ services:
       - AWS_REGION=${AWS_REGION}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_S3_ENDPOINT=http://s3:9000
-      - AWS_S3_FORCE_PATH_STYLE=${AWS_S3_FORCE_PATH_STYLE}
+      - AWS_S3_ENDPOINT=http://s3:9001
       - AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID}
       - APP_ENV=development
     ports:
-      - 127.0.0.1:9020:9000
+      - 127.0.0.1:9030:9000
     networks:
-      - prod
+      - local
 
 networks:
-  prod:
-    name: tarpisto-prod
+  local:
+    name: tarpisto-local

@@ -8,6 +8,7 @@ RUN npm ci --omit=dev
 FROM node:20.5.0-alpine as runner
 
 ENV PORT 9000
+ENV ENV production
 ENV NODE_ENV production
 ENV APP_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1

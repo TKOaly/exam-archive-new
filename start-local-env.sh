@@ -2,13 +2,13 @@
 set -o errexit -o nounset -o pipefail
 
 readonly repository="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
-export COMPOSE_PROJECT_NAME="tarpisto"
+readonly ENV="dev"
 source "$repository/scripts/common.sh"
 
 function stop() {
   pushd "$repository"
   required_command docker
-  docker-compose down || true
+  compose_cmd down || true
   popd
 }
 trap stop EXIT
@@ -35,7 +35,7 @@ function main() {
     tmux select-pane -t 0 -T "next dev"
 
     tmux select-pane -t 1
-    tmux send-keys "COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME docker-compose up" C-m
+    tmux send-keys "compose_cmd up" C-m
     tmux select-pane -t 1 -T "db & s3 logs"
 
     tmux select-pane -t 0

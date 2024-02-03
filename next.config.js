@@ -2,7 +2,7 @@
 const path = require('path')
 
 const csp =
-  process.env.NODE_ENV === 'development'
+  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
     ? ''
     : "default-src 'self'; img-src 'self'; media-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline';"
 
@@ -34,6 +34,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
+            // Permissions-Policy is blacklist-based, so we need to explicitly set all features we want to disable
             value:
               'microphone=(), geolocation=(), usb=(), payment=(), autoplay=(), display-capture=(), encrypted-media=(), gamepad=(), gyroscope=(), midi=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=()'
           },

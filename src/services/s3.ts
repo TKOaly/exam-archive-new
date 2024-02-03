@@ -14,9 +14,6 @@ const s3Credentials = {
 
 s3Options.credentials = s3Credentials
 s3Options.endpoint = config.AWS_S3_ENDPOINT
-if (config.AWS_S3_FORCE_PATH_STYLE) {
-  s3Options.forcePathStyle = true
-}
 
 const s3 = new S3(s3Options)
 

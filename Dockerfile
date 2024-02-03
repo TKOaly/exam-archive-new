@@ -15,6 +15,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 WORKDIR /usr/src/tarpisto
 
+# Bash for starting server, curl for container health checking
 RUN apk add --no-cache bash curl
 
 COPY --from=deps /usr/src/tarpisto/node_modules ./node_modules

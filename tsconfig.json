@@ -55,6 +55,7 @@
     "**/*.ts",
     "**/*.tsx",
     "dist/development/types/**/*.ts",
-    "dist/production/types/**/*.ts"
+    "dist/production/types/**/*.ts",
+    "dist/test/types/**/*.ts"
   ]
 }

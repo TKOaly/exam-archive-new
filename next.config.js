@@ -10,7 +10,8 @@ const nextConfig = {
   distDir: `dist/${process.env.NODE_ENV}`,
   reactStrictMode: true,
   experimental: {
-    serverActions: { bodySizeLimit: '25mb' }
+    serverActions: { bodySizeLimit: '25mb' },
+    instrumentationHook: true
   },
   devIndicators: {
     buildActivityPosition: 'bottom-right'

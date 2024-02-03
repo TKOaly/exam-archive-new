@@ -13,15 +13,13 @@ const Page = async () => {
     <div role="table" aria-label="Courses" className="list-container divide-y">
       <CourseListHeader showManage={rights.remove || rights.rename} />
       {courses.length === 0 && <NoCoursesFound />}
-      {courses.map(course => {
-        return (
-          <CourseListItem
-            key={course.id}
-            course={course}
-            showManage={rights.remove || rights.rename}
-          />
-        )
-      })}
+      {courses.map(course => (
+        <CourseListItem
+          key={course.id}
+          course={course}
+          showManage={rights.remove || rights.rename}
+        />
+      ))}
     </div>
   )
 }

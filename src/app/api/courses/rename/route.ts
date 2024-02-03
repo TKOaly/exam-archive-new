@@ -61,6 +61,9 @@ export const POST = async (req: NextRequest) => {
     await renameCourse(course.id, name)
     return NextResponse.json({ ok: true })
   } catch (e) {
+    if ((e as Error).message === 'NEXT_NOT_FOUND') {
+      return NextResponse.json({ error: '404 Not found' }, { status: 400 })
+    }
     console.error('Error while renaming course', e)
     return NextResponse.json(
       { error: '500 Internal Server Error' },

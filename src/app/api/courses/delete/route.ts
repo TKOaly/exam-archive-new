@@ -32,6 +32,9 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json({ ok: true })
   } catch (e) {
+    if ((e as Error).message === 'NEXT_NOT_FOUND') {
+      return NextResponse.json({ error: '404 Not found' }, { status: 400 })
+    }
     if (e instanceof CourseNotFoundError) {
       return NextResponse.json(
         { error: e.message },

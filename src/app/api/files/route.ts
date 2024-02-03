@@ -17,6 +17,9 @@ export const GET = async (req: NextRequest) => {
     const files = await getAllFiles()
     return NextResponse.json(files)
   } catch (e) {
+    if ((e as Error).message === 'NEXT_NOT_FOUND') {
+      return NextResponse.json({ error: '404 Not found' }, { status: 400 })
+    }
     console.error('Error while getting files', e)
     return NextResponse.json(
       { error: '500 Internal Server Error' },

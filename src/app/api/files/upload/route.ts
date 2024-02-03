@@ -80,6 +80,9 @@ export const POST = async (req: NextRequest) => {
 
     return NextResponse.json(uploadedFiles.filter(file => file))
   } catch (e) {
+    if ((e as Error).message === 'NEXT_NOT_FOUND') {
+      return NextResponse.json({ error: '404 Not found' }, { status: 400 })
+    }
     console.error('Error while uploading exam', e)
     return NextResponse.json(
       { error: '500 Internal Server Error' },

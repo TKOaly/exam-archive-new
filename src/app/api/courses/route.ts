@@ -17,6 +17,9 @@ export const GET = async (req: Request) => {
     const courses = await getCourseListing()
     return NextResponse.json(courses)
   } catch (e) {
+    if ((e as Error).message === 'NEXT_NOT_FOUND') {
+      return NextResponse.json({ error: '404 Not found' }, { status: 400 })
+    }
     console.error('Error while getting courses', e)
     return NextResponse.json(
       { error: '500 Internal Server Error' },

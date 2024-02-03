@@ -44,6 +44,14 @@ export const POST = async (req: NextRequest) => {
         const originalFilename = file.name as string
         const contentType = file.type as string
 
+        if (
+          !contentType.startsWith('image/') &&
+          contentType !== 'application/pdf' &&
+          contentType !== 'text/plain'
+        ) {
+          return null
+        }
+
         const params: PutObjectCommandInput = {
           Bucket: configs.AWS_S3_BUCKET_ID,
           Key: uuidv4(),
@@ -70,7 +78,7 @@ export const POST = async (req: NextRequest) => {
       })
     )
 
-    return NextResponse.json(uploadedFiles)
+    return NextResponse.json(uploadedFiles.filter(file => file))
   } catch (e) {
     console.error('Error while uploading exam', e)
     return NextResponse.json(

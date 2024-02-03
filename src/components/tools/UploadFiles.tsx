@@ -41,6 +41,14 @@ const UploadFiles = async ({ courseId }: UploadFileProps) => {
         const originalFilename = file.name as string
         const contentType = file.type as string
 
+        if (
+          !contentType.startsWith('image/') &&
+          contentType !== 'application/pdf' &&
+          contentType !== 'text/plain'
+        ) {
+          return null
+        }
+
         const params: PutObjectCommandInput = {
           Bucket: configs.AWS_S3_BUCKET_ID,
           Key: uuidv4(),
@@ -100,6 +108,7 @@ const UploadFiles = async ({ courseId }: UploadFileProps) => {
         <input
           type="file"
           name="files"
+          accept="image/*,application/pdf,text/plain"
           aria-label="Select files to upload"
           title="Select files to upload"
           multiple

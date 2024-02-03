@@ -41,7 +41,7 @@ services:
       - security
 
   security:
-    image: ghcr.io/zaproxy/zaproxy:nightly
+    image: ghcr.io/zaproxy/zaproxy:20240129-weekly
     volumes:
       - $PWD:/zap/wrk/:rw
     depends_on:

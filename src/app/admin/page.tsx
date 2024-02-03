@@ -1,21 +1,22 @@
 import { redirect } from 'next/navigation'
 
-import config from '@lib/config'
 import { adminGetS3Objects, sortByPrefixThenObjNameAsc } from '@services/admin'
+import { getSessionUser, validateRights } from '@services/tkoUserService'
 
-import { validateRights } from '@services/tkoUserService'
+import { UserRole } from '@lib/types'
 
 import ObjectListItem from '@components/ObjectList/ObjectListItem'
 import ObjectListHeader from '@components/ObjectList/ObjectListHeader'
 
 const Page = async () => {
-  if (config.NODE_ENV !== 'development') {
-    redirect('/')
-  }
-
+  const user = await getSessionUser()
   const isRights = await validateRights('rename', 'remove')
 
   if (!isRights) {
+    redirect('/')
+  }
+
+  if (user.role !== UserRole.Yllapitaja) {
     redirect('/')
   }
 

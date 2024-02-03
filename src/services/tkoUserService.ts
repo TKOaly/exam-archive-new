@@ -99,9 +99,9 @@ export const getSessionUser = async () => {
       return {
         id: 1,
         name: 'dev',
-        role: UserRole.Yllapitaja,
+        role: UserRole.Kayttaja,
         membership: UserMembership.Jasen,
-        rights: roleRights[UserRole.Yllapitaja]
+        rights: roleRights[UserRole.Kayttaja]
       }
     }
     redirect('/auth/signin')
@@ -111,17 +111,22 @@ export const getSessionUser = async () => {
 }
 
 export const validateRights = async (...neededRights: AccessRight[]) => {
-  const session = await getServerSession(authConfig)
+  const user = await getSessionUser()
 
-  if (!session || !session.user) {
-    if (config.APP_ENV === 'development') {
-      return true
-    }
+  if (!user) {
     return false
   }
-  if (!session.user?.rights) return false
-  if (!session.user?.membership) return false
-  if (!isActiveMember(session.user.membership)) return false
+  if (!user.rights) return false
+  if (!user.membership) return false
+  if (!isActiveMember(user.membership)) return false
 
-  return neededRights.every(right => session.user?.rights[right])
+  return neededRights.every(right => user.rights[right])
+}
+
+export const validateUserRights = async (...neededRights: AccessRight[]) => {
+  const isRights = await validateRights(...neededRights)
+
+  if (!isRights) {
+    redirect('/')
+  }
 }

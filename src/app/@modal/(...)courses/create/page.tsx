@@ -1,16 +1,10 @@
-import { redirect } from 'next/navigation'
-
-import { validateRights } from '@services/tkoUserService'
+import { validateUserRights } from '@services/tkoUserService'
 
 import Modal from '@components/Modal'
 import CreateCourse from '@components/tools/CreateCourse'
 
 const Page = async () => {
-  const isRights = await validateRights('upload')
-
-  if (!isRights) {
-    redirect('/')
-  }
+  await validateUserRights('upload')
 
   return (
     <Modal title="Create new course">

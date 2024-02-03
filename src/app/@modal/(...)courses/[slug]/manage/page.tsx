@@ -1,19 +1,13 @@
-import { redirect } from 'next/navigation'
-
 import { parseSlug } from '@lib/courses'
 import { getCourseInfo } from '@services/archive'
 
 import Modal from '@components/Modal'
 import RenameCourse from '@components/tools/RenameCourse'
 import DeleteCourse from '@components/tools/DeleteCourse'
-import { validateRights } from '@services/tkoUserService'
+import { validateUserRights } from '@services/tkoUserService'
 
 const Page = async ({ params }: any) => {
-  const isRights = await validateRights('rename', 'remove')
-
-  if (!isRights) {
-    redirect('/')
-  }
+  await validateUserRights('rename', 'remove')
 
   const { id } = parseSlug(params.slug)
 

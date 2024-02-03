@@ -1,22 +1,16 @@
-import { redirect } from 'next/navigation'
-
 import { getFileNameById } from '@services/archive'
 
 import Modal from '@components/Modal'
 import DeleteFile from '@components/tools/DeleteFile'
 import UpdateFile from '@components/tools/UpdateFile'
-import { validateRights } from '@services/tkoUserService'
+import { validateUserRights } from '@services/tkoUserService'
 
 const Page = async ({
   params
 }: {
   params: { fileId: string; fileName: string }
 }) => {
-  const isRights = await validateRights('rename', 'remove')
-
-  if (!isRights) {
-    redirect('/')
-  }
+  await validateUserRights('rename', 'remove')
 
   const fileId = parseInt(params.fileId, 10)
 

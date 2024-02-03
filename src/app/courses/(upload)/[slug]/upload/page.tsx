@@ -1,21 +1,15 @@
-import { redirect } from 'next/navigation'
-
 import { parseSlug } from '@lib/courses'
 import { getCourseInfo } from '@services/archive'
 
 import UploadFiles from '@components/tools/UploadFiles'
-import { validateRights } from '@services/tkoUserService'
+import { validateUserRights } from '@services/tkoUserService'
 
 const Page = async ({ params }: any) => {
-  const isRights = await validateRights('upload')
+  await validateUserRights('upload')
 
   const { id } = parseSlug(params.slug)
 
   const course = await getCourseInfo(id)
-
-  if (!isRights) {
-    redirect('/')
-  }
 
   return (
     <div

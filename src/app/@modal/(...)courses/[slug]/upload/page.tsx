@@ -5,7 +5,7 @@ import Modal from '@components/Modal'
 import UploadFiles from '@components/tools/UploadFiles'
 import { validateUserRights } from '@services/tkoUserService'
 
-const Page = async ({ params }: any) => {
+const Page = async ({ params }: { params: { slug: string } }) => {
   await validateUserRights('upload')
 
   const { id } = parseSlug(params.slug)

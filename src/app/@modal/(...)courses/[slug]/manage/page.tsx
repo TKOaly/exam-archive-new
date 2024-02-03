@@ -6,7 +6,7 @@ import RenameCourse from '@components/tools/RenameCourse'
 import DeleteCourse from '@components/tools/DeleteCourse'
 import { validateUserRights } from '@services/tkoUserService'
 
-const Page = async ({ params }: any) => {
+const Page = async ({ params }: { params: { slug: string } }) => {
   await validateUserRights('rename', 'remove')
 
   const { id } = parseSlug(params.slug)

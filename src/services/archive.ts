@@ -94,7 +94,7 @@ export const deleteFile = async (fileId: FileId) =>
 export const renameCourse = async (
   id: CourseId,
   newName: string
-): Promise<any> => {
+): Promise<CourseListItem> => {
   const result = await dbPool.query(
     `
     UPDATE courses

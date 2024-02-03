@@ -6,7 +6,7 @@ import FileListHeader from '@components/FileList/FileListHeader'
 import NotFound from '@components/FileList/NotFound'
 import FileListItem from '@components/FileList/FileListItem'
 
-const Page = async ({ params }: any) => {
+const Page = async ({ params }: { params: { slug: string } }) => {
   const { rights } = await getSessionUser()
   const { id: courseId } = parseSlug(params.slug)
 

@@ -62,7 +62,9 @@ function docker_health_check() {
 
 function npm_ci() {
     pushd "$repository"
-    echo "::debug::Installing dependencies with npm ci"
+    echo "::debug::Installing node and dependencies with npm ci"
+
+    check_node_version
 
     required_command shasum
 
@@ -125,6 +127,15 @@ function s3_health_check() {
     popd
 }
 
+function start_db_s3() {
+    echo "::group::Starting database and S3"
+    compose_cmd up -d db s3
+
+    db_health_check
+    s3_health_check
+    echo "::endgroup::"
+}
+
 function build_app() {
     echo "::group::Building application"
 
@@ -133,14 +144,14 @@ function build_app() {
     get_environment_variables
 
     echo "::debug::Running database migrations"
-    npm run db:migrate
+    NODE_ENV=development npm run db:migrate
     echo "::debug::Building application"
     npm run build
     echo "::endgroup::"
 }
 
 function build_docker_image() {
-
+    echo "::group::Building application image"
     required_command docker
 
     build_app
@@ -166,12 +177,13 @@ function build_docker_image() {
         docker buildx bake -f docker-bake.hcl -f ${DOCKER_INFO}
         echo "::endgroup::"
     fi
+    echo "::endgroup::"
 }
 
 function get_environment_variables() {
-    if [[ "$ENV" == "dev" || "$ENV" == "test" || "$ENV" == "security" || "$ENV" == "local" ]]
+    if [[ "$ENV" == "dev" || "$ENV" == "test" || "$ENV" == "security" || "$ENV" == "local" || "$ENV" == "build" ]]
     then
-        # Set environment variables for local development only
+        # Set environment variables for local development only and for build process to have DB access even though it will be empty
         export PG_CONNECTION_STRING=${PG_CONNECTION_STRING:-"postgresql://tarpisto:tarpisto@$(compose_cmd port db 5432)/tarpisto"}
 
         export USER_SERVICE_SERVICE_ID=${USER_SERVICE_SERVICE_ID:-"11188b9c-9534-4faf-8355-60973b720647"}

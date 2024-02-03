@@ -17,27 +17,17 @@ function main() {
 
     pushd "$repository"
 
-    echo "::group::Installing node and dependencies"
-    check_node_version
     npm_ci
+
+    echo "::group::Installing test tooling"
     npm run test:install
     echo "::endgroup::"
 
-    echo "::group::Starting database and S3"
-    compose_cmd up -d db s3
-
-    db_health_check
-    s3_health_check
-    echo "::endgroup::"
+    start_db_s3
 
     get_environment_variables
 
-    echo "::group::Building application"
-    echo "::debug::Running database migrations"
-    NODE_ENV=development npm run db:migrate
-    echo "::debug::Building application"
-    NODE_ENV=test npm run build
-    echo "::endgroup::"
+    build_app
 
     echo "::group::Running tests"
     npm run test

@@ -6,6 +6,7 @@ readonly ENV="dev"
 source "$repository/scripts/common.sh"
 
 function main() {
+    echo "::group::Seeding database with development data"
     pushd "$repository"
 
     required_command npm
@@ -16,6 +17,7 @@ function main() {
     npm run db:seed
 
     popd
+    echo "::endgroup::"
 }
 
 main "$@"

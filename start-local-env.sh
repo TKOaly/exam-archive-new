@@ -7,17 +7,15 @@ source "$repository/scripts/common.sh"
 
 function stop() {
   pushd "$repository"
-  required_command docker
   compose_cmd down || true
   popd
 }
 trap stop EXIT
 
-check_node_version
-
 required_command tmux
-docker_health_check
+
 npm_ci
+docker_health_check
 
 function main() {
     pushd "$repository"

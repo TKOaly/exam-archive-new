@@ -18,13 +18,8 @@ function main() {
 
     pushd "$repository"
 
-    compose_cmd up -d db s3
-
+    start_db_s3
     get_environment_variables
-
-    db_health_check
-    s3_health_check
-
     build_docker_image
 
     compose_cmd up tarpisto

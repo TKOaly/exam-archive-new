@@ -17,23 +17,11 @@ function main() {
 
     pushd "$repository"
 
-    echo "::group::Installing node and dependencies"
-    check_node_version
     npm_ci
-    echo "::endgroup::"
 
-    echo "::group::Starting database and S3"
-    compose_cmd up -d db s3
+    start_db_s3
 
-    get_environment_variables
-
-    db_health_check
-    s3_health_check
-    echo "::endgroup::"
-
-    echo "::group::Building application"
     build_docker_image
-    echo "::endgroup::"
 
     echo "::group::Run database migrations and seeds"
     npm run db:migrate

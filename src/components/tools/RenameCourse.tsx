@@ -22,7 +22,7 @@ const RenameCourse = async ({ currentName, courseId }: RenameCourseProps) => {
     'use server'
     const isRights = await validateRights('rename')
     if (!isRights) {
-      return `Unauthorized`
+      throw new Error('Unauthorized')
     }
 
     const body = CourseName.safeParse(formData.get('courseName'))

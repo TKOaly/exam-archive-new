@@ -27,7 +27,7 @@ const UpdateFile = async ({
     'use server'
     const isRights = await validateRights('rename')
     if (!isRights) {
-      return `Unauthorized`
+      throw new Error('Unauthorized')
     }
 
     const body = UpdateFileInfo.safeParse({

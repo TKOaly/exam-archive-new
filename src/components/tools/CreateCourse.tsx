@@ -13,7 +13,7 @@ const CreateCourse = async () => {
     'use server'
     const isRights = await validateRights('upload')
     if (!isRights) {
-      return `Unauthorized`
+      throw new Error('Unauthorized')
     }
 
     const body = CourseName.safeParse(formData.get('courseName'))

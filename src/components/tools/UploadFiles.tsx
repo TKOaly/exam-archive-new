@@ -22,7 +22,7 @@ const UploadFiles = async ({ courseId }: UploadFileProps) => {
     'use server'
     const isRights = await validateRights('upload')
     if (!isRights) {
-      return 'Unauthorized'
+      throw new Error('Unauthorized')
     }
     const type = formData.get('type') as string
     const courseId = parseInt(formData.get('courseId') as string, 10) // TODO: make better type check

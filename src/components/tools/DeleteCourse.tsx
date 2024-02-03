@@ -17,7 +17,7 @@ const DeleteCourse = async ({ courseId, courseName }: DeleteCourseProps) => {
     try {
       const isRights = await validateRights('upload')
       if (!isRights) {
-        return `Unauthorized`
+        throw new Error('Unauthorized')
       }
 
       const courseId = parseInt(formData.get('courseId') as string, 10) // TODO: make better type check

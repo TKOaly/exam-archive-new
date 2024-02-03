@@ -16,7 +16,7 @@ const DeleteFile = async ({ fileId, fileName }: DeleteFileProps) => {
     'use server'
     const isRights = await validateRights('remove')
     if (!isRights) {
-      return `Unauthorized`
+      throw new Error('Unauthorized')
     }
 
     const fileId = parseInt(formData.get('fileId') as string, 10) // TODO: make better type check

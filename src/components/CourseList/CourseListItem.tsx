@@ -26,12 +26,12 @@ const CourseListItem = ({ course, showManage }: CourseListItemProps) => {
         role="cell"
         className="list-row-icon mx-2 h-6 w-6 fill-cyan-500"
       />
-      <div role="cell">
+      <div role="cell" className="list-row-name">
         <Link
           href={url}
           title={`Open course "${name}"`}
           arial-label={`Open course "${name}"`}
-          className="list-row-name hover:underline hover:decoration-cyan-500"
+          className="hover:underline hover:decoration-cyan-500"
         >
           {name}
         </Link>
@@ -50,12 +50,12 @@ const CourseListItem = ({ course, showManage }: CourseListItemProps) => {
         </time>
       )}
       {showManage && (
-        <div role="cell">
+        <div role="cell" className="list-row-manage">
           <Link
             aria-label={`Manage course "${name}"`}
             title={`Manage course "${name}"`}
             href={`${urlForCourse(id, name)}/manage`}
-            className="list-row-manage mx-2 flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"
+            className="mx-2 flex w-10 flex-row bg-gray-800 px-3 py-1 font-serif lowercase text-white ring-inset hover:bg-gray-600 focus:ring focus:ring-gray-400"
           >
             <PencilSquareIcon className="h-4 w-4 self-center" />{' '}
             <span className="sr-only">{`Manage course "${name}"`}</span>

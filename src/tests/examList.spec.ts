@@ -764,11 +764,21 @@ test.describe('FileListing functions right', () => {
     await manageButton.click()
 
     const modal = page.getByTestId('modal')
-
+    const title = modal.getByRole('heading', {
+      name: `Manage file "existing-${testId}.pdf"`
+    })
+    const heading = modal
+      .locator('h3')
+      .getByText('Manage file', { exact: true })
     const renameInput = modal.locator('input[name="fileName"]')
     const saveButton = modal.getByRole('button', {
       name: `Save file "existing-${testId}.pdf"`
     })
+
+    await expect(title).toBeVisible()
+    await expect(heading).toBeVisible()
+    await expect(renameInput).toBeVisible()
+    await expect(saveButton).toBeVisible()
 
     const newFilename = `renamed-${testId}.pdf`
     await renameInput.fill(newFilename)
@@ -829,7 +839,7 @@ test.describe('FileListing functions right', () => {
     // await expect(success).toBeVisible()
   })
 
-  test('rename file and change of type via modal works', async ({
+  test('rename file and change of type at the same time via modal works', async ({
     page,
     courseList,
     fileList
@@ -918,9 +928,19 @@ test.describe('FileListing functions right', () => {
     await manageButton.click()
 
     const modal = page.getByTestId('modal')
+    const title = modal.getByRole('heading', {
+      name: `Manage file "existing-${testId}.pdf"`
+    })
+    const heading = modal
+      .locator('h3')
+      .getByText('Delete file', { exact: true })
     const deleteButton = modal.getByRole('button', {
       name: `Delete file "existing-${testId}.pdf"`
     })
+    await expect(title).toBeVisible()
+    await expect(heading).toBeVisible()
+    await expect(deleteButton).toBeVisible()
+
     await deleteButton.click()
 
     await page.waitForURL(new RegExp('^(?!\b.*manage.*\b).*$'))

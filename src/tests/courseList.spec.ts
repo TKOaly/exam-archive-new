@@ -329,7 +329,7 @@ test.describe('courselisting functions works', () => {
       name: `Manage course "Introduction to testing ${testId}"`
     })
     const heading = modal
-      .locator('p')
+      .locator('h3')
       .getByText('Rename course', { exact: true })
     const courseRenameInput = modal.locator('input[name="courseName"]')
     const courseRenameButton = modal.getByRole('button', {
@@ -403,7 +403,7 @@ test.describe('courselisting functions works', () => {
       name: `Manage course "Introduction to naming ${testId}"`
     })
     const heading = modal
-      .locator('p')
+      .locator('h3')
       .getByText('Delete course', { exact: true })
     const courseDeleteButton = modal.getByRole('button', {
       name: `Delete course "Introduction to naming ${testId}"`

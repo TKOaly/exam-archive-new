@@ -1,17 +1,13 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 9010
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
-  testDir: './tests',
+  testDir: './src/tests',
   /* Maximum time one test can run for. */
   timeout: 30 * 1000,
   expect: {
@@ -30,20 +26,29 @@ const config: PlaywrightTestConfig = {
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI ? 'github' : 'html',
+  reporter: process.env.CI
+    ? 'github'
+    : [['html', { outputFolder: 'test-results/test-report' }]],
+  shard: {
+    current: process.env.PLAYWRIGHT_SHARD
+      ? parseInt(process.env.PLAYWRIGHT_SHARD as string)
+      : 1,
+    total: process.env.PLAYWRIGHT_TOTAL_SHARDS
+      ? parseInt(process.env.PLAYWRIGHT_TOTAL_SHARDS as string)
+      : 1
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'http://localhost:9000',
+    baseURL: `http://127.0.0.1:${PORT}`,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
     testIdAttribute: 'data-test-id'
   },
-
   /* Configure projects for major browsers */
   projects: [
     {
@@ -59,40 +64,21 @@ const config: PlaywrightTestConfig = {
         ...devices['Desktop Firefox']
       }
     },
-
-    // disable whole webkit as being flaky in CI
-    // {
-    //   name: 'Desktop WebKit',
-    //   use: {
-    //     ...devices['Desktop Safari']
-    //   }
-    // },
-
-    /* Test against mobile viewports. */
     {
       name: 'Mobile Chrome',
       use: {
         ...devices['Pixel 5']
       }
     }
-    // disable mobile safari from tests, because current layout keeps tests flaky
-    // {
-    //   name: 'Mobile Safari',
-    //   use: {
-    //     ...devices['iPhone 13 Pro Max']
-    //   }
-    // }
   ],
-
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */
-  outputDir: 'test-results/',
-
+  outputDir: 'test-results/playwright',
   /* Run your local dev server before starting the tests */
-
   webServer: {
-    reuseExistingServer: !process.env.CI,
-    command: 'npm run build && npm run start:e2e',
-    port: 9000
+    reuseExistingServer: false,
+    command: `PORT=${PORT} ./scripts/start-test-server.sh`,
+    port: PORT,
+    timeout: 120 * 1000
   }
 }
 

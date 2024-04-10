@@ -4,7 +4,8 @@ import config from '../config'
 const s3Options: S3ClientConfig = {
   apiVersion: '2006-03-01',
   region: config.AWS_REGION,
-  forcePathStyle: true
+  forcePathStyle: true,
+  endpoint: config.AWS_S3_ENDPOINT,
 }
 
 const s3 = new S3(s3Options)

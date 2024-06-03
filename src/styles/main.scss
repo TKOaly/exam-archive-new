@@ -1,23 +1,324 @@
-@use './common';
-@use './components/layout';
-@use './components/header';
-@use './components/footer';
-@use './components/listing-navigation';
-@use './components/course-list';
-@use './components/exam-list';
-@use './components/flash-message';
-@use './components/controls';
-@use './components/developer';
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import 'tailwindcss/variants';
 
-body {
-  margin: 0;
-  padding: 0;
+@media screen and (min-width: 640px) {
+  .header-container {
+    grid-column: header-start / header-end;
+    grid-row: header-start / header-end;
+    justify-self: stretch;
+    display: grid;
+    grid-template-columns: [begin name-start] auto [name-end search-start] 1fr [search-end menu-start] auto [menu-end end];
+    grid-template-rows: [begin name-start search-start menu-start] auto [name-end search-end menu-end end];
+    column-gap: theme('spacing.16');
+    padding: theme('spacing.2');
+  }
 
-  background: #fafafa;
-  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui,
-    helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
+  .list-container {
+    grid-column: content-start / content-end;
+    grid-row: content-start / content-end;
+    display: grid;
+    grid-template-columns: [begin icon-start] min-content [icon-end name-start empty-start] auto [name-end date-start] min-content [date-end manage-start] min-content [manage-end empty-end end];
+    grid-auto-rows: auto;
+    column-gap: theme('spacing.4');
+  }
+
+  .list-row {
+    display: grid;
+    grid-column: begin / end;
+    grid-template-columns: subgrid;
+    grid-template-rows: [icon-start name-start date-start manage-start empty-start] auto [icon-end name-end date-end manage-end empty-end end];
+    align-items: center;
+  }
+
+  .list-row-date {
+    text-align: right;
+    justify-self: right;
+  }
+
+  .footer-container {
+    grid-column: footer-start / footer-end;
+    grid-row: footer-start / footer-end;
+    justify-self: stretch;
+    display: grid;
+    grid-template-columns: [begin name-start email-start tkoaly-start] auto [tkoaly-end privacy-start] auto [privacy-end sourcecode-start] auto [sourcecode-end fuksiwiki-start] auto [name-end email-end fuksiwiki-end end];
+    grid-template-rows: [begin name-start] auto [name-end email-start] auto [email-end tkoaly-start privacy-start sourcecode-start fuksiwiki-start] auto [tkoaly-end privacy-end sourcecode-end fuksiwiki-end end];
+    column-gap: theme('spacing.4');
+    row-gap: theme('spacing.2');
+    padding-top: theme('spacing.5');
+    padding-bottom: theme('spacing.5');
+  }
+
+  .navigation-container {
+    grid-column: navigation-start / navigation-end;
+    grid-row: navigation-start / navigation-end;
+    display: grid;
+    grid-template-columns: [begin back-start] min-content [back-end title-start] auto [title-end actions-start] auto [actions-end end];
+    grid-template-rows: [begin back-start title-start actions-start] auto [back-end title-end actions-end end];
+    padding-top: theme('spacing.2');
+    padding-bottom: theme('spacing.2');
+    justify-items: space-between;
+    align-items: center;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .header-container {
+    grid-column: header-start / header-end;
+    grid-row: header-start / header-end;
+    display: grid;
+    justify-self: stretch;
+    grid-template-columns: [begin name-start search-start] auto [name-end menu-start] auto [menu-end search-end end];
+    // Rows below commented out and replaced with no search as not implmented yet and commented out in header
+    // grid-template-rows: [begin name-start menu-start] auto [name-end menu-end search-start] min-content [search-end end];
+    grid-template-rows: [begin name-start menu-start] auto [name-end menu-end end];
+    justify-content: space-between;
+    row-gap: theme('spacing.4');
+    column-gap: theme('spacing.16');
+    padding: theme('spacing.2');
+  }
+
+  .navigation-container {
+    grid-column: navigation-start / navigation-end;
+    grid-row: navigation-start / navigation-end;
+    display: grid;
+    grid-template-columns: [begin back-start actions-start] min-content [back-end title-start] auto [title-end actions-end end];
+    grid-template-rows: [begin back-start title-start] auto [back-end title-end actions-start] auto [actions-end end];
+    row-gap: theme('spacing.2');
+    padding-top: theme('spacing.2');
+    padding-bottom: theme('spacing.2');
+    justify-items: space-between;
+    align-items: center;
+  }
+
+  .list-container {
+    display: grid;
+    grid-template-columns: [begin icon-start] auto [icon-end name-start date-start empty-start] 6fr [name-end date-end manage-start] auto [manage-end empty-end end];
+    grid-auto-rows: auto;
+    column-gap: theme('spacing.4');
+  }
+
+  .list-row {
+    display: grid;
+    grid-column: begin / end;
+    grid-template-columns: subgrid;
+    grid-template-rows: [icon-start name-start manage-start empty-start] min-content [name-end date-start] min-content [icon-end date-end manage-end empty-end end];
+    align-items: center;
+  }
+
+  .list-row-date {
+    text-align: left;
+    justify-self: left;
+  }
+
+  .footer-container {
+    grid-column: footer-start / footer-end;
+    grid-row: footer-start / footer-end;
+    justify-self: stretch;
+    display: grid;
+    grid-template-columns: [begin name-start email-start tkoaly-start privacy-start sourcecode-start fuksiwiki-start] auto [name-end email-end tkoaly-end privacy-end sourcecode-end fuksiwiki-end end];
+    grid-template-rows: [begin name-start] auto [name-end email-start] auto [email-end tkoaly-start] auto [tkoaly-end privacy-start] auto [privacy-end sourcecode-start] auto [sourcecode-end fuksiwiki-start] auto [fuksiwiki-end end];
+    column-gap: theme('spacing.2');
+    row-gap: theme('spacing.1');
+  }
+
+  .footer-email {
+    border-top: 1px solid theme('colors.white');
+    border-bottom: 1px solid theme('colors.white');
+    padding-top: theme('spacing.2');
+    padding-bottom: theme('spacing.2');
+  }
+}
+
+.layout-container {
+  grid-column: list-start / list-end;
+  grid-row: content-start / content-end;
+  display: grid;
+  grid-template-columns: [begin header-start page-start footer-start] auto [header-end page-end footer-end end];
+  grid-template-rows: [begin header-start] auto [header-end page-start navigation-start] auto [navigation-end content-start] auto [content-end page-end footer-start] auto [footer-end end];
+  justify-items: center;
 }
 
 .page-container {
-  @extend %responsive-container;
+  grid-column: page-start / page-end;
+  grid-row: page-start / page-end;
+  display: grid;
+  grid-template-columns: [begin navigation-start content-start] auto [navigation-end content-end end];
+  grid-template-rows: [begin navigation-start] auto [navigation-end content-start] auto [content-end end];
+  row-gap: theme('spacing.4');
+  column-gap: theme('spacing.16');
+  padding: theme('spacing.4');
+  margin-bottom: theme('spacing.10');
+  width: 100%;
+  max-width: theme('screens.lg');
+}
+
+.content-container {
+  grid-column: content-start / content-end;
+  grid-row: content-start / content-end;
+}
+
+.admin-list-container {
+  grid-column: content-start / content-end;
+  grid-row: content-start / content-end;
+  display: grid;
+  grid-template-columns: [begin icon-start] auto [icon-end id-start empty-start] auto [id-end filename-start] auto [filename-end filepath-start] auto [filepath-end empty-end end];
+  grid-auto-rows: auto;
+  column-gap: theme('spacing.4');
+}
+
+.admin-list-row {
+  display: grid;
+  grid-column: begin / end;
+  grid-template-columns: subgrid;
+  grid-template-rows: [icon-start id-start filename-start filepath-start empty-start] auto [icon-end id-end filename-end filepath-end empty-end end];
+  align-items: center;
+}
+
+.header-name {
+  grid-column: name-start / name-end;
+  grid-row: name-start / name-end;
+  align-self: start;
+  display: inline-flex;
+  align-items: center;
+}
+
+.header-search {
+  grid-column: search-start / search-end;
+  grid-row: search-start / search-end;
+  align-self: center;
+}
+
+.header-menu {
+  grid-column: menu-start / menu-end;
+  grid-row: menu-start / menu-end;
+  align-self: end;
+}
+
+.navigation-back {
+  grid-column: back-start / back-end;
+  grid-row: back-start / back-end;
+}
+
+.navigation-title {
+  grid-column: title-start / title-end;
+  grid-row: title-start / title-end;
+  margin-left: theme('spacing.2');
+  margin-right: theme('spacing.2');
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navigation-actions {
+  grid-column: actions-start / actions-end;
+  grid-row: actions-start / actions-end;
+  margin-left: theme('spacing.2');
+  margin-right: theme('spacing.2');
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.list-row-icon {
+  grid-column: icon-start / icon-end;
+  grid-row: icon-start / icon-end;
+  justify-self: center;
+}
+
+.list-row-name {
+  grid-column: name-start / name-end;
+  grid-row: name-start / name-end;
+  justify-self: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-row-date {
+  grid-column: date-start / date-end;
+  grid-row: date-start / date-end;
+  white-space: nowrap;
+}
+
+.list-row-manage {
+  grid-column: manage-start / manage-end;
+  grid-row: manage-start / manage-end;
+  justify-self: center;
+}
+
+.admin-list-row-id {
+  grid-column: id-start / id-end;
+  grid-row: id-start / id-end;
+}
+
+.admin-list-row-filename {
+  grid-column: filename-start / filename-end;
+  grid-row: filename-start / filename-end;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-list-row-filepath {
+  grid-column: filepath-start / filepath-end;
+  grid-row: filepath-start / filepath-end;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-row-empty {
+  grid-column: empty-start / empty-end;
+  grid-row: empty-start / empty-end;
+}
+
+.list-row > img {
+  max-width: unset;
+}
+
+.footer-name {
+  grid-column: name-start / name-end;
+  grid-row: name-start / name-end;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  padding-top: theme('spacing.2');
+  padding-bottom: theme('spacing.2');
+}
+
+.footer-email {
+  grid-column: email-start / email-end;
+  grid-row: email-start / email-end;
+  justify-self: center;
+  display: inline-flex;
+}
+
+.footer-tkoaly {
+  grid-column: tkoaly-start / tkoaly-end;
+  grid-row: tkoaly-start / tkoaly-end;
+  text-align: center;
+  padding-top: theme('spacing.2');
+  padding-bottom: theme('spacing.2');
+}
+
+.footer-privacy {
+  grid-column: privacy-start / privacy-end;
+  grid-row: privacy-start / privacy-end;
+  text-align: center;
+  padding-top: theme('spacing.2');
+  padding-bottom: theme('spacing.2');
+}
+
+.footer-sourcecode {
+  grid-column: sourcecode-start / sourcecode-end;
+  grid-row: sourcecode-start / sourcecode-end;
+  text-align: center;
+  padding-top: theme('spacing.2');
+  padding-bottom: theme('spacing.2');
+}
+
+.footer-fuksiwiki {
+  grid-column: fuksiwiki-start / fuksiwiki-end;
+  grid-row: fuksiwiki-start / fuksiwiki-end;
+  text-align: center;
+  padding-top: theme('spacing.2');
+  padding-bottom: theme('spacing.2');
 }

@@ -1,49 +1,42 @@
 version: '3.9'
 
 services:
-  #exam-archive:
-  #  image: tkoalydocker/exam-archive-new
-  #  build: ./
-  #  environment:
-  #    NODE_ENV: development
-  #    # Set the key for yourself, as env_file doesn't do multiline
-  #    # AWS_CF_KEY: > ---- BEGIN RSA PRIVAE KEY ----
-  #  env_file:
-  #    - .env.docker
-  #  ports:
-  #    - 9001:9001
-  #  depends_on:
-  #    - db
-
   s3:
     build:
       context: ./docker
       dockerfile: minio.Dockerfile
+    healthcheck:
+      test: mc admin info local
+      interval: 5s
+      timeout: 5s
+      retries: 5
     environment:
-      INITIAL_BUCKETS: 'local/exam-archive-local'
+      INITIAL_BUCKETS: 'local/tarpisto-local'
+      MINIO_ROOT_USER: tarpisto
+      MINIO_ROOT_PASSWORD: tarpisto
     volumes:
-      - exam-archive-minio-data:/data
+      - tarpisto-minio-data:/data
     ports:
-      - 127.0.0.1:9001:9000
-      - 127.0.0.1:9002:9001
+      - 127.0.0.1::9001 # S3
+      - 127.0.0.1::9002 # Console
 
   db:
-    image: postgres:11.17-alpine
+    image: postgres:16.1-alpine
     ports:
-      - '127.0.0.1:9876:5432'
+      - '127.0.0.1::5432'
+    healthcheck:
+      test: pg_isready -U tarpisto
+      interval: 5s
+      timeout: 5s
+      retries: 5
     environment:
-      - POSTGRES_PASSWORD=Su5hgVvoqUCRw5vrWmrW
+      - POSTGRES_PASSWORD=tarpisto
       - POSTGRES_USER=tarpisto
       - POSTGRES_DB=tarpisto
       - PGDATA=/data/pgdata
     volumes:
-      - exam-archive-pg-data:/data/pgdata
-
-  adminer:
-    image: adminer
-    ports:
-      - 127.0.0.1:9003:8080
+      - tarpisto-pg-data:/data/pgdata
 
 volumes:
-  exam-archive-pg-data:
-  exam-archive-minio-data:
+  tarpisto-pg-data:
+  tarpisto-minio-data:

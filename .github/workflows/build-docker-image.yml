@@ -9,7 +9,7 @@ on:
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: registry.tko-aly.fi
-  IMAGE_NAME: exam-archive
+  IMAGE_NAME: tarpisto
 
 jobs:
   build:
@@ -19,13 +19,13 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4.1.6
 
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata for worker
         id: meta
-        uses: docker/metadata-action@v4.1.1
+        uses: docker/metadata-action@v5.5.1
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -34,12 +34,8 @@ jobs:
             type=ref,event=tag
             type=ref,event=pr
             type=sha
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v3.2.0
-        with:
-          context: .
-          push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build Docker image
+        run: ./scripts/build-image.sh
+        env:
+          DOCKER_INFO: ${{ steps.meta.outputs.bake-file }}

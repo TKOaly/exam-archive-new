@@ -5,9 +5,7 @@ on:
     types: [published]
 
 env:
-  # Use docker.io for Docker Hub if empty
-  REGISTRY: registry.tko-aly.fi
-  IMAGE_NAME: exam-archive
+  IMAGE_NAME: tarpisto
 
 jobs:
   build:
@@ -17,12 +15,16 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4.1.6
+
+      - name: Get commit SHA for Docker image tag
+        id: sha
+        run: echo "value=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into registry
-        uses: docker/login-action@v2.1.0
+        uses: docker/login-action@v3.2.0
         with:
           registry: ${{ secrets.PRIVATE_REGISTRY_URL }}
           username: ${{ secrets.PRIVATE_REGISTRY_USER }}
@@ -32,7 +34,7 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata for worker
         id: meta
-        uses: docker/metadata-action@v4.1.1
+        uses: docker/metadata-action@v5.5.1
         with:
           images: ${{ secrets.PRIVATE_REGISTRY_URL }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -40,13 +42,21 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=ref,event=pr
-            type=sha
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v3.2.0
+            type=raw,value=sha-${{ steps.sha.outputs.value }}
+
+      - name: Build Docker image
+        run: ./scripts/build-image.sh
+        env:
+          DOCKER_INFO: ${{ steps.meta.outputs.bake-file }}
+
+      - name: Push Docker image
+        run: docker push ${{ steps.meta.outputs.tags }}
+
+      - name: Trigger deployment
+        uses: aurelien-baudet/workflow-dispatch@v2
         with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          token: ${{ secrets.DEPLOYMENT_PAT }}
+          workflow: Bump Service
+          inputs: '{"service": "tarpisto", "tag": "sha-${{ steps.sha.outputs.value }}"}'
+          repo: TKOaly/tko-aly-k8s-configs
+          ref: main

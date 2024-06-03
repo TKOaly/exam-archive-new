@@ -1,7 +1,4 @@
 // @ts-check
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
 
 const { PG_CONNECTION_STRING } = process.env
 if (!PG_CONNECTION_STRING) {
@@ -12,36 +9,53 @@ if (!PG_CONNECTION_STRING) {
 
 /**
  * @typedef {import("knex").Config} KnexConfig
- * @typedef {{development: KnexConfig, production: KnexConfig, onUpdateTrigger: (tableName: string) => string}} KnexFile
+ * @typedef {{development: KnexConfig, test: KnexConfig, production: KnexConfig, onUpdateTrigger: (tableName: string) => string}} KnexFile
  * @type {KnexFile}
  */
 module.exports = {
   development: {
     client: 'postgres',
-    version: '11.17',
-    connection: PG_CONNECTION_STRING,
-    pool: {
-      min: 1,
-      max: 2
-    },
-    migrations: {
-      tableName: 'knex_migrations'
-    },
-    seeds: {
-      directory: './seeds'
-    }
-  },
-
-  production: {
-    client: 'postgres',
-    version: '11.17',
+    version: '15.2',
     connection: PG_CONNECTION_STRING,
     pool: {
       min: 1,
       max: 3
     },
     migrations: {
-      tableName: 'knex_migrations'
+      tableName: 'knex_migrations',
+      directory: './src/migrations'
+    },
+    seeds: {
+      directory: './src/seeds'
+    }
+  },
+  test: {
+    client: 'postgres',
+    version: '15.2',
+    connection: PG_CONNECTION_STRING,
+    pool: {
+      min: 1,
+      max: 3
+    },
+    seeds: {
+      directory: './src/seeds'
+    },
+    migrations: {
+      tableName: 'knex_migrations',
+      directory: './src/migrations'
+    }
+  },
+  production: {
+    client: 'postgres',
+    version: '15.2',
+    connection: PG_CONNECTION_STRING,
+    pool: {
+      min: 1,
+      max: 3
+    },
+    migrations: {
+      tableName: 'knex_migrations',
+      directory: './src/migrations'
     }
   },
 

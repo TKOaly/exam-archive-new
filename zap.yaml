@@ -1,0 +1,129 @@
+env:
+  contexts:
+    - name: tarpisto
+      excludePaths: []
+      urls:
+        - http://tarpisto:9020/
+        - http://tarpisto:9020/courses/create
+        - http://tarpisto:9020/courses/3-advanced-course-in-machine-learning
+        - http://tarpisto:9020/courses/3-advanced-course-in-machine-learning/upload
+        - http://tarpisto:9020/courses/3-advanced-course-in-machine-learning/manage
+        - http://tarpisto:9020/files/1842/170511_Advanced_Course_in_Machine_Learning_KK.pdf/manage
+  parameters:
+    failOnError: true
+    progressToStdout: true
+jobs:
+  - type: passiveScan-config
+    parameters:
+      enableTags: false
+      maxAlertsPerRule: 5
+      scanOnlyInScope: true
+    rules:
+      - id: 10109
+        threshold: 'OFF'
+        # Disabled reason: Info of Modern Web Application
+      - id: 10202
+        threshold: 'OFF'
+        # Disabled reason: Server Actions are already using same origin check for requests coming, ref: https://nextjs.org/docs/app/api-reference/next-config-js/serverActions#allowedorigins
+      - id: 10031
+        threshold: 'OFF'
+        # Disabled reason: False positive, SQL statements are prepared statements
+      - id: 90022
+        threshold: 'OFF'
+        # Disabled reason: 500 Internal Server Error is only content coming out of the error, relates to if S3 is not reached
+      - id: 10044
+        threshold: 'OFF'
+        # Disabled reason: Next router does return upcoming page as response, /courses is returning content of /
+      - id: 10094
+        threshold: 'OFF'
+        # Disabled reason: ACTION_ID related stuff relates to Next's internal handling of Server Actions
+      - id: 90033
+        threshold: 'OFF'
+        # Disabled reason: In test env there is no FQDN in cookie
+      - id: 10027
+        threshold: 'OFF'
+        # Disabled reason: False positive, relates to Next's own building logic how it pushes stuff into script tags
+      - id: 10049
+        threshold: 'OFF'
+        # Disabled reason: Next.js handles caching itself
+      - id: 10112
+        threshold: 'OFF'
+        # Disabled reason: NextAuth's internal functionality
+      - id: 10055
+        threshold: 'OFF'
+        # Disabled reason: Next.js uses eval & inline in intercepted & parallel routes f.ex
+      - id: 90005
+        threshold: 'OFF'
+        # Disabled reason: There are currently no separation on page by page level for headers in current setup
+  - type: spider
+    parameters:
+      context: tarpisto
+      maxDuration: 10
+      requestWaitTime: 500
+      maxDepth: 5
+      maxChildren: 10
+    tests:
+      - name: '> 10 URLs found'
+        type: 'stats'
+        statistic: 'automation.spider.urls.added'
+        operator: '>='
+        value: 10
+        onFail: 'info'
+  - type: spiderAjax
+    parameters:
+      context: tarpisto
+      maxDuration: 10
+      maxCrawlDepth: 5
+      maxCrawlStates: 10
+    tests:
+      - name: '> 10 URLs found'
+        type: 'stats'
+        statistic: 'spiderAjax.urls.added'
+        operator: '>='
+        value: 10
+        onFail: 'info'
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 10
+  - type: activeScan
+    parameters:
+      context: tarpisto
+      addQueryParam: true
+      maxAlertsPerRule: 5
+      maxRuleDurationInMins: 1
+    policyDefinition:
+      rules:
+        - id: 90018
+          threshold: 'OFF'
+          # Disabled reason: False positive, SQL statements are prepared statements
+        - id: 40032
+          threshold: 'OFF'
+          # Disabled reason: False positive, Next router does return basic layout as response if not known route
+        - id: 40033
+          threshold: 'OFF'
+          # Disabled reason: False positive, SQL statements are prepared statements
+        - id: 40018
+          threshold: 'OFF'
+          # Disabled reason: False positive, SQL statements are prepared statements
+        - id: 40035
+          threshold: 'OFF'
+          # Disabled reason: False positive, SQL statements are prepared statements
+        - id: 90027
+          threshold: 'OFF'
+          # Disabled reason: In test environment NextAuth is bypassed partially and therefore does change cookies
+        - id: 20012
+          threshold: 'OFF'
+          # Disabled reason: Server Actions are already using same origin check for requests coming, ref: https://nextjs.org/docs/app/api-reference/next-config-js/serverActions#allowedorigins
+        - id: 10104
+          threshold: 'OFF'
+          # Disabled reason: informational
+        - id: 10058
+          threshold: 'OFF'
+          # Disabled reason: False positive, Next does use same address pathing for Server Actions and base site
+  - type: report
+    parameters:
+      reportDescription: 'Tärpisto Security Check'
+      reportDir: /home/zap/
+      reportFile: security-report.md
+      reportTitle: Tärpistö ZAP Scanning Report
+      template: traditional-md

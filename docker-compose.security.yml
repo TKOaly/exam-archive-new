@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+  db:
+    networks:
+      - security
+
+  s3:
+    networks:
+      - security
+
+  tarpisto:
+    image: tarpisto/tarpisto-security:latest
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:9020/api/health']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      db:
+        condition: service_healthy
+      s3:
+        condition: service_healthy
+    environment:
+      - PORT=${PORT:-9020}
+      - PG_CONNECTION_STRING=postgresql://tarpisto:tarpisto@db:5432/tarpisto
+      - USER_SERVICE_SERVICE_ID=${USER_SERVICE_SERVICE_ID}
+      - USER_SERVICE_URL=${USER_SERVICE_URL}
+      - USER_SERVICE_SECRET=${USER_SERVICE_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_S3_ENDPOINT=http://s3:9001
+      - AWS_S3_BUCKET_ID=${AWS_S3_BUCKET_ID}
+      - OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME}
+      - OTEL_ENDPOINT=${OTEL_ENDPOINT}
+      - OTEL_AUTHORIZATION=${OTEL_AUTHORIZATION}
+    networks:
+      - security
+
+  security:
+    image: ghcr.io/zaproxy/zaproxy:weekly
+    volumes:
+      - $PWD/zap.yaml:/tmp/zap.yaml:ro
+    depends_on:
+      tarpisto:
+        condition: service_healthy
+    command: zap.sh -addonupdate -addoninstall retire -addoninstall spiderAjax -addoninstall packscanrules -addoninstall ascanrules -addoninstall pscanrulesBeta -addoninstall ascanrulesBeta -addoninstall sqliplugin -cmd -autorun /tmp/zap.yaml
+    networks:
+      - security
+
+networks:
+  security:
+    name: tarpisto-security

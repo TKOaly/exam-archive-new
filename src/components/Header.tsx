@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline'
 
 import MainMenu from '@components/MainMenu'
+import Button from '@components/Button'
 import TkoAlyLogo from '@media/tkoaly-logo-outline-black.svg'
 
 const Header = async () => {
@@ -55,12 +56,14 @@ const Header = async () => {
               <span>{name}</span>
             </div>
           </div>
-          <a
-            href={`/auth/signout`}
-            className="box-border bg-transparent p-3 font-serif lowercase text-gray-800 shadow-lg ring ring-inset ring-gray-800 hover:bg-gray-600 hover:text-white focus:ring-gray-400"
-          >
-            sign out
-          </a>
+          <form method="POST" action="/auth/signout">
+            <Button
+              type="submit"
+              name="signOut"
+              title="sign out"
+              variant="outline"
+            />
+          </form>
         </div>
       </MainMenu>
     </header>

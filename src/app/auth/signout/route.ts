@@ -1,7 +1,7 @@
 import config from '@lib/config'
 import { cookies } from 'next/headers'
 
-export const GET = async (req: Request) => {
+export const POST = async (req: Request) => {
   const cookiesIn = await cookies()
 
   const csrfResponse = await fetch(`${config.NEXTAUTH_URL}/api/auth/csrf`, {

@@ -56,10 +56,10 @@ const Header = async () => {
               <span>{name}</span>
             </div>
           </div>
-          <form method="POST" action="/auth/signout">
+          <form method="POST" action="/auth/signout" name="signOut">
             <Button
               type="submit"
-              name="signOut"
+              name="signOutButton"
               title="sign out"
               variant="outline"
             />

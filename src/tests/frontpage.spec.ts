@@ -66,9 +66,11 @@ test.describe('frontpage of Tärpistö works', () => {
     await expect(userInfo).toBeVisible()
     await expect(userName).toBeVisible()
 
-    const signOutButton = menu.getByRole('link', { name: 'sign out' })
+    const signOutForm = menu.locator('form[name="signOut"]')
+    await expect(signOutForm).toBeVisible()
+    await expect(signOutForm).toHaveAttribute('action', '/auth/signout')
+    const signOutButton = signOutForm.getByText('sign out')
     await expect(signOutButton).toBeVisible()
-    await expect(signOutButton).toHaveAttribute('href', '/auth/signout')
   })
 
   test('modal can be closed', async ({ page }) => {

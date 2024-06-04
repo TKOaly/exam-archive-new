@@ -17,11 +17,7 @@ const Header = async () => {
   return (
     <header className="header-container box-border bg-yellow-500 transition-all">
       <Link href="/" className="header-name">
-        <Image
-          src={TkoAlyLogo}
-          alt="TKO-äly logo"
-          className="me-4 h-14 w-14"
-        />
+        <Image src={TkoAlyLogo} alt="TKO-äly logo" className="me-4 h-14 w-14" />
         <h1 className="font-serif text-2xl font-extrabold uppercase text-gray-800">
           Tärpistö
         </h1>
@@ -59,12 +55,12 @@ const Header = async () => {
               <span>{name}</span>
             </div>
           </div>
-          <Link
+          <a
             href={`/auth/signout`}
             className="box-border bg-transparent p-3 font-serif lowercase text-gray-800 shadow-lg ring ring-inset ring-gray-800 hover:bg-gray-600 hover:text-white focus:ring-gray-400"
           >
             sign out
-          </Link>
+          </a>
         </div>
       </MainMenu>
     </header>

@@ -19,7 +19,7 @@ export const GET = async (req: Request) => {
         'Content-Type': 'application/x-www-form-urlencoded',
         Cookie: cookiesIn.toString()
       },
-      body: `csrfToken=${csrf.csrfToken}&callbackUrl=http%3A%2F%2F127.0.0.1%3A9000%2F&json=true`,
+      body: `csrfToken=${csrf.csrfToken}&callbackUrl=${config.NEXTAUTH_URL}&json=true`,
       method: 'POST'
     }
   )

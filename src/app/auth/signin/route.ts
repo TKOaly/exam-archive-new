@@ -25,8 +25,12 @@ export const GET = async (req: Request) => {
   )
   const auth = await authResponse.json()
 
-  const headers = new Headers(authResponse.headers)
+  const headers = new Headers()
   headers.set('Location', auth.url)
+  headers.set(
+    'set-cookie',
+    `${authResponse.headers.get('set-cookie')}; ${csrfResponse.headers.get('set-cookie')}`
+  )
 
   return new Response(null, { status: 302, headers: headers })
 }

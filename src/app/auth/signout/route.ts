@@ -1,6 +1,8 @@
 import config from '@lib/config'
 import { cookies } from 'next/headers'
 
+export const dynamic = 'force-dynamic'
+
 export const POST = async (req: Request) => {
   const cookiesIn = await cookies()
 
@@ -19,7 +21,7 @@ export const POST = async (req: Request) => {
         'Content-Type': 'application/x-www-form-urlencoded',
         Cookie: cookiesIn.toString()
       },
-      body: `csrfToken=${csrf.csrfToken}&callbackUrl=${config.NEXTAUTH_URL}&json=true`,
+      body: `csrfToken=${csrf.csrfToken}&callbackUrl=${config.NEXTAUTH_URL}/auth/callback/out&json=true`,
       method: 'POST'
     }
   )

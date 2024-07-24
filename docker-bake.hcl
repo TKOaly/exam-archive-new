@@ -13,4 +13,7 @@ target "default" {
   context = "./"
   dockerfile = "Dockerfile"
   target = "${BUILDTARGET}"
+  args = {
+    NODE_VERSION = "${NODE_VERSION}"
+  }
 }

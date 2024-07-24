@@ -3,6 +3,7 @@ name: Build and push Docker image
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 env:
   IMAGE_NAME: tarpisto
@@ -42,7 +43,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=ref,event=pr
-            type=sha
+            type=raw,value=sha-${{ steps.sha.outputs.value }}
 
       - name: Build Docker image
         run: ./scripts/build-image.sh

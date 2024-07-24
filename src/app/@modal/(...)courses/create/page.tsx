@@ -3,6 +3,11 @@ import { validateUserRights } from '@services/tkoUserService'
 import Modal from '@components/Modal'
 import CreateCourse from '@components/tools/CreateCourse'
 
+export const metadata = {
+  title: `Create new course - Tärpistö - TKO-äly ry`,
+  description: 'The TKO-äly ry exam archive'
+}
+
 const Page = async () => {
   await validateUserRights('upload')
 

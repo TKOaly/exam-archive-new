@@ -42,7 +42,7 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=ref,event=pr
-            type=raw,value=sha-${{ steps.sha.outputs.value }}
+            type=sha
 
       - name: Build Docker image
         run: ./scripts/build-image.sh

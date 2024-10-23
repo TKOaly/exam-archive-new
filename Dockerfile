@@ -1,11 +1,12 @@
-FROM node:20.14.0-alpine AS deps
+ARG NODE_VERSION
+FROM node:${NODE_VERSION}-alpine AS deps
 
 WORKDIR /usr/src/tarpisto
 
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-FROM node:20.14.0-alpine AS base
+FROM node:${NODE_VERSION}-alpine AS base
 
 ENV PORT 9000
 ENV ENV production

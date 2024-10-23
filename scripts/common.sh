@@ -158,6 +158,8 @@ function build_docker_image() {
 
     export PROGRESS_NO_TRUNC=1
 
+    export NODE_VERSION=$(cat $repo/.nvmrc)
+
     if [[ -z ${DOCKER_INFO-} ]]
     then
         if [[ "$ENV" == "security" ]]
